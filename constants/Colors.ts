@@ -1,19 +1,24 @@
-const tintColorLight = '#2f95dc';
-const tintColorDark = '#fff';
+import { colors } from '@/src/ui/theme'
 
+// La app es siempre dark — paleta de librería antigua
 export default {
-  light: {
-    text: '#000',
-    background: '#fff',
-    tint: tintColorLight,
-    tabIconDefault: '#ccc',
-    tabIconSelected: tintColorLight,
-  },
   dark: {
-    text: '#fff',
-    background: '#000',
-    tint: tintColorDark,
-    tabIconDefault: '#ccc',
-    tabIconSelected: tintColorDark,
+    text:            colors.textPrimary,
+    background:      colors.bg,
+    tint:            colors.amber,
+    tabIconDefault:  colors.textMuted,
+    tabIconSelected: colors.amber,
+    surface:         colors.surface,
+    border:          colors.border,
   },
-};
+  // Alias para compatibilidad con componentes que leen 'light'
+  light: {
+    text:            colors.textPrimary,
+    background:      colors.bg,
+    tint:            colors.amber,
+    tabIconDefault:  colors.textMuted,
+    tabIconSelected: colors.amber,
+    surface:         colors.surface,
+    border:          colors.border,
+  },
+}
