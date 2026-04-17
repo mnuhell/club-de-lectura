@@ -32,37 +32,56 @@ function mapMember(row: MemberRow): ClubMember {
 
 export const ClubRepository: IClubRepository = {
   async getById(id, userId) {
-    const { data, error } = await supabase
-      .from('clubs')
-      .select(
-        '*, current_book:books(*), club_members(count), my_membership:club_members!inner(role)',
-      )
-      .eq('id', id)
-      .eq('club_members.user_id', userId)
-      .single()
-    if (error) return null
+    const [{ data: clubData, error }, { data: membership }] = await Promise.all([
+      supabase
+        .from('clubs')
+        .select('*, current_book:books(*), club_members(count)')
+        .eq('id', id)
+        .single(),
+      supabase
+        .from('club_members')
+        .select('role')
+        .eq('club_id', id)
+        .eq('user_id', userId)
+        .maybeSingle(),
+    ])
+    if (error || !clubData) return null
 
-    const club = mapClub(data)
     return {
-      ...club,
-      currentBook: data.current_book ?? null,
-      memberCount: (data.club_members as unknown as { count: number }[])[0]?.count ?? 0,
-      myRole: (data.my_membership as unknown as { role: ClubMember['role'] }[])[0]?.role ?? null,
+      ...mapClub(clubData),
+      currentBook: clubData.current_book ?? null,
+      memberCount: (clubData.club_members as unknown as { count: number }[])[0]?.count ?? 0,
+      myRole: (membership?.role as ClubMember['role']) ?? null,
     } as ClubWithDetails
   },
 
   async getMyClubs(userId) {
-    const { data, error } = await supabase
-      .from('clubs')
-      .select('*, current_book:books(*), club_members!inner(user_id, role, count)')
-      .eq('club_members.user_id', userId)
+    const { data: memberships, error } = await supabase
+      .from('club_members')
+      .select('role, club_id')
+      .eq('user_id', userId)
     if (error) throw new Error('No se pudieron cargar tus clubs')
+    if (memberships.length === 0) return []
 
-    return data.map(row => ({
-      ...mapClub(row),
-      currentBook: row.current_book ?? null,
-      memberCount: (row.club_members as unknown as { count: number }[])[0]?.count ?? 0,
-      myRole: (row.club_members as unknown as { role: ClubMember['role'] }[])[0]?.role ?? null,
+    const clubIds = memberships.map(m => m.club_id)
+
+    const [{ data: clubs, error: clubsError }, { data: allMembers }] = await Promise.all([
+      supabase.from('clubs').select('*, current_book:books(*)').in('id', clubIds),
+      supabase.from('club_members').select('club_id').in('club_id', clubIds),
+    ])
+    if (clubsError) throw new Error('No se pudieron cargar tus clubs')
+
+    const roleMap = Object.fromEntries(memberships.map(m => [m.club_id, m.role]))
+    const countMap = (allMembers ?? []).reduce<Record<string, number>>((acc, m) => {
+      acc[m.club_id] = (acc[m.club_id] ?? 0) + 1
+      return acc
+    }, {})
+
+    return (clubs ?? []).map(row => ({
+      ...mapClub(row as unknown as ClubRow),
+      currentBook: (row.current_book as ClubWithDetails['currentBook']) ?? null,
+      memberCount: countMap[row.id] ?? 0,
+      myRole: (roleMap[row.id] as ClubMember['role']) ?? null,
     })) as ClubWithDetails[]
   },
 
@@ -129,8 +148,8 @@ export const ClubRepository: IClubRepository = {
     if (error) throw new Error('No se pudo abandonar el club')
   },
   async getMembers(clubId) {
-    const { data, error } = await supabase.from('club_members').select('*').eq('club_id', clubId)
+    const { data, error } = await supabase.rpc('get_club_members', { p_club_id: clubId })
     if (error) throw new Error('No se pudieron cargar los miembros')
-    return data.map(mapMember)
+    return (data ?? []).map(mapMember)
   },
 }
