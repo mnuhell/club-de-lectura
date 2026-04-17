@@ -3,6 +3,7 @@ import { useAuth } from '@/src/ui/hooks/useAuth'
 import { useLibrary } from '@/src/ui/hooks/useLibrary'
 import { colors } from '@/src/ui/theme'
 import { Ionicons } from '@expo/vector-icons'
+import { useRouter } from 'expo-router'
 import { useState } from 'react'
 import {
   ActivityIndicator,
@@ -75,6 +76,7 @@ function BookCard({
 }
 
 export default function LibraryScreen() {
+  const router = useRouter()
   const { user } = useAuth()
   const { books, loading, error, setStatus, remove, refresh } = useLibrary(user?.id ?? '')
   const [activeTab, setActiveTab] = useState<BookStatus>('reading')
@@ -85,6 +87,12 @@ export default function LibraryScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Mi biblioteca</Text>
+        <TouchableOpacity
+          style={styles.searchButton}
+          onPress={() => router.push('/(tabs)/library/search')}
+        >
+          <Ionicons name="search-outline" size={18} color={colors.amber} />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.tabs}>
@@ -187,10 +195,21 @@ const styles = StyleSheet.create({
   emptyText: { color: colors.textSecondary, fontFamily: 'Georgia', fontSize: 15 },
   errorText: { color: colors.error, fontFamily: 'SpaceMono', fontSize: 13 },
   header: {
+    alignItems: 'center',
     borderBottomColor: colors.border,
     borderBottomWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 16,
+  },
+  searchButton: {
+    alignItems: 'center',
+    backgroundColor: colors.amberFaint,
+    borderRadius: 20,
+    height: 36,
+    justifyContent: 'center',
+    width: 36,
   },
   list: { paddingVertical: 8 },
   retryButton: {

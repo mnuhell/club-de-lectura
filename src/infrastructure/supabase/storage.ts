@@ -1,38 +1,30 @@
 import { supabase } from './client'
+import * as FileSystem from 'expo-file-system/legacy'
+import { decode } from 'base64-arraybuffer'
 
 const AVATARS_BUCKET = 'avatars'
 const COVERS_BUCKET = 'covers'
 
-export async function uploadAvatar(userId: string, fileUri: string, contentType: string) {
-  const ext = fileUri.split('.').pop()
-  const path = `${userId}/avatar.${ext}`
-
-  const response = await fetch(fileUri)
-  const blob = await response.blob()
-
-  const { error } = await supabase.storage.from(AVATARS_BUCKET).upload(path, blob, {
+async function uploadFile(bucket: string, path: string, fileUri: string, contentType: string) {
+  const base64 = await FileSystem.readAsStringAsync(fileUri, {
+    encoding: 'base64',
+  })
+  const { error } = await supabase.storage.from(bucket).upload(path, decode(base64), {
     contentType,
     upsert: true,
   })
   if (error) throw error
+  return getPublicUrl(bucket, path)
+}
 
-  return getPublicUrl(AVATARS_BUCKET, path)
+export async function uploadAvatar(userId: string, fileUri: string, contentType: string) {
+  const ext = contentType.split('/')[1] ?? 'jpg'
+  return uploadFile(AVATARS_BUCKET, `${userId}/avatar.${ext}`, fileUri, contentType)
 }
 
 export async function uploadClubCover(clubId: string, fileUri: string, contentType: string) {
-  const ext = fileUri.split('.').pop()
-  const path = `${clubId}/cover.${ext}`
-
-  const response = await fetch(fileUri)
-  const blob = await response.blob()
-
-  const { error } = await supabase.storage.from(COVERS_BUCKET).upload(path, blob, {
-    contentType,
-    upsert: true,
-  })
-  if (error) throw error
-
-  return getPublicUrl(COVERS_BUCKET, path)
+  const ext = contentType.split('/')[1] ?? 'jpg'
+  return uploadFile(COVERS_BUCKET, `${clubId}/cover.${ext}`, fileUri, contentType)
 }
 
 function getPublicUrl(bucket: string, path: string) {
