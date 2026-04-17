@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import type { IClubRepository } from '../../repositories'
 import type { IPostRepository } from '../../repositories/IPostRepository'
 import type { IReadingSessionRepository } from '../../repositories/IReadingSessionRepository'
@@ -8,7 +9,9 @@ import {
   PostRepository,
   ReadingSessionRepository,
 } from '../../infrastructure/supabase/repositories'
+import { SupabaseRealtimeService } from '../../infrastructure/supabase/realtime'
 import { getFeed } from '../../usecases/feed'
+import { createRealtimeManager } from '../../usecases/realtime'
 
 export function createUseFeedActions(
   clubRepo: IClubRepository,
@@ -33,6 +36,7 @@ export function useFeed(userId: string): FeedState {
   const [error, setError] = useState<string | null>(null)
 
   const actions = createUseFeedActions(ClubRepository, PostRepository, ReadingSessionRepository)
+  const realtimeManager = useRef(createRealtimeManager(SupabaseRealtimeService))
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -40,6 +44,8 @@ export function useFeed(userId: string): FeedState {
     try {
       const data = await actions.fetchFeed(userId)
       setItems(data)
+      const clubIds = [...new Set(data.map(i => i.clubId))]
+      realtimeManager.current.subscribeToClubs(clubIds, load)
     } catch {
       setError('No se pudo cargar el feed')
     } finally {
@@ -49,6 +55,7 @@ export function useFeed(userId: string): FeedState {
 
   useEffect(() => {
     if (userId) load()
+    return () => realtimeManager.current.unsubscribeAll()
   }, [userId, load])
 
   return { items, loading, error, refresh: load }

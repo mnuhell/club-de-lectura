@@ -123,10 +123,18 @@ export default function ClubDetailScreen() {
             </View>
 
             {club.currentBook ? (
-              <View style={styles.currentBook}>
+              <TouchableOpacity
+                style={styles.currentBook}
+                onPress={() => router.push(`/club/${id}/reading` as never)}
+                activeOpacity={0.75}
+              >
                 <Text style={styles.currentBookLabel}>Leyendo ahora</Text>
                 <Text style={styles.currentBookTitle}>{club.currentBook.title}</Text>
-              </View>
+                <View style={styles.readingCta}>
+                  <Ionicons name="book-outline" size={12} color={colors.amber} />
+                  <Text style={styles.readingCtaText}>Ver progreso y comentarios →</Text>
+                </View>
+              </TouchableOpacity>
             ) : (
               <View style={styles.noBook}>
                 <Text style={styles.noBookText}>Sin libro actual</Text>
@@ -223,6 +231,8 @@ const styles = StyleSheet.create({
   metaText: { color: colors.textMuted, fontFamily: 'SpaceMono', fontSize: 11 },
   noBook: { marginTop: 20 },
   noBookText: { color: colors.textMuted, fontFamily: 'SpaceMono', fontSize: 12 },
+  readingCta: { alignItems: 'center', flexDirection: 'row', gap: 4, marginTop: 8 },
+  readingCtaText: { color: colors.amber, fontFamily: 'SpaceMono', fontSize: 10 },
   retryButton: {
     borderColor: colors.border,
     borderRadius: 8,

@@ -3,6 +3,12 @@
  */
 
 jest.mock('../infrastructure/supabase/repositories', () => ({}))
+jest.mock('../infrastructure/supabase/realtime', () => ({
+  SupabaseRealtimeService: {
+    subscribeToClubPosts: jest.fn().mockReturnValue(jest.fn()),
+    subscribeToReadingSession: jest.fn().mockReturnValue(jest.fn()),
+  },
+}))
 
 import type { Club, ClubMember, ClubWithDetails } from '../domain'
 import type { IClubRepository } from '../repositories'

@@ -1,8 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { IClubRepository } from '../../repositories'
 import type { ClubMember, ClubWithDetails } from '../../domain'
 import { ClubRepository } from '../../infrastructure/supabase/repositories'
+import { SupabaseRealtimeService } from '../../infrastructure/supabase/realtime'
 import { getClubDetail, getClubMembers, leaveClub } from '../../usecases/clubs'
+import { createRealtimeManager } from '../../usecases/realtime'
 
 export function createUseClubDetailActions(repo: IClubRepository) {
   return {
@@ -28,6 +30,7 @@ export function useClubDetail(id: string, userId: string): ClubDetailState {
   const [error, setError] = useState<string | null>(null)
 
   const actions = createUseClubDetailActions(ClubRepository)
+  const realtimeManager = useRef(createRealtimeManager(SupabaseRealtimeService))
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -39,6 +42,7 @@ export function useClubDetail(id: string, userId: string): ClubDetailState {
       ])
       setClub(detail)
       setMembers(memberList)
+      realtimeManager.current.subscribeToClubs([id], load)
     } catch {
       setError('No se pudo cargar el club')
     } finally {
@@ -48,6 +52,7 @@ export function useClubDetail(id: string, userId: string): ClubDetailState {
 
   useEffect(() => {
     if (id && userId) load()
+    return () => realtimeManager.current.unsubscribeAll()
   }, [id, userId, load])
 
   async function leave() {
