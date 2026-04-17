@@ -7,9 +7,20 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,json}\""
+  },
+  "jest": {
+    "preset": "jest-expo",
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/$1"
+    },
+    "testMatch": [
+      "<rootDir>/src/__tests__/**/*.test.ts"
+    ]
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -41,6 +52,8 @@
   },
   "devDependencies": {
     "@tamagui/babel-plugin": "2.0.0-rc.41",
+    "@testing-library/react-native": "^13.3.3",
+    "@types/jest": "^30.0.0",
     "@types/react": "~19.1.0",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
@@ -50,6 +63,7 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-native": "^4.1.0",
+    "jest-expo": "^55.0.16",
     "prettier": "^3.8.3",
     "react-test-renderer": "19.1.0",
     "typescript": "~5.9.2"

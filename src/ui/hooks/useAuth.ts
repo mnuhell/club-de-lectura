@@ -6,6 +6,7 @@ interface AuthState {
   session: Session | null;
   user: User | null;
   loading: boolean;
+  signOut: () => Promise<void>;
 }
 
 export function useAuth(): AuthState {
@@ -25,5 +26,9 @@ export function useAuth(): AuthState {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  return { session, user: session?.user ?? null, loading };
+  async function signOut() {
+    await supabase.auth.signOut();
+  }
+
+  return { session, user: session?.user ?? null, loading, signOut };
 }
