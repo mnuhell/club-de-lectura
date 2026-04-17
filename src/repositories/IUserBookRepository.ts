@@ -1,0 +1,7 @@
+import type { UserBook, BookStatus } from '../domain'
+
+export interface IUserBookRepository {
+  getByUser(userId: string, status?: BookStatus): Promise<UserBook[]>
+  upsert(data: Pick<UserBook, 'userId' | 'bookId' | 'status' | 'rating' | 'startedAt' | 'finishedAt'>): Promise<UserBook>
+  remove(userId: string, bookId: string): Promise<void>
+}

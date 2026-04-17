@@ -1,0 +1,7 @@
+export type { IUserRepository } from './IUserRepository'
+export type { IBookRepository } from './IBookRepository'
+export type { IClubRepository } from './IClubRepository'
+export type { IReadingSessionRepository } from './IReadingSessionRepository'
+export type { IPostRepository } from './IPostRepository'
+export type { IReactionRepository } from './IReactionRepository'
+export type { IUserBookRepository } from './IUserBookRepository'
