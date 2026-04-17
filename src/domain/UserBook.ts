@@ -1,3 +1,5 @@
+import type { Book } from './Book'
+
 export type BookStatus = 'want_to_read' | 'reading' | 'read'
 
 export type UserBook = {
@@ -10,3 +12,5 @@ export type UserBook = {
   createdAt: string
   updatedAt: string
 }
+
+export type UserBookWithDetails = UserBook & { book: Book }
