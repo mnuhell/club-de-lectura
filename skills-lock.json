@@ -10,6 +10,11 @@
       "source": "callstackincubator/agent-skills",
       "sourceType": "github",
       "computedHash": "bad5e73a1c3ddca2ed4bcd93b05ff913e8f9cc5495feacc3717c69e07fee540f"
+    },
+    "test-driven-development": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "computedHash": "126f1ebf6ccd414f42544f6e83d8cc5adb089e1108eaffb7c400701e37eecd9f"
     }
   }
 }
