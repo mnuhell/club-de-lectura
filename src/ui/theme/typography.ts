@@ -5,28 +5,28 @@ export const font = {
   serif: 'Georgia',
   // Sistema sans para cuerpo
   sans: 'System',
-} as const
+} as const;
 
 export const fontSize = {
-  xs:   11,
-  sm:   13,
+  xs: 11,
+  sm: 13,
   base: 15,
-  md:   17,
-  lg:   20,
-  xl:   24,
+  md: 17,
+  lg: 20,
+  xl: 24,
   '2xl': 30,
   '3xl': 38,
-} as const
+} as const;
 
 export const lineHeight = {
-  tight:  1.2,
+  tight: 1.2,
   normal: 1.5,
-  loose:  1.8,
-} as const
+  loose: 1.8,
+} as const;
 
 export const fontWeight = {
   regular: '400' as const,
-  medium:  '500' as const,
-  semibold:'600' as const,
-  bold:    '700' as const,
-}
+  medium: '500' as const,
+  semibold: '600' as const,
+  bold: '700' as const,
+};

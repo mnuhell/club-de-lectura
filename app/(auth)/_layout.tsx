@@ -1,5 +1,5 @@
-import { Stack } from 'expo-router'
-import { colors } from '@/src/ui/theme'
+import { Stack } from 'expo-router';
+import { colors } from '@/src/ui/theme';
 
 export default function AuthLayout() {
   return (
@@ -10,5 +10,5 @@ export default function AuthLayout() {
         animation: 'fade',
       }}
     />
-  )
+  );
 }
