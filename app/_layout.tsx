@@ -1,12 +1,12 @@
-import { useEffect } from 'react'
-import { useFonts } from 'expo-font'
-import { Stack, router } from 'expo-router'
-import * as SplashScreen from 'expo-splash-screen'
-import FontAwesome from '@expo/vector-icons/FontAwesome'
-import { TamaguiProvider } from '@tamagui/core'
 import { useAuth } from '@/src/ui/hooks/useAuth'
 import { colors } from '@/src/ui/theme'
 import config from '@/tamagui.config'
+import FontAwesome from '@expo/vector-icons/FontAwesome'
+import { TamaguiProvider } from '@tamagui/core'
+import { useFonts } from 'expo-font'
+import { Stack, router } from 'expo-router'
+import * as SplashScreen from 'expo-splash-screen'
+import { useEffect } from 'react'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -45,7 +45,7 @@ function RootNavigator() {
   useEffect(() => {
     if (loading) return
     if (session) {
-      router.replace('/(tabs)')
+      router.replace('/(tabs)/feed')
     } else {
       router.replace('/(auth)/welcome')
     }
