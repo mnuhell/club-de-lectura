@@ -1,7 +1,7 @@
-import { createAnimations } from '@tamagui/animations-reanimated';
-import { createInterFont } from '@tamagui/font-inter';
-import { shorthands } from '@tamagui/shorthands';
-import { createTamagui, createTokens } from '@tamagui/core';
+import { createAnimations } from '@tamagui/animations-reanimated'
+import { createInterFont } from '@tamagui/font-inter'
+import { shorthands } from '@tamagui/shorthands'
+import { createTamagui, createTokens } from '@tamagui/core'
 
 const animations = createAnimations({
   fast: {
@@ -22,7 +22,7 @@ const animations = createAnimations({
     mass: 1,
     stiffness: 80,
   },
-});
+})
 
 const interFont = createInterFont(
   {
@@ -49,7 +49,7 @@ const interFont = createInterFont(
     },
   },
   { sizeLineHeight: size => size + 6 },
-);
+)
 
 const tokens = createTokens({
   color: {
@@ -176,7 +176,7 @@ const tokens = createTokens({
     4: 400,
     5: 500,
   },
-});
+})
 
 // Tema oscuro: objetos planos con los tokens de color
 const dark = {
@@ -218,7 +218,7 @@ const dark = {
 
   shadowColor: 'rgba(0,0,0,0.6)',
   shadowColorHover: 'rgba(0,0,0,0.8)',
-};
+}
 
 // Sub-tema ámbar (botones primarios, acentos)
 const dark_amber = {
@@ -229,7 +229,7 @@ const dark_amber = {
   color: '#0D0A06',
   colorHover: '#0D0A06',
   borderColor: '#A87832',
-};
+}
 
 const config = createTamagui({
   animations,
@@ -257,11 +257,11 @@ const config = createTamagui({
     hoverNone: { hover: 'none' },
     pointerCoarse: { pointer: 'coarse' },
   },
-});
+})
 
-export type AppConfig = typeof config;
+export type AppConfig = typeof config
 declare module '@tamagui/core' {
   interface TamaguiCustomConfig extends AppConfig {}
 }
 
-export default config;
+export default config

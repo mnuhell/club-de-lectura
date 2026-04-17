@@ -30,7 +30,11 @@ export const UserRepository: IUserRepository = {
   },
 
   async getByUsername(username) {
-    const { data, error } = await supabase.from('profiles').select('*').eq('username', username).single()
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('username', username)
+      .single()
     if (error) return null
     return mapUser(data)
   },

@@ -1,4 +1,4 @@
-import { colors } from '@/src/ui/theme';
+import { colors } from '@/src/ui/theme'
 
 // La app es siempre dark — paleta de librería antigua
 export default {
@@ -21,4 +21,4 @@ export default {
     surface: colors.surface,
     border: colors.border,
   },
-};
+}

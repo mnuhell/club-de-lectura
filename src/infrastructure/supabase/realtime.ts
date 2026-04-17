@@ -1,8 +1,8 @@
-import { supabase } from './client';
-import type { Database } from './types';
+import { supabase } from './client'
+import type { Database } from './types'
 
-type Post = Database['public']['Tables']['posts']['Row'];
-type ReadingSession = Database['public']['Tables']['reading_sessions']['Row'];
+type Post = Database['public']['Tables']['posts']['Row']
+type ReadingSession = Database['public']['Tables']['reading_sessions']['Row']
 
 export function subscribeToClubPosts(clubId: string, onInsert: (post: Post) => void) {
   return supabase
@@ -12,7 +12,7 @@ export function subscribeToClubPosts(clubId: string, onInsert: (post: Post) => v
       { event: 'INSERT', schema: 'public', table: 'posts', filter: `club_id=eq.${clubId}` },
       payload => onInsert(payload.new as Post),
     )
-    .subscribe();
+    .subscribe()
 }
 
 export function subscribeToReadingSession(
@@ -31,9 +31,9 @@ export function subscribeToReadingSession(
       },
       payload => onUpdate(payload.new as ReadingSession),
     )
-    .subscribe();
+    .subscribe()
 }
 
 export function unsubscribe(channel: ReturnType<typeof supabase.channel>) {
-  supabase.removeChannel(channel);
+  supabase.removeChannel(channel)
 }

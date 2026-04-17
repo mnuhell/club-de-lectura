@@ -1,7 +1,13 @@
 import { useState } from 'react'
 import {
-  View, Text, TextInput, StyleSheet, TouchableOpacity,
-  ActivityIndicator, KeyboardAvoidingView, Platform,
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native'
 import { useRouter } from 'expo-router'
 import { colors } from '@/src/ui/theme'
@@ -60,10 +66,11 @@ export default function JoinClubScreen() {
           onPress={handleJoin}
           disabled={!code.trim() || loading}
         >
-          {loading
-            ? <ActivityIndicator color={colors.textInverse} />
-            : <Text style={styles.buttonText}>Unirse al club</Text>
-          }
+          {loading ? (
+            <ActivityIndicator color={colors.textInverse} />
+          ) : (
+            <Text style={styles.buttonText}>Unirse al club</Text>
+          )}
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -71,31 +78,48 @@ export default function JoinClubScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
-  content: { flex: 1, padding: 24, gap: 8 },
-  subtitle: { fontFamily: 'Georgia', fontSize: 15, color: colors.textSecondary, lineHeight: 22, marginBottom: 8 },
-  label: { fontFamily: 'SpaceMono', fontSize: 11, color: colors.textMuted, marginBottom: 6, marginTop: 16 },
-  input: {
-    backgroundColor: colors.surfaceUp,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-    fontFamily: 'SpaceMono',
-    fontSize: 22,
-    color: colors.textPrimary,
-    letterSpacing: 6,
-    textAlign: 'center',
-  },
-  error: { fontFamily: 'SpaceMono', fontSize: 12, color: colors.error, marginTop: 8 },
   button: {
+    alignItems: 'center',
     backgroundColor: colors.amber,
     borderRadius: 12,
-    paddingVertical: 14,
-    alignItems: 'center',
     marginTop: 28,
+    paddingVertical: 14,
   },
   buttonDisabled: { opacity: 0.5 },
-  buttonText: { fontFamily: 'SpaceMono', fontSize: 14, color: colors.textInverse, fontWeight: '600' },
+  buttonText: {
+    color: colors.textInverse,
+    fontFamily: 'SpaceMono',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  container: { backgroundColor: colors.bg, flex: 1 },
+  content: { flex: 1, gap: 8, padding: 24 },
+  error: { color: colors.error, fontFamily: 'SpaceMono', fontSize: 12, marginTop: 8 },
+  input: {
+    backgroundColor: colors.surfaceUp,
+    borderColor: colors.border,
+    borderRadius: 10,
+    borderWidth: 1,
+    color: colors.textPrimary,
+    fontFamily: 'SpaceMono',
+    fontSize: 22,
+    letterSpacing: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    textAlign: 'center',
+  },
+  label: {
+    color: colors.textMuted,
+    fontFamily: 'SpaceMono',
+    fontSize: 11,
+    marginBottom: 6,
+    marginTop: 16,
+  },
+  subtitle: {
+    color: colors.textSecondary,
+    fontFamily: 'Georgia',
+    fontSize: 15,
+    lineHeight: 22,
+    marginBottom: 8,
+  },
 })

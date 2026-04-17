@@ -17,11 +17,9 @@ export const ReactionRepository: IReactionRepository = {
       if (row.user_id === userId) counts[row.emoji].reactedByMe = true
     }
 
-    return Object.entries(counts).map(([emoji, { count, reactedByMe }]): ReactionSummary => ({
-      emoji,
-      count,
-      reactedByMe,
-    }))
+    return Object.entries(counts).map(
+      ([emoji, { count, reactedByMe }]): ReactionSummary => ({ emoji, count, reactedByMe }),
+    )
   },
 
   async toggle({ postId, userId, emoji }) {

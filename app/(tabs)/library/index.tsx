@@ -17,15 +17,15 @@ export default function LibraryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
+  container: { backgroundColor: colors.bg, flex: 1 },
+  empty: { alignItems: 'center', flex: 1, gap: 8, justifyContent: 'center' },
+  emptyHint: { color: colors.textMuted, fontFamily: 'SpaceMono', fontSize: 12 },
+  emptyText: { color: colors.textSecondary, fontFamily: 'Georgia', fontSize: 16 },
   header: {
+    borderBottomColor: colors.border,
+    borderBottomWidth: 1,
     paddingHorizontal: 20,
     paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
-  title: { fontFamily: 'Georgia', fontSize: 24, color: colors.textPrimary },
-  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8 },
-  emptyText: { fontFamily: 'Georgia', fontSize: 16, color: colors.textSecondary },
-  emptyHint: { fontFamily: 'SpaceMono', fontSize: 12, color: colors.textMuted },
+  title: { color: colors.textPrimary, fontFamily: 'Georgia', fontSize: 24 },
 })

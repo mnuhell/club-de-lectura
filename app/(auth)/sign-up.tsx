@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from 'react'
 import {
   View,
   Text,
@@ -10,37 +10,37 @@ import {
   Platform,
   ActivityIndicator,
   StatusBar,
-} from 'react-native';
-import { router } from 'expo-router';
-import { signUpWithEmail } from '@/src/infrastructure/supabase/auth';
-import { colors, fontSize, fontWeight, spacing, radius } from '@/src/ui/theme';
+} from 'react-native'
+import { router } from 'expo-router'
+import { signUpWithEmail } from '@/src/infrastructure/supabase/auth'
+import { colors, fontSize, fontWeight, spacing, radius } from '@/src/ui/theme'
 
 export default function SignUpScreen() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [done, setDone] = useState(false);
+  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [done, setDone] = useState(false)
 
   async function handleSignUp() {
     if (!username || !email || !password) {
-      setError('Todos los campos son obligatorios.');
-      return;
+      setError('Todos los campos son obligatorios.')
+      return
     }
     if (password.length < 8) {
-      setError('La contraseña debe tener al menos 8 caracteres.');
-      return;
+      setError('La contraseña debe tener al menos 8 caracteres.')
+      return
     }
-    setError(null);
-    setLoading(true);
+    setError(null)
+    setLoading(true)
     try {
-      await signUpWithEmail(email.trim(), password, username.trim());
-      setDone(true);
+      await signUpWithEmail(email.trim(), password, username.trim())
+      setDone(true)
     } catch (e: any) {
-      setError(friendlyError(e.message));
+      setError(friendlyError(e.message))
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
@@ -61,7 +61,7 @@ export default function SignUpScreen() {
           <Text style={styles.btnPrimaryText}>Ir a iniciar sesión</Text>
         </Pressable>
       </View>
-    );
+    )
   }
 
   return (
@@ -142,7 +142,7 @@ export default function SignUpScreen() {
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
-  );
+  )
 }
 
 function Field({
@@ -154,15 +154,15 @@ function Field({
   keyboardType,
   autoCapitalize,
 }: {
-  label: string;
-  value: string;
-  onChangeText: (v: string) => void;
-  placeholder?: string;
-  secureTextEntry?: boolean;
-  keyboardType?: any;
-  autoCapitalize?: any;
+  label: string
+  value: string
+  onChangeText: (v: string) => void
+  placeholder?: string
+  secureTextEntry?: boolean
+  keyboardType?: any
+  autoCapitalize?: any
 }) {
-  const [focused, setFocused] = useState(false);
+  const [focused, setFocused] = useState(false)
   return (
     <View style={fieldStyles.wrapper}>
       <Text style={fieldStyles.label}>{label}</Text>
@@ -179,15 +179,15 @@ function Field({
         onBlur={() => setFocused(false)}
       />
     </View>
-  );
+  )
 }
 
 function friendlyError(msg: string): string {
-  if (msg.includes('already registered')) return 'Ese correo ya tiene una cuenta.';
-  if (msg.includes('invalid email')) return 'El correo no tiene un formato válido.';
-  if (msg.includes('weak password')) return 'Usa una contraseña más segura.';
-  if (msg.includes('network')) return 'Sin conexión. Revisa tu red.';
-  return 'Algo salió mal. Inténtalo de nuevo.';
+  if (msg.includes('already registered')) return 'Ese correo ya tiene una cuenta.'
+  if (msg.includes('invalid email')) return 'El correo no tiene un formato válido.'
+  if (msg.includes('weak password')) return 'Usa una contraseña más segura.'
+  if (msg.includes('network')) return 'Sin conexión. Revisa tu red.'
+  return 'Algo salió mal. Inténtalo de nuevo.'
 }
 
 const styles = StyleSheet.create({
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize['2xl'],
     fontWeight: fontWeight.bold,
   },
-});
+})
 
 const fieldStyles = StyleSheet.create({
   input: {
@@ -290,4 +290,4 @@ const fieldStyles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   wrapper: { gap: spacing[2] },
-});
+})

@@ -1,7 +1,15 @@
 import { useState } from 'react'
 import {
-  View, Text, TextInput, StyleSheet, TouchableOpacity,
-  Switch, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView,
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Switch,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from 'react-native'
 import { useRouter } from 'expo-router'
 import { colors } from '@/src/ui/theme'
@@ -81,10 +89,11 @@ export default function CreateClubScreen() {
           onPress={handleCreate}
           disabled={!name.trim() || loading}
         >
-          {loading
-            ? <ActivityIndicator color={colors.textInverse} />
-            : <Text style={styles.buttonText}>Crear club</Text>
-          }
+          {loading ? (
+            <ActivityIndicator color={colors.textInverse} />
+          ) : (
+            <Text style={styles.buttonText}>Crear club</Text>
+          )}
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -92,37 +101,48 @@ export default function CreateClubScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
-  content: { padding: 24, gap: 8 },
-  label: { fontFamily: 'SpaceMono', fontSize: 11, color: colors.textMuted, marginBottom: 6, marginTop: 16 },
+  button: {
+    alignItems: 'center',
+    backgroundColor: colors.amber,
+    borderRadius: 12,
+    marginTop: 28,
+    paddingVertical: 14,
+  },
+  buttonDisabled: { opacity: 0.5 },
+  buttonText: {
+    color: colors.textInverse,
+    fontFamily: 'SpaceMono',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  container: { backgroundColor: colors.bg, flex: 1 },
+  content: { gap: 8, padding: 24 },
+  error: { color: colors.error, fontFamily: 'SpaceMono', fontSize: 12, marginTop: 8 },
   input: {
     backgroundColor: colors.surfaceUp,
+    borderColor: colors.border,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    color: colors.textPrimary,
     fontFamily: 'Georgia',
     fontSize: 15,
-    color: colors.textPrimary,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
   },
-  inputMultiline: { minHeight: 80, textAlignVertical: 'top', paddingTop: 12 },
+  inputMultiline: { minHeight: 80, paddingTop: 12, textAlignVertical: 'top' },
+  label: {
+    color: colors.textMuted,
+    fontFamily: 'SpaceMono',
+    fontSize: 11,
+    marginBottom: 6,
+    marginTop: 16,
+  },
+  switchHint: { color: colors.textMuted, fontFamily: 'SpaceMono', fontSize: 10, marginTop: 2 },
   switchRow: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 16,
     paddingVertical: 4,
   },
-  switchHint: { fontFamily: 'SpaceMono', fontSize: 10, color: colors.textMuted, marginTop: 2 },
-  error: { fontFamily: 'SpaceMono', fontSize: 12, color: colors.error, marginTop: 8 },
-  button: {
-    backgroundColor: colors.amber,
-    borderRadius: 12,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 28,
-  },
-  buttonDisabled: { opacity: 0.5 },
-  buttonText: { fontFamily: 'SpaceMono', fontSize: 14, color: colors.textInverse, fontWeight: '600' },
 })

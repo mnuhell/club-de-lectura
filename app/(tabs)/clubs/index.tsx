@@ -16,9 +16,13 @@ function ClubCard({ club }: { club: ClubWithDetails }) {
       activeOpacity={0.75}
     >
       <View style={styles.cardLeft}>
-        <Text style={styles.cardName} numberOfLines={1}>{club.name}</Text>
+        <Text style={styles.cardName} numberOfLines={1}>
+          {club.name}
+        </Text>
         {club.description && (
-          <Text style={styles.cardDesc} numberOfLines={2}>{club.description}</Text>
+          <Text style={styles.cardDesc} numberOfLines={2}>
+            {club.description}
+          </Text>
         )}
         <Text style={styles.cardMeta}>
           {club.memberCount} {club.memberCount === 1 ? 'lector' : 'lectores'}
@@ -40,16 +44,10 @@ export default function ClubsScreen() {
       <View style={styles.header}>
         <Text style={styles.title}>Mis clubs</Text>
         <View style={styles.headerActions}>
-          <TouchableOpacity
-            style={styles.secondaryButton}
-            onPress={() => router.push('./join')}
-          >
+          <TouchableOpacity style={styles.secondaryButton} onPress={() => router.push('./join')}>
             <Text style={styles.secondaryButtonText}>Unirse</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.primaryButton}
-            onPress={() => router.push('./create')}
-          >
+          <TouchableOpacity style={styles.primaryButton} onPress={() => router.push('./create')}>
             <Text style={styles.primaryButtonText}>+ Nuevo</Text>
           </TouchableOpacity>
         </View>
@@ -92,53 +90,59 @@ export default function ClubsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
-  header: {
-    flexDirection: 'row',
+  card: {
     alignItems: 'center',
+    backgroundColor: colors.surfaceUp,
+    borderColor: colors.border,
+    borderRadius: 12,
+    borderWidth: 1,
+    flexDirection: 'row',
+    padding: 16,
+  },
+  cardArrow: { color: colors.textMuted, fontSize: 22, marginLeft: 8 },
+  cardDesc: { color: colors.textSecondary, fontFamily: 'SpaceMono', fontSize: 11, lineHeight: 16 },
+  cardLeft: { flex: 1, gap: 4 },
+  cardMeta: { color: colors.textMuted, fontFamily: 'SpaceMono', fontSize: 10 },
+  cardName: { color: colors.textPrimary, fontFamily: 'Georgia', fontSize: 17 },
+  centered: { alignItems: 'center', flex: 1, gap: 12, justifyContent: 'center' },
+  container: { backgroundColor: colors.bg, flex: 1 },
+  empty: { alignItems: 'center', flex: 1, gap: 8, justifyContent: 'center' },
+  emptyHint: { color: colors.textMuted, fontFamily: 'SpaceMono', fontSize: 12 },
+  emptyText: { color: colors.textSecondary, fontFamily: 'Georgia', fontSize: 16 },
+  errorText: { color: colors.error, fontFamily: 'SpaceMono', fontSize: 13 },
+  header: {
+    alignItems: 'center',
+    borderBottomColor: colors.border,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
-  title: { fontFamily: 'Georgia', fontSize: 24, color: colors.textPrimary },
   headerActions: { flexDirection: 'row', gap: 8 },
-  secondaryButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderWidth: 1,
-    borderColor: colors.amber,
-    borderRadius: 20,
-  },
-  secondaryButtonText: { fontFamily: 'SpaceMono', fontSize: 12, color: colors.amber },
+  list: { gap: 12, padding: 16 },
   primaryButton: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
     backgroundColor: colors.amber,
     borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
   },
-  primaryButtonText: { fontFamily: 'SpaceMono', fontSize: 12, color: colors.textInverse },
-  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
-  errorText: { fontFamily: 'SpaceMono', fontSize: 13, color: colors.error },
-  retryButton: { paddingHorizontal: 16, paddingVertical: 8, borderWidth: 1, borderColor: colors.border, borderRadius: 8 },
-  retryText: { fontFamily: 'SpaceMono', fontSize: 12, color: colors.textSecondary },
-  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8 },
-  emptyText: { fontFamily: 'Georgia', fontSize: 16, color: colors.textSecondary },
-  emptyHint: { fontFamily: 'SpaceMono', fontSize: 12, color: colors.textMuted },
-  list: { padding: 16, gap: 12 },
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.surfaceUp,
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
+  primaryButtonText: { color: colors.textInverse, fontFamily: 'SpaceMono', fontSize: 12 },
+  retryButton: {
     borderColor: colors.border,
+    borderRadius: 8,
+    borderWidth: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
-  cardLeft: { flex: 1, gap: 4 },
-  cardName: { fontFamily: 'Georgia', fontSize: 17, color: colors.textPrimary },
-  cardDesc: { fontFamily: 'SpaceMono', fontSize: 11, color: colors.textSecondary, lineHeight: 16 },
-  cardMeta: { fontFamily: 'SpaceMono', fontSize: 10, color: colors.textMuted },
-  cardArrow: { fontSize: 22, color: colors.textMuted, marginLeft: 8 },
+  retryText: { color: colors.textSecondary, fontFamily: 'SpaceMono', fontSize: 12 },
+  secondaryButton: {
+    borderColor: colors.amber,
+    borderRadius: 20,
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  secondaryButtonText: { color: colors.amber, fontFamily: 'SpaceMono', fontSize: 12 },
+  title: { color: colors.textPrimary, fontFamily: 'Georgia', fontSize: 24 },
 })

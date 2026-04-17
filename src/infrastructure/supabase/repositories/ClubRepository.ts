@@ -34,7 +34,9 @@ export const ClubRepository: IClubRepository = {
   async getById(id, userId) {
     const { data, error } = await supabase
       .from('clubs')
-      .select('*, current_book:books(*), club_members(count), my_membership:club_members!inner(role)')
+      .select(
+        '*, current_book:books(*), club_members(count), my_membership:club_members!inner(role)',
+      )
       .eq('id', id)
       .eq('club_members.user_id', userId)
       .single()
@@ -126,12 +128,8 @@ export const ClubRepository: IClubRepository = {
       .eq('user_id', userId)
     if (error) throw new Error('No se pudo abandonar el club')
   },
-
   async getMembers(clubId) {
-    const { data, error } = await supabase
-      .from('club_members')
-      .select('*')
-      .eq('club_id', clubId)
+    const { data, error } = await supabase.from('club_members').select('*').eq('club_id', clubId)
     if (error) throw new Error('No se pudieron cargar los miembros')
     return data.map(mapMember)
   },

@@ -65,18 +65,28 @@ describe('createClub', () => {
   it('lanza error si el nombre está vacío', async () => {
     const repo = makeRepo()
     await expect(
-      createClub(repo, { name: '   ', description: null, isPrivate: false, ownerId: 'user-1' })
+      createClub(repo, { name: '   ', description: null, isPrivate: false, ownerId: 'user-1' }),
     ).rejects.toThrow('El nombre del club es obligatorio')
   })
 
   it('no llama al repositorio si la validación falla', async () => {
     const repo = makeRepo()
-    await createClub(repo, { name: 'válido', description: null, isPrivate: false, ownerId: 'user-1' }).catch(() => {})
+    await createClub(repo, {
+      name: 'válido',
+      description: null,
+      isPrivate: false,
+      ownerId: 'user-1',
+    }).catch(() => {})
     // la llamada válida sí invoca el repo
     expect(repo.create).toHaveBeenCalledTimes(1)
 
     const repo2 = makeRepo()
-    await createClub(repo2, { name: '', description: null, isPrivate: false, ownerId: 'user-1' }).catch(() => {})
+    await createClub(repo2, {
+      name: '',
+      description: null,
+      isPrivate: false,
+      ownerId: 'user-1',
+    }).catch(() => {})
     expect(repo2.create).not.toHaveBeenCalled()
   })
 })
@@ -91,7 +101,9 @@ describe('joinClub', () => {
 
   it('lanza error si el código de invitación está vacío', async () => {
     const repo = makeRepo()
-    await expect(joinClub(repo, '  ', 'user-2')).rejects.toThrow('El código de invitación es obligatorio')
+    await expect(joinClub(repo, '  ', 'user-2')).rejects.toThrow(
+      'El código de invitación es obligatorio',
+    )
   })
 
   it('no llama al repositorio si el código está vacío', async () => {

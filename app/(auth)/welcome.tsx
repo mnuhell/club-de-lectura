@@ -1,6 +1,6 @@
-import { View, Text, StyleSheet, Pressable, StatusBar } from 'react-native';
-import { router } from 'expo-router';
-import { colors, fontSize, fontWeight, spacing, radius } from '@/src/ui/theme';
+import { View, Text, StyleSheet, Pressable, StatusBar } from 'react-native'
+import { router } from 'expo-router'
+import { colors, fontSize, fontWeight, spacing, radius } from '@/src/ui/theme'
 
 export default function WelcomeScreen() {
   return (
@@ -25,7 +25,7 @@ export default function WelcomeScreen() {
       {/* Cita literaria */}
       <View style={styles.quoteBlock}>
         <Text style={styles.quoteText}>
-          "Una habitación sin libros es como un cuerpo sin alma."
+          {'"Una habitación sin libros es como un cuerpo sin alma."'}
         </Text>
         <Text style={styles.quoteAuthor}>— Cicerón</Text>
       </View>
@@ -50,7 +50,7 @@ export default function WelcomeScreen() {
       {/* Decoración inferior */}
       <Text style={styles.footerOrnament}>⁂</Text>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -152,4 +152,4 @@ const styles = StyleSheet.create({
     fontWeight: fontWeight.bold,
     letterSpacing: 3,
   },
-});
+})

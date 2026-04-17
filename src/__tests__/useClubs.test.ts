@@ -73,7 +73,7 @@ describe('useClubs actions (lógica pura)', () => {
     const repo = makeRepo()
     const actions = createUseClubsActions(repo)
     await expect(
-      actions.create({ name: '', description: null, isPrivate: false, ownerId: 'user-1' })
+      actions.create({ name: '', description: null, isPrivate: false, ownerId: 'user-1' }),
     ).rejects.toThrow('El nombre del club es obligatorio')
   })
 
@@ -88,7 +88,9 @@ describe('useClubs actions (lógica pura)', () => {
   it('join lanza error si el código está vacío', async () => {
     const repo = makeRepo()
     const actions = createUseClubsActions(repo)
-    await expect(actions.join('', 'user-2')).rejects.toThrow('El código de invitación es obligatorio')
+    await expect(actions.join('', 'user-2')).rejects.toThrow(
+      'El código de invitación es obligatorio',
+    )
   })
 
   it('fetchMyClubs devuelve la lista de clubs del usuario', async () => {

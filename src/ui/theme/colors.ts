@@ -29,6 +29,6 @@ export const colors = {
   // Transparencias
   overlay: 'rgba(13, 10, 6, 0.85)',
   scrim: 'rgba(0, 0, 0, 0.6)',
-} as const;
+} as const
 
-export type Color = keyof typeof colors;
+export type Color = keyof typeof colors
