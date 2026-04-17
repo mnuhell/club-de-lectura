@@ -3,14 +3,7 @@ import { useAuth } from '@/src/ui/hooks/useAuth'
 import { useFeed } from '@/src/ui/hooks/useFeed'
 import { colors } from '@/src/ui/theme'
 import { Ionicons } from '@expo/vector-icons'
-import {
-  ActivityIndicator,
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 function timeAgo(iso: string): string {
@@ -160,6 +153,8 @@ export default function FeedScreen() {
 }
 
 const styles = StyleSheet.create({
+  authorName: { color: colors.textSecondary, fontFamily: 'SpaceMono', fontSize: 12 },
+  authorRow: { alignItems: 'center', flexDirection: 'row', gap: 8, marginBottom: 10 },
   avatar: {
     alignItems: 'center',
     backgroundColor: colors.surfaceHigh,
@@ -169,8 +164,6 @@ const styles = StyleSheet.create({
     width: 28,
   },
   avatarInitial: { color: colors.amber, fontFamily: 'SpaceMono', fontSize: 12 },
-  authorName: { color: colors.textSecondary, fontFamily: 'SpaceMono', fontSize: 12 },
-  authorRow: { alignItems: 'center', flexDirection: 'row', gap: 8, marginBottom: 10 },
   card: {
     backgroundColor: colors.surfaceUp,
     borderColor: colors.border,

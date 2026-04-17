@@ -3,7 +3,7 @@ import type { IBookRepository } from '../repositories'
 import type { IUserBookRepository } from '../repositories'
 import type { Book, BookStatus, UserBookWithDetails } from '../domain'
 
-const ISBN_RE = /^[\d\-]{10,17}$/
+const ISBN_RE = /^[\d-]{10,17}$/
 
 export async function searchExternalBooks(
   service: IBookSearchService,

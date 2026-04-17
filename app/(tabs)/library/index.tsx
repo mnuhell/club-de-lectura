@@ -37,9 +37,7 @@ function BookCard({
   onChangeStatus: (status: BookStatus) => void
   onRemove: () => void
 }) {
-  const otherStatuses = (Object.keys(STATUS_LABELS) as BookStatus[]).filter(
-    s => s !== item.status,
-  )
+  const otherStatuses = (Object.keys(STATUS_LABELS) as BookStatus[]).filter(s => s !== item.status)
 
   function handleOptions() {
     Alert.alert(item.book.title, undefined, [
@@ -66,9 +64,7 @@ function BookCard({
         <Text style={styles.cardAuthor} numberOfLines={1}>
           {item.book.author}
         </Text>
-        {item.book.pageCount && (
-          <Text style={styles.cardMeta}>{item.book.pageCount} páginas</Text>
-        )}
+        {item.book.pageCount && <Text style={styles.cardMeta}>{item.book.pageCount} páginas</Text>}
       </View>
       <Ionicons name="ellipsis-vertical" size={16} color={colors.textMuted} />
     </TouchableOpacity>
@@ -203,14 +199,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
   },
-  searchButton: {
-    alignItems: 'center',
-    backgroundColor: colors.amberFaint,
-    borderRadius: 20,
-    height: 36,
-    justifyContent: 'center',
-    width: 36,
-  },
   list: { paddingVertical: 8 },
   retryButton: {
     borderColor: colors.border,
@@ -220,9 +208,17 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   retryText: { color: colors.textSecondary, fontFamily: 'SpaceMono', fontSize: 12 },
+  searchButton: {
+    alignItems: 'center',
+    backgroundColor: colors.amberFaint,
+    borderRadius: 20,
+    height: 36,
+    justifyContent: 'center',
+    width: 36,
+  },
   tab: {
     alignItems: 'center',
-    borderBottomColor: 'transparent',
+    borderBottomColor: colors.transparent,
     borderBottomWidth: 2,
     flexDirection: 'row',
     flex: 1,
