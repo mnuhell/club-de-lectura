@@ -44,9 +44,7 @@ test('unsubscribeAll calls all unsubscribe functions', () => {
   const unsub1 = jest.fn()
   const unsub2 = jest.fn()
   const service = makeService({
-    subscribeToClubPosts: jest.fn()
-      .mockReturnValueOnce(unsub1)
-      .mockReturnValueOnce(unsub2),
+    subscribeToClubPosts: jest.fn().mockReturnValueOnce(unsub1).mockReturnValueOnce(unsub2),
   })
   const manager = createRealtimeManager(service)
 
@@ -93,9 +91,7 @@ test('subscribeToSession calls onEvent when session updates', () => {
 test('subscribing twice to same clubs replaces previous subscriptions', () => {
   const unsub1 = jest.fn()
   const service = makeService({
-    subscribeToClubPosts: jest.fn()
-      .mockReturnValueOnce(unsub1)
-      .mockReturnValue(jest.fn()),
+    subscribeToClubPosts: jest.fn().mockReturnValueOnce(unsub1).mockReturnValue(jest.fn()),
   })
   const manager = createRealtimeManager(service)
 

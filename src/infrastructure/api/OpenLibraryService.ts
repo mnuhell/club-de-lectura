@@ -18,9 +18,7 @@ function mapDoc(doc: OLDoc): Book {
     title: doc.title,
     author: doc.author_name?.[0] ?? 'Autor desconocido',
     isbn: doc.isbn?.[0] ?? null,
-    coverUrl: doc.cover_i
-      ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-M.jpg`
-      : null,
+    coverUrl: doc.cover_i ? `https://covers.openlibrary.org/b/id/${doc.cover_i}-M.jpg` : null,
     description: null,
     pageCount: doc.number_of_pages_median ?? null,
     publishedYear: doc.first_publish_year ?? null,

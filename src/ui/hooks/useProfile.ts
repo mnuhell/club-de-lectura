@@ -37,8 +37,7 @@ export function createUseProfileActions(
       updateProfile(userRepo, userId, data),
     uploadAvatar: (userId: string, uri: string, contentType: string) =>
       uploadAvatar(userId, uri, contentType),
-    updateAvatarUrl: (userId: string, avatarUrl: string) =>
-      userRepo.update(userId, { avatarUrl }),
+    updateAvatarUrl: (userId: string, avatarUrl: string) => userRepo.update(userId, { avatarUrl }),
   }
 }
 
@@ -52,21 +51,21 @@ interface ProfileState {
   refresh: () => void
 }
 
+const _profileActions = createUseProfileActions(UserRepository, UserBookRepository, ClubRepository)
+
 export function useProfile(userId: string): ProfileState {
   const [user, setUser] = useState<User | null>(null)
   const [stats, setStats] = useState<ProfileStats>({ booksRead: 0, booksReading: 0, clubCount: 0 })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const actions = createUseProfileActions(UserRepository, UserBookRepository, ClubRepository)
-
   const load = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
       const [profile, profileStats] = await Promise.all([
-        actions.fetchProfile(userId),
-        actions.fetchStats(userId),
+        _profileActions.fetchProfile(userId),
+        _profileActions.fetchStats(userId),
       ])
       setUser(profile)
       setStats(profileStats)
@@ -82,13 +81,13 @@ export function useProfile(userId: string): ProfileState {
   }, [userId, load])
 
   async function update(data: { displayName: string; bio: string }) {
-    const updated = await actions.update(userId, data)
+    const updated = await _profileActions.update(userId, data)
     setUser(updated)
   }
 
   async function changeAvatar(uri: string, contentType: string) {
-    const avatarUrl = await actions.uploadAvatar(userId, uri, contentType)
-    const updated = await actions.updateAvatarUrl(userId, avatarUrl)
+    const avatarUrl = await _profileActions.uploadAvatar(userId, uri, contentType)
+    const updated = await _profileActions.updateAvatarUrl(userId, avatarUrl)
     setUser(updated)
   }
 

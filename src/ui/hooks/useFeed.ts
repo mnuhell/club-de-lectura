@@ -30,19 +30,20 @@ interface FeedState {
   refresh: () => void
 }
 
+const _feedActions = createUseFeedActions(ClubRepository, PostRepository, ReadingSessionRepository)
+
 export function useFeed(userId: string): FeedState {
   const [items, setItems] = useState<FeedItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const actions = createUseFeedActions(ClubRepository, PostRepository, ReadingSessionRepository)
   const realtimeManager = useRef(createRealtimeManager(SupabaseRealtimeService))
 
   const load = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      const data = await actions.fetchFeed(userId)
+      const data = await _feedActions.fetchFeed(userId)
       setItems(data)
       const clubIds = [...new Set(data.map(i => i.clubId))]
       realtimeManager.current.subscribeToClubs(clubIds, load)
@@ -54,8 +55,9 @@ export function useFeed(userId: string): FeedState {
   }, [userId])
 
   useEffect(() => {
+    const manager = realtimeManager.current
     if (userId) load()
-    return () => realtimeManager.current.unsubscribeAll()
+    return () => manager.unsubscribeAll()
   }, [userId, load])
 
   return { items, loading, error, refresh: load }

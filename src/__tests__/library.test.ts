@@ -20,7 +20,10 @@ const makeBook = (id: string) => ({
   createdAt: '2026-01-01T00:00:00Z',
 })
 
-const makeUserBook = (bookId: string, status: UserBookWithDetails['status'] = 'want_to_read'): UserBookWithDetails => ({
+const makeUserBook = (
+  bookId: string,
+  status: UserBookWithDetails['status'] = 'want_to_read',
+): UserBookWithDetails => ({
   userId: 'user-1',
   bookId,
   status,

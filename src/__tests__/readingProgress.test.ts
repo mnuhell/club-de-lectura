@@ -38,7 +38,9 @@ const makePost = (): Post => ({
   updatedAt: '2026-01-01T00:00:00Z',
 })
 
-const makeSessionRepo = (session: ReadingSession | null = makeSession()): IReadingSessionRepository => ({
+const makeSessionRepo = (
+  session: ReadingSession | null = makeSession(),
+): IReadingSessionRepository => ({
   getActiveByClub: jest.fn().mockResolvedValue(session),
   create: jest.fn().mockResolvedValue(makeSession()),
   updateProgress: jest.fn().mockResolvedValue(makeSession()),

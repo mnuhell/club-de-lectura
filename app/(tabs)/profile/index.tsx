@@ -18,15 +18,7 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-function Avatar({
-  url,
-  name,
-  onPress,
-}: {
-  url: string | null
-  name: string
-  onPress: () => void
-}) {
+function Avatar({ url, name, onPress }: { url: string | null; name: string; onPress: () => void }) {
   return (
     <TouchableOpacity style={styles.avatarWrap} onPress={onPress}>
       {url ? (
@@ -327,6 +319,7 @@ const styles = StyleSheet.create({
   statBox: { alignItems: 'center', flex: 1, gap: 4 },
   statDivider: { backgroundColor: colors.border, height: 32, width: 1 },
   statLabel: { color: colors.textMuted, fontFamily: 'SpaceMono', fontSize: 10 },
+  statValue: { color: colors.textPrimary, fontFamily: 'Georgia', fontSize: 22 },
   statsRow: {
     backgroundColor: colors.surfaceUp,
     borderColor: colors.border,
@@ -336,7 +329,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     paddingVertical: 18,
   },
-  statValue: { color: colors.textPrimary, fontFamily: 'Georgia', fontSize: 22 },
   title: { color: colors.textPrimary, fontFamily: 'Georgia', fontSize: 24 },
   username: { color: colors.textMuted, fontFamily: 'SpaceMono', fontSize: 12, marginTop: 2 },
 })

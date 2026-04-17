@@ -22,18 +22,18 @@ interface LibraryState {
   refresh: () => void
 }
 
+const _actions = createUseLibraryActions(UserBookRepository)
+
 export function useLibrary(userId: string): LibraryState {
   const [books, setBooks] = useState<UserBookWithDetails[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const actions = createUseLibraryActions(UserBookRepository)
-
   const load = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      const data = await actions.fetchLibrary(userId)
+      const data = await _actions.fetchLibrary(userId)
       setBooks(data)
     } catch {
       setError('No se pudo cargar tu biblioteca')
@@ -47,12 +47,12 @@ export function useLibrary(userId: string): LibraryState {
   }, [userId, load])
 
   async function setStatus(bookId: string, status: BookStatus) {
-    await actions.setStatus(userId, bookId, status)
+    await _actions.setStatus(userId, bookId, status)
     await load()
   }
 
   async function remove(bookId: string) {
-    await actions.remove(userId, bookId)
+    await _actions.remove(userId, bookId)
     await load()
   }
 

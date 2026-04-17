@@ -1,6 +1,6 @@
-import { supabase } from '../client'
+import type { BookStatus, UserBook, UserBookWithDetails } from '../../../domain'
 import type { IUserBookRepository } from '../../../repositories'
-import type { UserBook, UserBookWithDetails, BookStatus } from '../../../domain'
+import { supabase } from '../client'
 import type { Database } from '../types'
 
 type UserBookRow = Database['public']['Tables']['user_books']['Row']
@@ -37,10 +37,7 @@ function mapBook(row: BookRow) {
 
 export const UserBookRepository: IUserBookRepository = {
   async getByUser(userId, status?: BookStatus) {
-    let query = supabase
-      .from('user_books')
-      .select('*, book:books(*)')
-      .eq('user_id', userId)
+    let query = supabase.from('user_books').select('*, book:books(*)').eq('user_id', userId)
     if (status) query = query.eq('status', status)
     const { data, error } = await query.order('updated_at', { ascending: false })
     if (error) throw new Error('No se pudo cargar tu biblioteca')

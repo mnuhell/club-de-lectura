@@ -29,9 +29,17 @@ const makeUserBook = (status: UserBookWithDetails['status']): UserBookWithDetail
   createdAt: '2026-01-01T00:00:00Z',
   updatedAt: '2026-01-01T00:00:00Z',
   book: {
-    id: 'book-1', title: 'Libro', author: 'Autor', isbn: null, coverUrl: null,
-    description: null, pageCount: null, publishedYear: null, externalId: null,
-    externalSource: null, createdAt: '2026-01-01T00:00:00Z',
+    id: 'book-1',
+    title: 'Libro',
+    author: 'Autor',
+    isbn: null,
+    coverUrl: null,
+    description: null,
+    pageCount: null,
+    publishedYear: null,
+    externalId: null,
+    externalSource: null,
+    createdAt: '2026-01-01T00:00:00Z',
   },
 })
 

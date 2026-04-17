@@ -100,7 +100,9 @@ function makePostRepo(overrides: Partial<IPostRepository> = {}): IPostRepository
   }
 }
 
-function makeSessionRepo(overrides: Partial<IReadingSessionRepository> = {}): IReadingSessionRepository {
+function makeSessionRepo(
+  overrides: Partial<IReadingSessionRepository> = {},
+): IReadingSessionRepository {
   return {
     getActiveByClub: jest.fn().mockResolvedValue(makeSession()),
     create: jest.fn(),
@@ -133,9 +135,9 @@ describe('getFeed', () => {
       ]),
     })
     const sessionRepo = makeSessionRepo({
-      getActiveByClub: jest.fn().mockResolvedValue(
-        makeSession({ startedAt: '2026-04-13T00:00:00Z' }),
-      ),
+      getActiveByClub: jest
+        .fn()
+        .mockResolvedValue(makeSession({ startedAt: '2026-04-13T00:00:00Z' })),
     })
     const items = await getFeed(makeClubRepo(), postRepo, sessionRepo, 'user-1')
     expect(items[0].timestamp).toBe('2026-04-17T00:00:00Z')

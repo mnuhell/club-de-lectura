@@ -23,13 +23,14 @@ interface ClubDetailState {
   refresh: () => void
 }
 
+const _clubDetailActions = createUseClubDetailActions(ClubRepository)
+
 export function useClubDetail(id: string, userId: string): ClubDetailState {
   const [club, setClub] = useState<ClubWithDetails | null>(null)
   const [members, setMembers] = useState<ClubMember[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const actions = createUseClubDetailActions(ClubRepository)
   const realtimeManager = useRef(createRealtimeManager(SupabaseRealtimeService))
 
   const load = useCallback(async () => {
@@ -37,8 +38,8 @@ export function useClubDetail(id: string, userId: string): ClubDetailState {
     setError(null)
     try {
       const [detail, memberList] = await Promise.all([
-        actions.fetchDetail(id, userId),
-        actions.fetchMembers(id).catch((e) => {
+        _clubDetailActions.fetchDetail(id, userId),
+        _clubDetailActions.fetchMembers(id).catch(e => {
           console.error('[useClubDetail] fetchMembers error:', e)
           return []
         }),
@@ -54,15 +55,16 @@ export function useClubDetail(id: string, userId: string): ClubDetailState {
   }, [id, userId])
 
   useEffect(() => {
+    const manager = realtimeManager.current
     if (id && userId) {
       load()
-      realtimeManager.current.subscribeToClubs([id], load)
+      manager.subscribeToClubs([id], load)
     }
-    return () => realtimeManager.current.unsubscribeAll()
+    return () => manager.unsubscribeAll()
   }, [id, userId, load])
 
   async function leave() {
-    await actions.leave(id, userId)
+    await _clubDetailActions.leave(id, userId)
   }
 
   return { club, members, loading, error, leave, refresh: load }

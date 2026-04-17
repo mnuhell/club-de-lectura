@@ -2,6 +2,7 @@ import { Link, Stack } from 'expo-router'
 import { StyleSheet } from 'react-native'
 
 import { Text, View } from '@/components/Themed'
+import { colors } from '@/src/ui/theme'
 
 export default function NotFoundScreen() {
   return (
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   linkText: {
-    color: '#2e78b7',
+    color: colors.amber,
     fontSize: 14,
   },
   title: {

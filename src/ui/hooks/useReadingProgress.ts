@@ -2,7 +2,10 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import type { IReadingSessionRepository } from '../../repositories/IReadingSessionRepository'
 import type { IPostRepository } from '../../repositories/IPostRepository'
 import type { PostWithDetails, ReadingSession } from '../../domain'
-import { ReadingSessionRepository, PostRepository } from '../../infrastructure/supabase/repositories'
+import {
+  ReadingSessionRepository,
+  PostRepository,
+} from '../../infrastructure/supabase/repositories'
 import { SupabaseRealtimeService } from '../../infrastructure/supabase/realtime'
 import { getReadingProgress, postComment, updateProgress } from '../../usecases/readingProgress'
 import { createRealtimeManager } from '../../usecases/realtime'
@@ -38,23 +41,27 @@ interface ReadingProgressState {
   refresh: () => void
 }
 
+const _readingActions = createUseReadingProgressActions(ReadingSessionRepository, PostRepository)
+
 export function useReadingProgress(clubId: string, userId: string): ReadingProgressState {
   const [session, setSession] = useState<ReadingSession | null>(null)
   const [posts, setPosts] = useState<PostWithDetails[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const actions = createUseReadingProgressActions(ReadingSessionRepository, PostRepository)
   const realtimeManager = useRef(createRealtimeManager(SupabaseRealtimeService))
 
   const load = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
-      const activeSession = await actions.fetchProgress(clubId)
+      const activeSession = await _readingActions.fetchProgress(clubId)
       setSession(activeSession)
       if (activeSession) {
-        const chapterPosts = await actions.fetchChapterPosts(clubId, activeSession.currentChapter ?? 1)
+        const chapterPosts = await _readingActions.fetchChapterPosts(
+          clubId,
+          activeSession.currentChapter ?? 1,
+        )
         setPosts(chapterPosts)
         realtimeManager.current.subscribeToClubs([clubId], load)
         realtimeManager.current.subscribeToSession(activeSession.id, load)
@@ -67,13 +74,14 @@ export function useReadingProgress(clubId: string, userId: string): ReadingProgr
   }, [clubId])
 
   useEffect(() => {
+    const manager = realtimeManager.current
     if (clubId && userId) load()
-    return () => realtimeManager.current.unsubscribeAll()
+    return () => manager.unsubscribeAll()
   }, [clubId, userId, load])
 
   async function comment(content: string, hasSpoiler: boolean) {
     if (!session) return
-    await actions.comment({
+    await _readingActions.comment({
       clubId,
       sessionId: session.id,
       authorId: userId,
@@ -86,9 +94,9 @@ export function useReadingProgress(clubId: string, userId: string): ReadingProgr
 
   async function advance(chapter: number, page: number | null) {
     if (!session) return
-    const updated = await actions.advance(session.id, { chapter, page })
+    const updated = await _readingActions.advance(session.id, { chapter, page })
     setSession(updated)
-    const chapterPosts = await actions.fetchChapterPosts(clubId, chapter)
+    const chapterPosts = await _readingActions.fetchChapterPosts(clubId, chapter)
     setPosts(chapterPosts)
   }
 

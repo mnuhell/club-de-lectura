@@ -12,7 +12,9 @@ export const SupabaseRealtimeService: IRealtimeService = {
       )
       .subscribe()
 
-    return () => { supabase.removeChannel(channel) }
+    return () => {
+      supabase.removeChannel(channel)
+    }
   },
 
   subscribeToReadingSession(sessionId, onEvent) {
@@ -20,11 +22,18 @@ export const SupabaseRealtimeService: IRealtimeService = {
       .channel(`reading-session-${sessionId}-${Date.now()}`)
       .on(
         'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'reading_sessions', filter: `id=eq.${sessionId}` },
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'reading_sessions',
+          filter: `id=eq.${sessionId}`,
+        },
         () => onEvent(),
       )
       .subscribe()
 
-    return () => { supabase.removeChannel(channel) }
+    return () => {
+      supabase.removeChannel(channel)
+    }
   },
 }
