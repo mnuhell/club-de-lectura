@@ -33,11 +33,7 @@ function mapMember(row: MemberRow): ClubMember {
 export const ClubRepository: IClubRepository = {
   async getById(id, userId) {
     const [{ data: clubData, error }, { data: membership }] = await Promise.all([
-      supabase
-        .from('clubs')
-        .select('*, current_book:books(*), club_members(count)')
-        .eq('id', id)
-        .single(),
+      supabase.from('clubs').select('*, current_book:books(*)').eq('id', id).single(),
       supabase
         .from('club_members')
         .select('role')
@@ -50,7 +46,7 @@ export const ClubRepository: IClubRepository = {
     return {
       ...mapClub(clubData),
       currentBook: clubData.current_book ?? null,
-      memberCount: (clubData.club_members as unknown as { count: number }[])[0]?.count ?? 0,
+      memberCount: 0,
       myRole: (membership?.role as ClubMember['role']) ?? null,
     } as ClubWithDetails
   },

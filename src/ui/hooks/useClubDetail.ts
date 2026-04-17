@@ -38,12 +38,15 @@ export function useClubDetail(id: string, userId: string): ClubDetailState {
     try {
       const [detail, memberList] = await Promise.all([
         actions.fetchDetail(id, userId),
-        actions.fetchMembers(id),
+        actions.fetchMembers(id).catch((e) => {
+          console.error('[useClubDetail] fetchMembers error:', e)
+          return []
+        }),
       ])
-      setClub(detail)
+      setClub(detail ? { ...detail, memberCount: memberList.length } : null)
       setMembers(memberList)
-      realtimeManager.current.subscribeToClubs([id], load)
-    } catch {
+    } catch (e) {
+      console.error('[useClubDetail] error:', e)
       setError('No se pudo cargar el club')
     } finally {
       setLoading(false)
@@ -51,7 +54,10 @@ export function useClubDetail(id: string, userId: string): ClubDetailState {
   }, [id, userId])
 
   useEffect(() => {
-    if (id && userId) load()
+    if (id && userId) {
+      load()
+      realtimeManager.current.subscribeToClubs([id], load)
+    }
     return () => realtimeManager.current.unsubscribeAll()
   }, [id, userId, load])
 
