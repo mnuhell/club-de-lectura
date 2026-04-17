@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1776406871492" clover="3.2.0">
+  <project timestamp="1776406871492" name="All files">
+    <metrics statements="30" coveredstatements="10" conditionals="6" coveredconditionals="4" methods="13" coveredmethods="8" elements="49" coveredelements="22" complexity="0" loc="30" ncloc="30" packages="2" files="2" classes="2"/>
+    <package name="ui.hooks">
+      <metrics statements="24" coveredstatements="4" conditionals="2" coveredconditionals="0" methods="9" coveredmethods="4"/>
+      <file name="useClubs.ts" path="/Users/manufit78/Proyectos/bookclub/src/ui/hooks/useClubs.ts">
+        <metrics statements="24" coveredstatements="4" conditionals="2" coveredconditionals="0" methods="9" coveredmethods="4"/>
+        <line num="8" count="5" type="stmt"/>
+        <line num="10" count="2" type="stmt"/>
+        <line num="11" count="2" type="stmt"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="46" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="60" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="usecases">
+      <metrics statements="6" coveredstatements="6" conditionals="4" coveredconditionals="4" methods="4" coveredmethods="4"/>
+      <file name="clubs.ts" path="/Users/manufit78/Proyectos/bookclub/src/usecases/clubs.ts">
+        <metrics statements="6" coveredstatements="6" conditionals="4" coveredconditionals="4" methods="4" coveredmethods="4"/>
+        <line num="8" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="9" count="3" type="stmt"/>
+        <line num="17" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="18" count="2" type="stmt"/>
+        <line num="25" count="3" type="stmt"/>
+        <line num="33" count="2" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
