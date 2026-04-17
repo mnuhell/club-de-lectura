@@ -27,9 +27,11 @@ export const colors = {
   errorFaint: '#C0614A20',
 
   // Transparencias
+  white: '#FFFFFF',
   transparent: 'transparent',
   overlay: 'rgba(13, 10, 6, 0.85)',
   scrim: 'rgba(0, 0, 0, 0.6)',
+  scannerBg: 'rgba(0,0,0,0.5)',
 } as const
 
 export type Color = keyof typeof colors

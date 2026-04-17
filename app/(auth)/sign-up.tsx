@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import type { TextInputProps } from 'react-native'
 import {
   View,
   Text,
@@ -37,8 +38,8 @@ export default function SignUpScreen() {
     try {
       await signUpWithEmail(email.trim(), password, username.trim())
       setDone(true)
-    } catch (e: any) {
-      setError(friendlyError(e.message))
+    } catch (e: unknown) {
+      setError(friendlyError(e instanceof Error ? e.message : 'Error desconocido'))
     } finally {
       setLoading(false)
     }
@@ -159,8 +160,8 @@ function Field({
   onChangeText: (v: string) => void
   placeholder?: string
   secureTextEntry?: boolean
-  keyboardType?: any
-  autoCapitalize?: any
+  keyboardType?: TextInputProps['keyboardType']
+  autoCapitalize?: TextInputProps['autoCapitalize']
 }) {
   const [focused, setFocused] = useState(false)
   return (

@@ -5,7 +5,7 @@ import { colors } from '@/src/ui/theme'
 import { Ionicons } from '@expo/vector-icons'
 import { CameraView, useCameraPermissions } from 'expo-camera'
 import { useRouter } from 'expo-router'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import {
   ActivityIndicator,
   Alert,
@@ -52,9 +52,7 @@ function BookResult({ book, onAdd }: { book: Book; onAdd: (status: BookStatus) =
         <Text style={styles.resultAuthor} numberOfLines={1}>
           {book.author}
         </Text>
-        {book.publishedYear && (
-          <Text style={styles.resultMeta}>{book.publishedYear}</Text>
-        )}
+        {book.publishedYear && <Text style={styles.resultMeta}>{book.publishedYear}</Text>}
       </View>
       <TouchableOpacity style={styles.addButton} onPress={handleAdd}>
         <Ionicons name="add" size={20} color={colors.amber} />
@@ -63,7 +61,13 @@ function BookResult({ book, onAdd }: { book: Book; onAdd: (status: BookStatus) =
   )
 }
 
-function ScannerView({ onScanned, onClose }: { onScanned: (isbn: string) => void; onClose: () => void }) {
+function ScannerView({
+  onScanned,
+  onClose,
+}: {
+  onScanned: (isbn: string) => void
+  onClose: () => void
+}) {
   const [scanned, setScanned] = useState(false)
 
   function handleBarcode({ data }: { data: string }) {
@@ -84,7 +88,7 @@ function ScannerView({ onScanned, onClose }: { onScanned: (isbn: string) => void
         <Text style={styles.scannerHint}>Enfoca el código de barras del libro</Text>
       </View>
       <TouchableOpacity style={styles.scannerClose} onPress={onClose}>
-        <Ionicons name="close" size={24} color="#fff" />
+        <Ionicons name="close" size={24} color={colors.white} />
       </TouchableOpacity>
     </View>
   )
@@ -108,7 +112,10 @@ export default function SearchScreen() {
     if (!permission?.granted) {
       const result = await requestPermission()
       if (!result.granted) {
-        Alert.alert('Permiso requerido', 'Necesitamos acceso a la cámara para escanear el código de barras.')
+        Alert.alert(
+          'Permiso requerido',
+          'Necesitamos acceso a la cámara para escanear el código de barras.',
+        )
         return
       }
     }
@@ -134,12 +141,7 @@ export default function SearchScreen() {
   }
 
   if (showScanner) {
-    return (
-      <ScannerView
-        onScanned={handleScanned}
-        onClose={() => setShowScanner(false)}
-      />
-    )
+    return <ScannerView onScanned={handleScanned} onClose={() => setShowScanner(false)} />
   }
 
   return (
@@ -297,7 +299,7 @@ const styles = StyleSheet.create({
   scanHintText: { color: colors.amber, fontFamily: 'SpaceMono', fontSize: 12 },
   scanner: { flex: 1 },
   scannerClose: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: colors.scannerBg,
     borderRadius: 20,
     padding: 8,
     position: 'absolute',
@@ -312,7 +314,7 @@ const styles = StyleSheet.create({
     width: 280,
   },
   scannerHint: {
-    color: '#fff',
+    color: colors.white,
     fontFamily: 'SpaceMono',
     fontSize: 12,
     marginTop: 20,
