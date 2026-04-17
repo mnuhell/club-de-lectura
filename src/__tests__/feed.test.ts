@@ -129,10 +129,12 @@ describe('getFeed', () => {
 
   it('los items están ordenados por fecha descendente', async () => {
     const postRepo = makePostRepo({
-      getByClub: jest.fn().mockResolvedValue([
-        makePost({ id: 'post-old', createdAt: '2026-04-10T00:00:00Z' }),
-        makePost({ id: 'post-new', createdAt: '2026-04-17T00:00:00Z' }),
-      ]),
+      getByClub: jest
+        .fn()
+        .mockResolvedValue([
+          makePost({ id: 'post-old', createdAt: '2026-04-10T00:00:00Z' }),
+          makePost({ id: 'post-new', createdAt: '2026-04-17T00:00:00Z' }),
+        ]),
     })
     const sessionRepo = makeSessionRepo({
       getActiveByClub: jest
