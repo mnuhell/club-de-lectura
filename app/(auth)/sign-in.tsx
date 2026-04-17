@@ -30,7 +30,7 @@ export default function SignInScreen() {
     setLoading(true)
     try {
       await signInWithEmail(email.trim(), password)
-      router.replace('/(tabs)')
+      router.replace('/(tabs)/feed')
     } catch (e: any) {
       setError(friendlyError(e.message))
     } finally {

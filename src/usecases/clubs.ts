@@ -1,5 +1,5 @@
-import type { IClubRepository } from '../repositories'
 import type { Club, ClubMember, ClubWithDetails } from '../domain'
+import type { IClubRepository } from '../repositories'
 
 export async function createClub(
   repo: IClubRepository,
@@ -31,4 +31,18 @@ export async function getClubDetail(
   userId: string,
 ): Promise<ClubWithDetails | null> {
   return repo.getById(id, userId)
+}
+
+export async function getClubMembers(repo: IClubRepository, clubId: string): Promise<ClubMember[]> {
+  return repo.getMembers(clubId)
+}
+
+export async function leaveClub(
+  repo: IClubRepository,
+  clubId: string,
+  userId: string,
+): Promise<void> {
+  const club = await repo.getById(clubId, userId)
+  if (club?.myRole === 'owner') throw new Error('El organizador no puede abandonar el club')
+  return repo.leave(clubId, userId)
 }
