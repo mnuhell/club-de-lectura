@@ -1,10 +1,24 @@
-import type { FeedItem, PostFeedItem, ProgressFeedItem } from '@/src/domain'
+import type { FeedItem, NotificationWithDetails, PostFeedItem, ProgressFeedItem, ReactionSummary } from '@/src/domain'
+import { EmojiReactionBar } from '@/src/ui/components/EmojiReactionBar'
 import { useAuth } from '@/src/ui/hooks/useAuth'
 import { useFeed } from '@/src/ui/hooks/useFeed'
+import { useNotifications } from '@/src/ui/hooks/useNotifications'
+import { useReaction } from '@/src/ui/hooks/useReaction'
 import { colors } from '@/src/ui/theme'
 import { Ionicons } from '@expo/vector-icons'
-import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { useMemo } from 'react'
+import {
+  ActivityIndicator,
+  FlatList,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useState } from 'react'
 
 function timeAgo(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime()
@@ -16,7 +30,26 @@ function timeAgo(iso: string): string {
   return `hace ${Math.floor(h / 24)}d`
 }
 
-function PostCard({ item }: { item: PostFeedItem }) {
+function PostCard({ item, userId }: { item: PostFeedItem; userId: string }) {
+  const initialReactions = useMemo<ReactionSummary[]>(
+    () =>
+      Object.entries(
+        item.post.reactions.reduce<Record<string, { count: number; reactedByMe: boolean }>>(
+          (acc, r) => {
+            if (!acc[r.emoji]) acc[r.emoji] = { count: 0, reactedByMe: false }
+            acc[r.emoji].count++
+            if (r.userId === userId) acc[r.emoji].reactedByMe = true
+            return acc
+          },
+          {},
+        ),
+      ).map(([emoji, { count, reactedByMe }]) => ({ emoji, count, reactedByMe })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [item.post.id],
+  )
+
+  const { reactions, toggle } = useReaction(item.post.id, userId, initialReactions)
+
   return (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
@@ -53,21 +86,7 @@ function PostCard({ item }: { item: PostFeedItem }) {
         </Text>
       )}
 
-      {item.post.reactions.length > 0 && (
-        <View style={styles.reactionsRow}>
-          {Object.entries(
-            item.post.reactions.reduce<Record<string, number>>((acc, r) => {
-              acc[r.emoji] = (acc[r.emoji] ?? 0) + 1
-              return acc
-            }, {}),
-          ).map(([emoji, count]) => (
-            <View key={emoji} style={styles.reactionBadge}>
-              <Text style={styles.reactionEmoji}>{emoji}</Text>
-              <Text style={styles.reactionCount}>{count}</Text>
-            </View>
-          ))}
-        </View>
-      )}
+      <EmojiReactionBar reactions={reactions} onToggle={toggle} />
     </View>
   )
 }
@@ -100,19 +119,87 @@ function ProgressCard({ item }: { item: ProgressFeedItem }) {
   )
 }
 
-function FeedCard({ item }: { item: FeedItem }) {
-  if (item.type === 'post') return <PostCard item={item} />
+function FeedCard({ item, userId }: { item: FeedItem; userId: string }) {
+  if (item.type === 'post') return <PostCard item={item} userId={userId} />
   return <ProgressCard item={item} />
+}
+
+function NotificationsModal({
+  visible,
+  notifications,
+  onClose,
+}: {
+  visible: boolean
+  notifications: NotificationWithDetails[]
+  onClose: () => void
+}) {
+  return (
+    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
+      <SafeAreaView style={styles.modalContainer}>
+        <View style={styles.modalHeader}>
+          <Text style={styles.modalTitle}>Notificaciones</Text>
+          <TouchableOpacity onPress={onClose}>
+            <Ionicons name="close" size={22} color={colors.textSecondary} />
+          </TouchableOpacity>
+        </View>
+
+        {notifications.length === 0 ? (
+          <View style={styles.centered}>
+            <Text style={styles.emptyText}>Sin notificaciones</Text>
+          </View>
+        ) : (
+          <ScrollView contentContainerStyle={styles.notifList}>
+            {notifications.map(n => (
+              <View key={n.id} style={[styles.notifItem, !n.read && styles.notifItemUnread]}>
+                <View style={styles.notifAvatar}>
+                  <Text style={styles.notifAvatarText}>
+                    {(n.actor.displayName ?? n.actor.username).slice(0, 1).toUpperCase()}
+                  </Text>
+                </View>
+                <View style={styles.notifBody}>
+                  <Text style={styles.notifText}>
+                    <Text style={styles.notifActor}>
+                      {n.actor.displayName ?? n.actor.username}
+                    </Text>
+                    {' reaccionó con '}
+                    <Text style={styles.notifEmoji}>{n.emoji}</Text>
+                    {' a tu comentario'}
+                  </Text>
+                  <Text style={styles.notifTime}>{timeAgo(n.createdAt)}</Text>
+                </View>
+                {!n.read && <View style={styles.unreadDot} />}
+              </View>
+            ))}
+          </ScrollView>
+        )}
+      </SafeAreaView>
+    </Modal>
+  )
 }
 
 export default function FeedScreen() {
   const { user } = useAuth()
   const { items, loading, error, refresh } = useFeed(user?.id ?? '')
+  const { notifications, unreadCount, markAllRead } = useNotifications(user?.id ?? '')
+  const [notifVisible, setNotifVisible] = useState(false)
+
+  function openNotifications() {
+    setNotifVisible(true)
+    if (unreadCount > 0) markAllRead()
+  }
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Feed</Text>
+        <TouchableOpacity style={styles.bellButton} onPress={openNotifications}>
+          <Ionicons name="notifications-outline" size={22} color={colors.textSecondary} />
+          {unreadCount > 0 && (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{unreadCount > 9 ? '9+' : unreadCount}</Text>
+            </View>
+          )}
+        </TouchableOpacity>
       </View>
 
       {loading && (
@@ -141,13 +228,19 @@ export default function FeedScreen() {
         <FlatList
           data={items}
           keyExtractor={i => `${i.type}-${i.id}`}
-          renderItem={({ item }) => <FeedCard item={item} />}
+          renderItem={({ item }) => <FeedCard item={item} userId={user?.id ?? ''} />}
           contentContainerStyle={styles.list}
           onRefresh={refresh}
           refreshing={loading}
           showsVerticalScrollIndicator={false}
         />
       )}
+
+      <NotificationsModal
+        visible={notifVisible}
+        notifications={notifications}
+        onClose={() => setNotifVisible(false)}
+      />
     </SafeAreaView>
   )
 }
@@ -164,6 +257,20 @@ const styles = StyleSheet.create({
     width: 28,
   },
   avatarInitial: { color: colors.amber, fontFamily: 'SpaceMono', fontSize: 12 },
+  badge: {
+    alignItems: 'center',
+    backgroundColor: colors.error,
+    borderRadius: 8,
+    bottom: -2,
+    height: 16,
+    justifyContent: 'center',
+    minWidth: 16,
+    paddingHorizontal: 3,
+    position: 'absolute',
+    right: -4,
+  },
+  badgeText: { color: '#fff', fontFamily: 'SpaceMono', fontSize: 9 },
+  bellButton: { padding: 4, position: 'relative' },
   card: {
     backgroundColor: colors.surfaceUp,
     borderColor: colors.border,
@@ -182,28 +289,55 @@ const styles = StyleSheet.create({
   emptyText: { color: colors.textSecondary, fontFamily: 'Georgia', fontSize: 16 },
   errorText: { color: colors.error, fontFamily: 'SpaceMono', fontSize: 13 },
   header: {
+    alignItems: 'center',
     borderBottomColor: colors.border,
     borderBottomWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 16,
   },
   list: { paddingVertical: 8 },
+  modalContainer: { backgroundColor: colors.bg, flex: 1 },
+  modalHeader: {
+    alignItems: 'center',
+    borderBottomColor: colors.border,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+  },
+  modalTitle: { color: colors.textPrimary, fontFamily: 'Georgia', fontSize: 20 },
+  notifActor: { color: colors.textPrimary, fontFamily: 'SpaceMono' },
+  notifAvatar: {
+    alignItems: 'center',
+    backgroundColor: colors.surfaceHigh,
+    borderRadius: 18,
+    height: 36,
+    justifyContent: 'center',
+    width: 36,
+  },
+  notifAvatarText: { color: colors.amber, fontFamily: 'SpaceMono', fontSize: 13 },
+  notifBody: { flex: 1, gap: 4 },
+  notifEmoji: { fontSize: 16 },
+  notifItem: {
+    alignItems: 'center',
+    borderBottomColor: colors.border,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    gap: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+  },
+  notifItemUnread: { backgroundColor: colors.amberFaint },
+  notifList: { paddingBottom: 20 },
+  notifText: { color: colors.textSecondary, fontFamily: 'SpaceMono', fontSize: 12, lineHeight: 18 },
+  notifTime: { color: colors.textMuted, fontFamily: 'SpaceMono', fontSize: 10 },
   postContent: { color: colors.textPrimary, fontFamily: 'Georgia', fontSize: 15, lineHeight: 22 },
   progressBody: { alignItems: 'center', flexDirection: 'row', gap: 10 },
   progressCard: { borderColor: colors.success + '40' },
   progressText: { color: colors.textPrimary, fontFamily: 'Georgia', fontSize: 15 },
-  reactionBadge: {
-    alignItems: 'center',
-    backgroundColor: colors.surfaceHigh,
-    borderRadius: 12,
-    flexDirection: 'row',
-    gap: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  reactionCount: { color: colors.textSecondary, fontFamily: 'SpaceMono', fontSize: 11 },
-  reactionEmoji: { fontSize: 14 },
-  reactionsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 10 },
   retryButton: {
     borderColor: colors.border,
     borderRadius: 8,
@@ -235,4 +369,10 @@ const styles = StyleSheet.create({
   typeBadgeProgress: { backgroundColor: colors.success + '20' },
   typeBadgeText: { color: colors.amber, fontFamily: 'SpaceMono', fontSize: 9 },
   typeBadgeTextProgress: { color: colors.success },
+  unreadDot: {
+    backgroundColor: colors.amber,
+    borderRadius: 4,
+    height: 8,
+    width: 8,
+  },
 })

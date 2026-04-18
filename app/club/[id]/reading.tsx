@@ -1,10 +1,12 @@
-import type { PostWithDetails } from '@/src/domain'
+import type { PostWithDetails, ReactionSummary } from '@/src/domain'
+import { EmojiReactionBar } from '@/src/ui/components/EmojiReactionBar'
 import { useAuth } from '@/src/ui/hooks/useAuth'
+import { useReaction } from '@/src/ui/hooks/useReaction'
 import { useReadingProgress } from '@/src/ui/hooks/useReadingProgress'
 import { colors } from '@/src/ui/theme'
 import { Ionicons } from '@expo/vector-icons'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import {
   ActivityIndicator,
   Alert,
@@ -30,9 +32,28 @@ function timeAgo(iso: string): string {
   return `hace ${Math.floor(h / 24)}d`
 }
 
-function CommentCard({ post }: { post: PostWithDetails }) {
+function CommentCard({ post, userId }: { post: PostWithDetails; userId: string }) {
   const [revealed, setRevealed] = useState(false)
   const name = post.author.displayName ?? post.author.username
+
+  const initialReactions = useMemo<ReactionSummary[]>(
+    () =>
+      Object.entries(
+        post.reactions.reduce<Record<string, { count: number; reactedByMe: boolean }>>(
+          (acc, r) => {
+            if (!acc[r.emoji]) acc[r.emoji] = { count: 0, reactedByMe: false }
+            acc[r.emoji].count++
+            if (r.userId === userId) acc[r.emoji].reactedByMe = true
+            return acc
+          },
+          {},
+        ),
+      ).map(([emoji, { count, reactedByMe }]) => ({ emoji, count, reactedByMe })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [post.id],
+  )
+
+  const { reactions, toggle } = useReaction(post.id, userId, initialReactions)
 
   return (
     <View style={styles.card}>
@@ -52,6 +73,8 @@ function CommentCard({ post }: { post: PostWithDetails }) {
       ) : (
         <Text style={styles.content}>{post.content}</Text>
       )}
+
+      <EmojiReactionBar reactions={reactions} onToggle={toggle} />
     </View>
   )
 }
@@ -222,7 +245,7 @@ export default function ReadingScreen() {
         <FlatList
           data={posts}
           keyExtractor={p => p.id}
-          renderItem={({ item }) => <CommentCard post={item} />}
+          renderItem={({ item }) => <CommentCard post={item} userId={user?.id ?? ''} />}
           contentContainerStyle={styles.list}
           onRefresh={refresh}
           refreshing={loading}
