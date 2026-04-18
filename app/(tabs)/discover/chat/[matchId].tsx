@@ -34,7 +34,7 @@ export default function ChatScreen() {
   const userId = user?.id ?? ''
 
   const { matches } = useMatches(userId)
-  const match = matches.find((m) => m.matchId === matchId)
+  const match = matches.find(m => m.matchId === matchId)
   const reader = match?.reader
 
   const { messages, loading, sending, send } = useChat(matchId, userId)
@@ -56,9 +56,7 @@ export default function ChatScreen() {
 
     return (
       <View>
-        {showTime && (
-          <Text style={styles.timeDivider}>{timeAgo(item.createdAt)}</Text>
-        )}
+        {showTime && <Text style={styles.timeDivider}>{timeAgo(item.createdAt)}</Text>}
         <View style={[styles.bubble, isMe ? styles.bubbleMe : styles.bubbleThem]}>
           <Text style={[styles.bubbleText, isMe ? styles.bubbleTextMe : styles.bubbleTextThem]}>
             {item.content}
@@ -70,7 +68,6 @@ export default function ChatScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Text style={styles.backIcon}>←</Text>
@@ -98,7 +95,6 @@ export default function ChatScreen() {
         <View style={{ width: 40 }} />
       </View>
 
-      {/* Messages */}
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -112,7 +108,7 @@ export default function ChatScreen() {
           <FlatList
             ref={listRef}
             data={messages}
-            keyExtractor={(item) => item.id}
+            keyExtractor={item => item.id}
             renderItem={renderMessage}
             contentContainerStyle={styles.list}
             onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: false })}
@@ -129,7 +125,6 @@ export default function ChatScreen() {
           />
         )}
 
-        {/* Input */}
         <View style={styles.inputArea}>
           <TextInput
             style={styles.input}
@@ -161,49 +156,14 @@ export default function ChatScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0D0A06' },
-  flex: { flex: 1 },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#C8853A20',
-  },
-  backButton: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
+  backButton: { alignItems: 'center', height: 40, justifyContent: 'center', width: 40 },
   backIcon: { color: '#C8853A', fontSize: 22 },
-  headerProfile: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  headerAvatar: { width: 38, height: 38, borderRadius: 19, borderWidth: 1.5, borderColor: '#C8853A' },
-  headerAvatarFallback: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: '#C8853A22',
-    borderWidth: 1.5,
-    borderColor: '#C8853A',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerAvatarInitial: { color: '#C8853A', fontSize: 16, fontFamily: 'Georgia', fontWeight: '700' },
-  headerName: { color: '#F2E8D5', fontSize: 15, fontFamily: 'Georgia', fontWeight: '600' },
-  headerSub: { color: '#C8853A80', fontSize: 10, fontFamily: 'SpaceMono' },
-  list: { padding: 16, paddingBottom: 8 },
-  timeDivider: {
-    color: '#F2E8D530',
-    fontSize: 10,
-    fontFamily: 'SpaceMono',
-    textAlign: 'center',
-    marginVertical: 8,
-  },
   bubble: {
-    maxWidth: '78%',
     borderRadius: 18,
+    marginVertical: 3,
+    maxWidth: '78%',
     paddingHorizontal: 14,
     paddingVertical: 9,
-    marginVertical: 3,
   },
   bubbleMe: {
     alignSelf: 'flex-end',
@@ -213,53 +173,94 @@ const styles = StyleSheet.create({
   bubbleThem: {
     alignSelf: 'flex-start',
     backgroundColor: '#161009',
-    borderWidth: 1,
-    borderColor: '#C8853A30',
     borderBottomLeftRadius: 4,
+    borderColor: '#C8853A30',
+    borderWidth: 1,
   },
   bubbleText: { fontSize: 15, lineHeight: 21 },
   bubbleTextMe: { color: '#0D0A06', fontFamily: 'Georgia' },
   bubbleTextThem: { color: '#F2E8D5', fontFamily: 'Georgia' },
-  inputArea: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    gap: 10,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#C8853A20',
-  },
-  input: {
-    flex: 1,
-    backgroundColor: '#161009',
-    borderWidth: 1,
-    borderColor: '#C8853A30',
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    color: '#F2E8D5',
-    fontFamily: 'Georgia',
-    fontSize: 15,
-    maxHeight: 100,
-  },
-  sendBtn: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: '#C8853A',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  sendBtnDisabled: { backgroundColor: '#C8853A40' },
-  sendIcon: { color: '#0D0A06', fontSize: 20, fontWeight: '700' },
-  emptyChat: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 80 },
+  center: { alignItems: 'center', flex: 1, justifyContent: 'center' },
+  container: { backgroundColor: '#0D0A06', flex: 1 },
+  emptyChat: { alignItems: 'center', flex: 1, justifyContent: 'center', paddingTop: 80 },
   emptyChatIcon: { fontSize: 40, marginBottom: 12 },
   emptyChatText: {
     color: '#F2E8D550',
-    fontSize: 14,
     fontFamily: 'Georgia',
     fontStyle: 'italic',
-    textAlign: 'center',
+    fontSize: 14,
     lineHeight: 22,
+    textAlign: 'center',
+  },
+  flex: { flex: 1 },
+  header: {
+    alignItems: 'center',
+    borderBottomColor: '#C8853A20',
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  headerAvatar: {
+    borderColor: '#C8853A',
+    borderRadius: 19,
+    borderWidth: 1.5,
+    height: 38,
+    width: 38,
+  },
+  headerAvatarFallback: {
+    alignItems: 'center',
+    backgroundColor: '#C8853A22',
+    borderColor: '#C8853A',
+    borderRadius: 19,
+    borderWidth: 1.5,
+    height: 38,
+    justifyContent: 'center',
+    width: 38,
+  },
+  headerAvatarInitial: { color: '#C8853A', fontFamily: 'Georgia', fontSize: 16, fontWeight: '700' },
+  headerName: { color: '#F2E8D5', fontFamily: 'Georgia', fontSize: 15, fontWeight: '600' },
+  headerProfile: { alignItems: 'center', flexDirection: 'row', gap: 10 },
+  headerSub: { color: '#C8853A80', fontFamily: 'SpaceMono', fontSize: 10 },
+  input: {
+    backgroundColor: '#161009',
+    borderColor: '#C8853A30',
+    borderRadius: 20,
+    borderWidth: 1,
+    color: '#F2E8D5',
+    flex: 1,
+    fontFamily: 'Georgia',
+    fontSize: 15,
+    maxHeight: 100,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  inputArea: {
+    alignItems: 'flex-end',
+    borderTopColor: '#C8853A20',
+    borderTopWidth: 1,
+    flexDirection: 'row',
+    gap: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  list: { padding: 16, paddingBottom: 8 },
+  sendBtn: {
+    alignItems: 'center',
+    backgroundColor: '#C8853A',
+    borderRadius: 21,
+    height: 42,
+    justifyContent: 'center',
+    width: 42,
+  },
+  sendBtnDisabled: { backgroundColor: '#C8853A40' },
+  sendIcon: { color: '#0D0A06', fontSize: 20, fontWeight: '700' },
+  timeDivider: {
+    color: '#F2E8D530',
+    fontFamily: 'SpaceMono',
+    fontSize: 10,
+    marginVertical: 8,
+    textAlign: 'center',
   },
 })
