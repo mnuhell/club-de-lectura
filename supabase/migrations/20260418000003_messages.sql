@@ -75,3 +75,6 @@ CREATE TRIGGER on_message_insert
   AFTER INSERT ON messages
   FOR EACH ROW
   EXECUTE FUNCTION notify_on_message();
+
+-- Enable realtime for messages
+ALTER PUBLICATION supabase_realtime ADD TABLE messages;

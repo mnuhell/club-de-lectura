@@ -342,6 +342,7 @@ export type Database = {
           display_name: string | null
           id: string
           matching_enabled: boolean
+          push_token: string | null
           reader_bio: string | null
           updated_at: string
           username: string
@@ -354,6 +355,7 @@ export type Database = {
           display_name?: string | null
           id: string
           matching_enabled?: boolean
+          push_token?: string | null
           reader_bio?: string | null
           updated_at?: string
           username: string
@@ -366,6 +368,7 @@ export type Database = {
           display_name?: string | null
           id?: string
           matching_enabled?: boolean
+          push_token?: string | null
           reader_bio?: string | null
           updated_at?: string
           username?: string

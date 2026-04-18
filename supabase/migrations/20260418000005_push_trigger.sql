@@ -1,0 +1,4 @@
+-- Push notifications are handled via Supabase Database Webhooks (Dashboard).
+-- Configure in: Dashboard → Database → Webhooks → Create webhook
+--   Table: messages  |  Event: INSERT  |  Function: send-push
+-- No SQL trigger needed — Supabase injects SUPABASE_URL and SERVICE_ROLE_KEY automatically.

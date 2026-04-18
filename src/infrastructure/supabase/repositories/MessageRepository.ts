@@ -37,7 +37,7 @@ export const MessageRepository: IMessageRepository = {
       .insert({ match_id: matchId, sender_id: senderId, content })
       .select()
       .single()
-    if (error) throw new Error('No se pudo enviar el mensaje')
+    if (error) throw new Error(`No se pudo enviar el mensaje: ${error.message} (${error.code})`)
     return mapMessage(data)
   },
 

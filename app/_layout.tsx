@@ -1,4 +1,5 @@
 import { useAuth } from '@/src/ui/hooks/useAuth'
+import { usePushNotifications } from '@/src/ui/hooks/usePushNotifications'
 import { colors } from '@/src/ui/theme'
 import config from '@/tamagui.config'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
@@ -41,6 +42,7 @@ export default function RootLayout() {
 
 function RootNavigator() {
   const { session, loading } = useAuth()
+  usePushNotifications(session?.user.id ?? '')
 
   useEffect(() => {
     if (loading) return
