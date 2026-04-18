@@ -1,14 +1,14 @@
+import type { ReaderProfile } from '@/src/domain/ReaderProfile'
 import React, { useRef } from 'react'
 import {
-  View,
-  Text,
-  StyleSheet,
   Animated,
-  PanResponder,
   Dimensions,
+  PanResponder,
+  StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
 } from 'react-native'
-import type { ReaderProfile } from '@/src/domain/ReaderProfile'
 import { GenreChip } from './GenreChip'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
@@ -125,7 +125,7 @@ export function ReaderCard({ reader, onLike, onPass, isTop }: Props) {
         )}
 
         {/* Reader bio */}
-        {reader.readerBio ? <Text style={styles.bio}>"{reader.readerBio}"</Text> : null}
+        {reader.readerBio ? <Text style={styles.bio}>{reader.readerBio}</Text> : null}
 
         {/* Genres */}
         <View style={styles.genresRow}>

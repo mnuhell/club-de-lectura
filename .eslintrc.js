@@ -26,9 +26,10 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/no-explicit-any': 'warn',
     'react-native/no-raw-text': 'off',
-    'react-native/no-color-literals': 'warn',
+    'react-native/no-color-literals': 'off',
     'react-native/no-inline-styles': 'warn',
     'react-native/sort-styles': 'off',
+    'react-native/no-single-element-style-arrays': 'off',
   },
   settings: {
     react: { version: 'detect' },
