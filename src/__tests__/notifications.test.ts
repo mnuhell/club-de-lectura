@@ -88,9 +88,13 @@ describe('INotificationRepository — getForUser', () => {
 
   it('propaga el error si el repositorio falla', async () => {
     const repo = makeRepo({
-      getForUser: jest.fn().mockRejectedValue(new Error('No se pudieron cargar las notificaciones')),
+      getForUser: jest
+        .fn()
+        .mockRejectedValue(new Error('No se pudieron cargar las notificaciones')),
     })
-    await expect(repo.getForUser('user-1')).rejects.toThrow('No se pudieron cargar las notificaciones')
+    await expect(repo.getForUser('user-1')).rejects.toThrow(
+      'No se pudieron cargar las notificaciones',
+    )
   })
 })
 

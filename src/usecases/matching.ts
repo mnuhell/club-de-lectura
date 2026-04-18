@@ -3,10 +3,7 @@ import type { ReaderProfile, ReaderMatch } from '../domain/ReaderProfile'
 
 export function createMatchingActions(repo: IMatchingRepository) {
   return {
-    async getDiscoverableReaders(
-      userId: string,
-      city?: string
-    ): Promise<ReaderProfile[]> {
+    async getDiscoverableReaders(userId: string, city?: string): Promise<ReaderProfile[]> {
       return repo.getDiscoverableReaders(userId, city)
     },
 
@@ -33,7 +30,7 @@ export function createMatchingActions(repo: IMatchingRepository) {
 
     async updateReaderProfile(
       userId: string,
-      data: { city?: string; readerBio?: string; matchingEnabled?: boolean }
+      data: { city?: string; readerBio?: string; matchingEnabled?: boolean },
     ): Promise<void> {
       await repo.updateReaderProfile(userId, data)
     },

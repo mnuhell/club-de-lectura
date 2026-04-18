@@ -27,7 +27,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Format check
-        run: pnpm prettier --check "**/*.{ts,tsx,js,json}"
+        run: pnpm prettier --check "**/*.{ts,tsx,js,json}" --ignore-path .gitignore
 
       - name: Type check
         run: npx tsc --noEmit

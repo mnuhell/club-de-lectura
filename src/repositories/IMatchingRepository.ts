@@ -8,6 +8,6 @@ export interface IMatchingRepository {
   setMyGenres(userId: string, genres: string[]): Promise<void>
   updateReaderProfile(
     userId: string,
-    data: { city?: string; readerBio?: string; matchingEnabled?: boolean }
+    data: { city?: string; readerBio?: string; matchingEnabled?: boolean },
   ): Promise<void>
 }

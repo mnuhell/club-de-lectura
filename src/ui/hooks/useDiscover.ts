@@ -32,19 +32,19 @@ export function useDiscover(userId: string, city?: string) {
 
   const like = useCallback(
     async (swipedId: string) => {
-      setReaders((prev) => prev.filter((r) => r.id !== swipedId))
+      setReaders(prev => prev.filter(r => r.id !== swipedId))
       const matchId = await actions.like(userId, swipedId)
       if (matchId) setNewMatch(matchId)
     },
-    [userId]
+    [userId],
   )
 
   const pass = useCallback(
     async (swipedId: string) => {
-      setReaders((prev) => prev.filter((r) => r.id !== swipedId))
+      setReaders(prev => prev.filter(r => r.id !== swipedId))
       await actions.pass(userId, swipedId)
     },
-    [userId]
+    [userId],
   )
 
   const clearNewMatch = useCallback(() => setNewMatch(null), [])
@@ -70,7 +70,7 @@ export function useMatches(userId: string) {
   useFocusEffect(
     useCallback(() => {
       load()
-    }, [load])
+    }, [load]),
   )
 
   return { matches, loading, reload: load }
@@ -86,7 +86,7 @@ export function useReaderPreferences(userId: string) {
     setLoading(true)
     actions
       .getMyGenres(userId)
-      .then((g) => setGenres(g))
+      .then(g => setGenres(g))
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [userId])
@@ -95,7 +95,7 @@ export function useReaderPreferences(userId: string) {
   useFocusEffect(
     useCallback(() => {
       fetchGenres()
-    }, [fetchGenres])
+    }, [fetchGenres]),
   )
 
   const saveGenres = useCallback(
@@ -108,7 +108,7 @@ export function useReaderPreferences(userId: string) {
         setSaving(false)
       }
     },
-    [userId]
+    [userId],
   )
 
   const saveReaderProfile = useCallback(
@@ -120,7 +120,7 @@ export function useReaderPreferences(userId: string) {
         setSaving(false)
       }
     },
-    [userId]
+    [userId],
   )
 
   return { genres, loading, saving, saveGenres, saveReaderProfile }

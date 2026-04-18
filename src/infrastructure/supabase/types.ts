@@ -265,7 +265,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'profiles'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       notifications: {
@@ -330,7 +330,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'messages'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       profiles: {
@@ -398,7 +398,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'profiles'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       reader_matches: {
@@ -434,7 +434,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'profiles'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       reader_swipes: {
@@ -473,7 +473,7 @@ export type Database = {
             isOneToOne: false
             referencedRelation: 'profiles'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
       reactions: {

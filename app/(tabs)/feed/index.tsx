@@ -1,4 +1,10 @@
-import type { FeedItem, NotificationWithDetails, PostFeedItem, ProgressFeedItem, ReactionSummary } from '@/src/domain'
+import type {
+  FeedItem,
+  NotificationWithDetails,
+  PostFeedItem,
+  ProgressFeedItem,
+  ReactionSummary,
+} from '@/src/domain'
 import { EmojiReactionBar } from '@/src/ui/components/EmojiReactionBar'
 import { useAuth } from '@/src/ui/hooks/useAuth'
 import { useFeed } from '@/src/ui/hooks/useFeed'
@@ -158,9 +164,7 @@ function NotificationsModal({
                 </View>
                 <View style={styles.notifBody}>
                   <Text style={styles.notifText}>
-                    <Text style={styles.notifActor}>
-                      {n.actor.displayName ?? n.actor.username}
-                    </Text>
+                    <Text style={styles.notifActor}>{n.actor.displayName ?? n.actor.username}</Text>
                     {' reaccionó con '}
                     <Text style={styles.notifEmoji}>{n.emoji}</Text>
                     {' a tu comentario'}

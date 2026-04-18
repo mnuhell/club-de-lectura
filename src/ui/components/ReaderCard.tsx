@@ -63,7 +63,7 @@ export function ReaderCard({ reader, onLike, onPass, isTop }: Props) {
           }).start()
         }
       },
-    })
+    }),
   ).current
 
   const handleLike = () => {
@@ -125,13 +125,11 @@ export function ReaderCard({ reader, onLike, onPass, isTop }: Props) {
         )}
 
         {/* Reader bio */}
-        {reader.readerBio ? (
-          <Text style={styles.bio}>"{reader.readerBio}"</Text>
-        ) : null}
+        {reader.readerBio ? <Text style={styles.bio}>"{reader.readerBio}"</Text> : null}
 
         {/* Genres */}
         <View style={styles.genresRow}>
-          {reader.genres.slice(0, 4).map((g) => (
+          {reader.genres.slice(0, 4).map(g => (
             <GenreChip key={g} genre={g} selected={sharedCount > 0} small />
           ))}
           {reader.genres.length > 4 && (

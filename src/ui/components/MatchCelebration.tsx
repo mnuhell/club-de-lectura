@@ -32,7 +32,12 @@ export function MatchCelebration({ match, onViewMatch, onDismiss }: Props) {
           Animated.timing(opacity, { toValue: 1, duration: 300, useNativeDriver: true }),
         ]),
         Animated.delay(600),
-        Animated.spring(avatarReveal, { toValue: 1, useNativeDriver: true, tension: 40, friction: 6 }),
+        Animated.spring(avatarReveal, {
+          toValue: 1,
+          useNativeDriver: true,
+          tension: 40,
+          friction: 6,
+        }),
       ]).start()
     } else {
       scale.setValue(0)
@@ -79,9 +84,7 @@ export function MatchCelebration({ match, onViewMatch, onDismiss }: Props) {
           </View>
 
           <Text style={styles.name}>{match.reader.fullName}</Text>
-          {match.reader.city && (
-            <Text style={styles.city}>📍 {match.reader.city}</Text>
-          )}
+          {match.reader.city && <Text style={styles.city}>📍 {match.reader.city}</Text>}
 
           <TouchableOpacity style={styles.button} onPress={() => onViewMatch(match.matchId)}>
             <Text style={styles.buttonText}>Ver mi coincidencia</Text>

@@ -12,7 +12,7 @@ interface Props {
 export function GenreSelector({ selected, onChange, max = 5 }: Props) {
   const toggle = (genre: string) => {
     if (selected.includes(genre)) {
-      onChange(selected.filter((g) => g !== genre))
+      onChange(selected.filter(g => g !== genre))
     } else if (selected.length < max) {
       onChange([...selected, genre])
     }
@@ -20,11 +20,9 @@ export function GenreSelector({ selected, onChange, max = 5 }: Props) {
 
   return (
     <View>
-      <Text style={styles.hint}>
-        Elige hasta {max} géneros que te apasionen
-      </Text>
+      <Text style={styles.hint}>Elige hasta {max} géneros que te apasionen</Text>
       <View style={styles.grid}>
-        {LITERARY_GENRES.map((genre) => (
+        {LITERARY_GENRES.map(genre => (
           <GenreChip
             key={genre}
             genre={genre}

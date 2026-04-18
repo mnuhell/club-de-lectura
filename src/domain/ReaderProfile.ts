@@ -17,22 +17,22 @@ export const LITERARY_GENRES = [
   'Viajes',
   'Cómics',
   'Juvenil',
-] as const;
+] as const
 
-export type LiteraryGenre = (typeof LITERARY_GENRES)[number];
+export type LiteraryGenre = (typeof LITERARY_GENRES)[number]
 
 export interface ReaderProfile {
-  id: string;
-  fullName: string;
-  city?: string;
-  readerBio?: string;
-  genres: string[];
-  sharedGenreCount?: number;
-  avatarUrl?: string; // only populated in matches, never in discovery
+  id: string
+  fullName: string
+  city?: string
+  readerBio?: string
+  genres: string[]
+  sharedGenreCount?: number
+  avatarUrl?: string // only populated in matches, never in discovery
 }
 
 export interface ReaderMatch {
-  matchId: string;
-  matchedAt: string;
-  reader: ReaderProfile & { avatarUrl?: string };
+  matchId: string
+  matchedAt: string
+  reader: ReaderProfile & { avatarUrl?: string }
 }

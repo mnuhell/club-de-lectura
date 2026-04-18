@@ -39,7 +39,7 @@ export function useChat(matchId: string, userId: string) {
           table: 'messages',
           filter: `match_id=eq.${matchId}`,
         },
-        (payload) => {
+        payload => {
           const row = payload.new as {
             id: string
             match_id: string
@@ -56,15 +56,15 @@ export function useChat(matchId: string, userId: string) {
             createdAt: row.created_at,
             readAt: row.read_at ?? undefined,
           }
-          setMessages((prev) => {
-            if (prev.find((m) => m.id === msg.id)) return prev
+          setMessages(prev => {
+            if (prev.find(m => m.id === msg.id)) return prev
             return [...prev, msg]
           })
           // Mark as read if sent by the other person
           if (row.sender_id !== userId) {
             MessageRepository.markAsRead(matchId, userId)
           }
-        }
+        },
       )
       .subscribe()
 
@@ -82,12 +82,12 @@ export function useChat(matchId: string, userId: string) {
       try {
         const msg = await MessageRepository.sendMessage(matchId, userId, content.trim())
         // Optimistic: add immediately (realtime will dedupe)
-        setMessages((prev) => (prev.find((m) => m.id === msg.id) ? prev : [...prev, msg]))
+        setMessages(prev => (prev.find(m => m.id === msg.id) ? prev : [...prev, msg]))
       } finally {
         setSending(false)
       }
     },
-    [matchId, userId, sending]
+    [matchId, userId, sending],
   )
 
   return { messages, loading, sending, send }

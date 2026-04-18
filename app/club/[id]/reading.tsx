@@ -39,15 +39,12 @@ function CommentCard({ post, userId }: { post: PostWithDetails; userId: string }
   const initialReactions = useMemo<ReactionSummary[]>(
     () =>
       Object.entries(
-        post.reactions.reduce<Record<string, { count: number; reactedByMe: boolean }>>(
-          (acc, r) => {
-            if (!acc[r.emoji]) acc[r.emoji] = { count: 0, reactedByMe: false }
-            acc[r.emoji].count++
-            if (r.userId === userId) acc[r.emoji].reactedByMe = true
-            return acc
-          },
-          {},
-        ),
+        post.reactions.reduce<Record<string, { count: number; reactedByMe: boolean }>>((acc, r) => {
+          if (!acc[r.emoji]) acc[r.emoji] = { count: 0, reactedByMe: false }
+          acc[r.emoji].count++
+          if (r.userId === userId) acc[r.emoji].reactedByMe = true
+          return acc
+        }, {}),
       ).map(([emoji, { count, reactedByMe }]) => ({ emoji, count, reactedByMe })),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [post.id],
