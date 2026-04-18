@@ -26,6 +26,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Format check
+        run: pnpm prettier --check "**/*.{ts,tsx,js,json}"
+
       - name: Type check
         run: npx tsc --noEmit
 

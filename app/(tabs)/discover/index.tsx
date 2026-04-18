@@ -20,16 +20,8 @@ export default function DiscoverScreen() {
   const userId = user?.id ?? ''
 
   const { genres, loading: genresLoading } = useReaderPreferences(userId)
-  const {
-    readers,
-    loading,
-    error,
-    newMatch,
-    like,
-    pass,
-    clearNewMatch,
-    reload,
-  } = useDiscover(userId)
+  const { readers, loading, error, newMatch, like, pass, clearNewMatch, reload } =
+    useDiscover(userId)
   const { matches } = useMatches(userId)
   const [celebrationMatch, setCelebrationMatch] = useState<ReaderMatch | null>(null)
 

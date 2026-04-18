@@ -19,7 +19,7 @@ export default function MatchDetailScreen() {
   const { user } = useAuth()
   const { matches, loading } = useMatches(user?.id ?? '')
 
-  const match = matches.find((m) => m.matchId === id)
+  const match = matches.find(m => m.matchId === id)
 
   if (loading) {
     return (
@@ -68,9 +68,7 @@ export default function MatchDetailScreen() {
             <Image source={{ uri: reader.avatarUrl }} style={styles.avatar} />
           ) : (
             <View style={styles.avatarFallback}>
-              <Text style={styles.avatarInitial}>
-                {reader.fullName.charAt(0).toUpperCase()}
-              </Text>
+              <Text style={styles.avatarInitial}>{reader.fullName.charAt(0).toUpperCase()}</Text>
             </View>
           )}
         </View>
@@ -101,7 +99,7 @@ export default function MatchDetailScreen() {
         {reader.readerBio && (
           <View style={styles.bioCard}>
             <Text style={styles.bioLabel}>Su frase lectora</Text>
-            <Text style={styles.bio}>"{reader.readerBio}"</Text>
+            <Text style={styles.bio}>&ldquo;{reader.readerBio}&rdquo;</Text>
           </View>
         )}
 
@@ -110,7 +108,7 @@ export default function MatchDetailScreen() {
           <View style={styles.section}>
             <Text style={styles.sectionLabel}>Sus géneros</Text>
             <View style={styles.genresGrid}>
-              {reader.genres.map((g) => (
+              {reader.genres.map(g => (
                 <GenreChip key={g} genre={g} selected />
               ))}
             </View>
@@ -123,10 +121,7 @@ export default function MatchDetailScreen() {
           <Text style={styles.ctaText}>
             Crea un club de lectura e invítale con el código para empezar a leer juntos.
           </Text>
-          <TouchableOpacity
-            style={styles.ctaButton}
-            onPress={() => router.push('/(tabs)/clubs')}
-          >
+          <TouchableOpacity style={styles.ctaButton} onPress={() => router.push('/(tabs)/clubs')}>
             <Text style={styles.ctaButtonText}>Ir a mis clubs</Text>
           </TouchableOpacity>
         </View>

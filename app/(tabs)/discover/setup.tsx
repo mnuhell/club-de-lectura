@@ -17,7 +17,7 @@ import { GenreSelector } from '@/src/ui/components/GenreSelector'
 export default function DiscoverSetupScreen() {
   const { user } = useAuth()
   const { genres, loading, saving, saveGenres, saveReaderProfile } = useReaderPreferences(
-    user?.id ?? ''
+    user?.id ?? '',
   )
   const [selected, setSelected] = useState<string[]>(genres)
   const [city, setCity] = useState('')
@@ -38,7 +38,10 @@ export default function DiscoverSetupScreen() {
     }
     try {
       await saveGenres(selected)
-      await saveReaderProfile({ city: city.trim() || undefined, readerBio: readerBio.trim() || undefined })
+      await saveReaderProfile({
+        city: city.trim() || undefined,
+        readerBio: readerBio.trim() || undefined,
+      })
       router.back()
     } catch (e: unknown) {
       Alert.alert('Error', e instanceof Error ? e.message : 'No se pudo guardar')
