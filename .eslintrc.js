@@ -28,6 +28,7 @@ module.exports = {
     'react-native/no-raw-text': 'off',
     'react-native/no-color-literals': 'warn',
     'react-native/no-inline-styles': 'warn',
+    'react-native/sort-styles': 'off',
   },
   settings: {
     react: { version: 'detect' },

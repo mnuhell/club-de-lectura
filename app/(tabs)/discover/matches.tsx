@@ -1,19 +1,19 @@
-import React from 'react'
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  ActivityIndicator,
-  SafeAreaView,
-} from 'react-native'
-import { router } from 'expo-router'
+import type { ReaderMatch } from '@/src/domain/ReaderProfile'
+import { GenreChip } from '@/src/ui/components/GenreChip'
 import { useAuth } from '@/src/ui/hooks/useAuth'
 import { useMatches } from '@/src/ui/hooks/useDiscover'
-import { GenreChip } from '@/src/ui/components/GenreChip'
-import type { ReaderMatch } from '@/src/domain/ReaderProfile'
+import { router } from 'expo-router'
+import React from 'react'
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 
 export default function MatchesScreen() {
   const { user } = useAuth()
@@ -31,9 +31,7 @@ export default function MatchesScreen() {
           <Image source={{ uri: item.reader.avatarUrl }} style={styles.avatar} />
         ) : (
           <View style={styles.avatarFallback}>
-            <Text style={styles.avatarInitial}>
-              {item.reader.fullName.charAt(0).toUpperCase()}
-            </Text>
+            <Text style={styles.avatarInitial}>{item.reader.fullName.charAt(0).toUpperCase()}</Text>
           </View>
         )}
         <View style={styles.matchDot} />
@@ -41,21 +39,20 @@ export default function MatchesScreen() {
 
       <View style={styles.matchInfo}>
         <Text style={styles.matchName}>{item.reader.fullName}</Text>
-        {item.reader.city && (
-          <Text style={styles.matchCity}>📍 {item.reader.city}</Text>
-        )}
+        {item.reader.city && <Text style={styles.matchCity}>📍 {item.reader.city}</Text>}
         {item.reader.readerBio && (
           <Text style={styles.matchBio} numberOfLines={2}>
-            "{item.reader.readerBio}"
+            {item.reader.readerBio}
           </Text>
         )}
         <View style={styles.genresRow}>
-          {item.reader.genres.slice(0, 3).map((g) => (
+          {item.reader.genres.slice(0, 3).map(g => (
             <GenreChip key={g} genre={g} selected small />
           ))}
         </View>
         <Text style={styles.matchedAt}>
-          Coincidencia el {new Date(item.matchedAt).toLocaleDateString('es-ES', {
+          Coincidencia el{' '}
+          {new Date(item.matchedAt).toLocaleDateString('es-ES', {
             day: 'numeric',
             month: 'long',
           })}
@@ -93,7 +90,7 @@ export default function MatchesScreen() {
       ) : (
         <FlatList
           data={matches}
-          keyExtractor={(item) => item.matchId}
+          keyExtractor={item => item.matchId}
           renderItem={renderMatch}
           contentContainerStyle={styles.list}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -106,131 +103,131 @@ export default function MatchesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0D0A06' },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#C8853A20',
-  },
-  backButton: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
-  backIcon: { color: '#C8853A', fontSize: 22 },
-  headerTitle: {
-    color: '#F2E8D5',
-    fontSize: 18,
-    fontFamily: 'Georgia',
-    fontWeight: '700',
-  },
-  list: { padding: 16 },
-  matchCard: {
-    flexDirection: 'row',
-    backgroundColor: '#161009',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#C8853A20',
-    padding: 16,
-    gap: 14,
-  },
+  avatar: { borderRadius: 36, height: 72, width: 72 },
   avatarContainer: { position: 'relative' },
-  avatar: { width: 72, height: 72, borderRadius: 36 },
   avatarFallback: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: '#C8853A22',
-    borderWidth: 1.5,
-    borderColor: '#C8853A',
     alignItems: 'center',
+    backgroundColor: '#C8853A22',
+    borderColor: '#C8853A',
+    borderRadius: 36,
+    borderWidth: 1.5,
+    height: 72,
     justifyContent: 'center',
+    width: 72,
   },
   avatarInitial: {
     color: '#C8853A',
-    fontSize: 28,
     fontFamily: 'Georgia',
+    fontSize: 28,
     fontWeight: '700',
   },
-  matchDot: {
-    position: 'absolute',
-    bottom: 2,
-    right: 2,
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: '#C8853A',
-    borderWidth: 2,
-    borderColor: '#161009',
+  backButton: { alignItems: 'center', height: 40, justifyContent: 'center', width: 40 },
+  backIcon: { color: '#C8853A', fontSize: 22 },
+  center: { alignItems: 'center', flex: 1, justifyContent: 'center' },
+  container: { backgroundColor: '#0D0A06', flex: 1 },
+  discoverButton: {
+    borderColor: '#C8853A',
+    borderRadius: 12,
+    borderWidth: 1,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
   },
-  matchInfo: { flex: 1 },
-  matchName: {
-    color: '#F2E8D5',
-    fontSize: 16,
-    fontFamily: 'Georgia',
-    fontWeight: '600',
-    marginBottom: 2,
-  },
-  matchCity: {
-    color: '#F2E8D550',
-    fontSize: 12,
+  discoverButtonText: {
+    color: '#C8853A',
     fontFamily: 'SpaceMono',
-    marginBottom: 6,
+    fontSize: 14,
   },
-  matchBio: {
-    color: '#F2E8D570',
-    fontSize: 12,
+  empty: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+    padding: 32,
+  },
+  emptyIcon: { fontSize: 56, marginBottom: 16 },
+  emptyText: {
+    color: '#F2E8D560',
     fontFamily: 'Georgia',
+    fontSize: 14,
     fontStyle: 'italic',
-    marginBottom: 8,
-    lineHeight: 17,
+    lineHeight: 22,
+    marginBottom: 28,
+    textAlign: 'center',
+  },
+  emptyTitle: {
+    color: '#F2E8D5',
+    fontFamily: 'Georgia',
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 12,
+    textAlign: 'center',
   },
   genresRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginBottom: 6,
   },
-  matchedAt: {
-    color: '#F2E8D530',
-    fontSize: 11,
-    fontFamily: 'SpaceMono',
-  },
-  separator: { height: 10 },
-  empty: {
-    flex: 1,
+  header: {
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: 32,
-  },
-  emptyIcon: { fontSize: 56, marginBottom: 16 },
-  emptyTitle: {
-    color: '#F2E8D5',
-    fontSize: 20,
-    fontFamily: 'Georgia',
-    fontWeight: '700',
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-  emptyText: {
-    color: '#F2E8D560',
-    fontSize: 14,
-    fontFamily: 'Georgia',
-    fontStyle: 'italic',
-    textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: 28,
-  },
-  discoverButton: {
-    borderWidth: 1,
-    borderColor: '#C8853A',
-    borderRadius: 12,
-    paddingHorizontal: 24,
+    borderBottomColor: '#C8853A20',
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
     paddingVertical: 12,
   },
-  discoverButtonText: {
-    color: '#C8853A',
-    fontSize: 14,
-    fontFamily: 'SpaceMono',
+  headerTitle: {
+    color: '#F2E8D5',
+    fontFamily: 'Georgia',
+    fontSize: 18,
+    fontWeight: '700',
   },
+  list: { padding: 16 },
+  matchBio: {
+    color: '#F2E8D570',
+    fontFamily: 'Georgia',
+    fontSize: 12,
+    fontStyle: 'italic',
+    lineHeight: 17,
+    marginBottom: 8,
+  },
+  matchCard: {
+    backgroundColor: '#161009',
+    borderColor: '#C8853A20',
+    borderRadius: 16,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 14,
+    padding: 16,
+  },
+  matchCity: {
+    color: '#F2E8D550',
+    fontFamily: 'SpaceMono',
+    fontSize: 12,
+    marginBottom: 6,
+  },
+  matchDot: {
+    backgroundColor: '#C8853A',
+    borderColor: '#161009',
+    borderRadius: 6,
+    borderWidth: 2,
+    bottom: 2,
+    height: 12,
+    position: 'absolute',
+    right: 2,
+    width: 12,
+  },
+  matchInfo: { flex: 1 },
+  matchName: {
+    color: '#F2E8D5',
+    fontFamily: 'Georgia',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  matchedAt: {
+    color: '#F2E8D530',
+    fontFamily: 'SpaceMono',
+    fontSize: 11,
+  },
+  separator: { height: 10 },
 })
