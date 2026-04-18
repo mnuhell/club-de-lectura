@@ -226,35 +226,203 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          id: string
+          user_id: string
+          actor_id: string
+          post_id: string
+          type: string
+          emoji: string | null
+          read: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          actor_id: string
+          post_id: string
+          type?: string
+          emoji?: string | null
+          read?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          actor_id?: string
+          post_id?: string
+          type?: string
+          emoji?: string | null
+          read?: boolean
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'notifications_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'notifications_actor_id_fkey'
+            columns: ['actor_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'notifications_post_id_fkey'
+            columns: ['post_id']
+            isOneToOne: false
+            referencedRelation: 'posts'
+            referencedColumns: ['id']
+          }
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           bio: string | null
+          city: string | null
           created_at: string
           display_name: string | null
           id: string
+          matching_enabled: boolean
+          reader_bio: string | null
           updated_at: string
           username: string
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
+          city?: string | null
           created_at?: string
           display_name?: string | null
           id: string
+          matching_enabled?: boolean
+          reader_bio?: string | null
           updated_at?: string
           username: string
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
+          city?: string | null
           created_at?: string
           display_name?: string | null
           id?: string
+          matching_enabled?: boolean
+          reader_bio?: string | null
           updated_at?: string
           username?: string
         }
         Relationships: []
+      }
+      reader_genres: {
+        Row: {
+          id: string
+          user_id: string
+          genre: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          genre: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          genre?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'reader_genres_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      reader_matches: {
+        Row: {
+          id: string
+          user_1_id: string
+          user_2_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_1_id: string
+          user_2_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_1_id?: string
+          user_2_id?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'reader_matches_user_1_id_fkey'
+            columns: ['user_1_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'reader_matches_user_2_id_fkey'
+            columns: ['user_2_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      reader_swipes: {
+        Row: {
+          id: string
+          swiper_id: string
+          swiped_id: string
+          action: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          swiper_id: string
+          swiped_id: string
+          action: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          swiper_id?: string
+          swiped_id?: string
+          action?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'reader_swipes_swiper_id_fkey'
+            columns: ['swiper_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'reader_swipes_swiped_id_fkey'
+            columns: ['swiped_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
       }
       reactions: {
         Row: {
@@ -410,6 +578,34 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
+      }
+      get_discoverable_readers: {
+        Args: { p_user_id: string; p_city?: string | null; p_limit?: number }
+        Returns: {
+          id: string
+          full_name: string
+          city: string | null
+          reader_bio: string | null
+          genres: string[] | null
+          shared_genre_count: number
+        }[]
+      }
+      swipe_reader: {
+        Args: { p_swiper_id: string; p_swiped_id: string; p_action: string }
+        Returns: string | null
+      }
+      get_my_matches: {
+        Args: { p_user_id: string }
+        Returns: {
+          match_id: string
+          matched_at: string
+          reader_id: string
+          full_name: string
+          city: string | null
+          reader_bio: string | null
+          avatar_url: string | null
+          genres: string[] | null
+        }[]
       }
     }
     Enums: {
