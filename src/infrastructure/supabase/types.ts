@@ -226,12 +226,55 @@ export type Database = {
           },
         ]
       }
+      messages: {
+        Row: {
+          id: string
+          match_id: string
+          sender_id: string
+          content: string
+          created_at: string
+          read_at: string | null
+        }
+        Insert: {
+          id?: string
+          match_id: string
+          sender_id: string
+          content: string
+          created_at?: string
+          read_at?: string | null
+        }
+        Update: {
+          id?: string
+          match_id?: string
+          sender_id?: string
+          content?: string
+          created_at?: string
+          read_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'messages_match_id_fkey'
+            columns: ['match_id']
+            isOneToOne: false
+            referencedRelation: 'reader_matches'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'messages_sender_id_fkey'
+            columns: ['sender_id']
+            isOneToOne: false
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
       notifications: {
         Row: {
           id: string
           user_id: string
           actor_id: string
-          post_id: string
+          post_id: string | null
+          message_id: string | null
           type: string
           emoji: string | null
           read: boolean
@@ -241,7 +284,8 @@ export type Database = {
           id?: string
           user_id: string
           actor_id: string
-          post_id: string
+          post_id?: string | null
+          message_id?: string | null
           type?: string
           emoji?: string | null
           read?: boolean
@@ -251,7 +295,8 @@ export type Database = {
           id?: string
           user_id?: string
           actor_id?: string
-          post_id?: string
+          post_id?: string | null
+          message_id?: string | null
           type?: string
           emoji?: string | null
           read?: boolean
@@ -277,6 +322,13 @@ export type Database = {
             columns: ['post_id']
             isOneToOne: false
             referencedRelation: 'posts'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'notifications_message_id_fkey'
+            columns: ['message_id']
+            isOneToOne: false
+            referencedRelation: 'messages'
             referencedColumns: ['id']
           }
         ]

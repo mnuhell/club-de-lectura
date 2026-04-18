@@ -89,6 +89,14 @@ export default function MatchDetailScreen() {
           })}
         </Text>
 
+        {/* Chat button */}
+        <TouchableOpacity
+          style={styles.chatButton}
+          onPress={() => router.push(`/discover/chat/${match.matchId}`)}
+        >
+          <Text style={styles.chatButtonText}>✉ Enviar mensaje</Text>
+        </TouchableOpacity>
+
         {/* Reader bio */}
         {reader.readerBio && (
           <View style={styles.bioCard}>
@@ -210,7 +218,22 @@ const styles = StyleSheet.create({
     color: '#F2E8D530',
     fontSize: 11,
     fontFamily: 'SpaceMono',
+    marginBottom: 16,
+  },
+  chatButton: {
+    backgroundColor: '#C8853A',
+    borderRadius: 14,
+    paddingHorizontal: 28,
+    paddingVertical: 14,
+    width: '100%',
+    alignItems: 'center',
     marginBottom: 28,
+  },
+  chatButtonText: {
+    color: '#0D0A06',
+    fontSize: 15,
+    fontFamily: 'SpaceMono',
+    fontWeight: '700',
   },
   bioCard: {
     backgroundColor: '#161009',

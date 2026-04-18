@@ -7,6 +7,7 @@ export default function DiscoverLayout() {
       <Stack.Screen name="matches" />
       <Stack.Screen name="setup" options={{ presentation: 'modal' }} />
       <Stack.Screen name="match/[id]" />
+      <Stack.Screen name="chat/[matchId]" />
     </Stack>
   )
 }

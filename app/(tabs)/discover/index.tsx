@@ -20,15 +20,23 @@ export default function DiscoverScreen() {
   const userId = user?.id ?? ''
 
   const { genres, loading: genresLoading } = useReaderPreferences(userId)
-  const { readers, loading, error, newMatch, like, pass, clearNewMatch, reload } = useDiscover(userId)
+  const {
+    readers,
+    loading,
+    error,
+    newMatch,
+    like,
+    pass,
+    clearNewMatch,
+    reload,
+  } = useDiscover(userId)
   const { matches } = useMatches(userId)
   const [celebrationMatch, setCelebrationMatch] = useState<ReaderMatch | null>(null)
 
-  // When a match occurs, fetch the match data to show celebration
   React.useEffect(() => {
     if (newMatch) {
-      MatchingRepository.getMatches(userId).then((allMatches) => {
-        const found = allMatches.find((m) => m.matchId === newMatch)
+      MatchingRepository.getMatches(userId).then(allMatches => {
+        const found = allMatches.find(m => m.matchId === newMatch)
         if (found) setCelebrationMatch(found)
         clearNewMatch()
       })
@@ -52,7 +60,6 @@ export default function DiscoverScreen() {
     )
   }
 
-  // No genres set — prompt setup
   if (genres.length === 0) {
     return (
       <SafeAreaView style={styles.container}>
@@ -76,7 +83,6 @@ export default function DiscoverScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Descubrir</Text>
         <TouchableOpacity
@@ -92,7 +98,6 @@ export default function DiscoverScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Card stack */}
       <View style={styles.stack}>
         {loading ? (
           <ActivityIndicator color="#C8853A" size="large" />
@@ -110,8 +115,8 @@ export default function DiscoverScreen() {
             <Text style={styles.emptyIcon}>🔭</Text>
             <Text style={styles.emptyTitle}>Sin más lectores por ahora</Text>
             <Text style={styles.emptyText}>
-              Has explorado todos los lectores disponibles en tu zona.
-              Vuelve más tarde o amplía tu ciudad.
+              Has explorado todos los lectores disponibles en tu zona. Vuelve más tarde o amplía tu
+              ciudad.
             </Text>
             <TouchableOpacity style={styles.reloadButton} onPress={reload}>
               <Text style={styles.reloadText}>Volver a buscar</Text>
@@ -124,15 +129,11 @@ export default function DiscoverScreen() {
             </TouchableOpacity>
           </View>
         ) : (
-          // Show top 2 cards (stacked visually)
           <>
             {readers.slice(0, 2).map((reader, i) => (
               <View
                 key={reader.id}
-                style={[
-                  styles.cardWrapper,
-                  i === 1 && styles.cardBehind,
-                ]}
+                style={[styles.cardWrapper, i === 1 && styles.cardBehind]}
                 pointerEvents={i === 0 ? 'auto' : 'none'}
               >
                 <ReaderCard
@@ -147,7 +148,6 @@ export default function DiscoverScreen() {
         )}
       </View>
 
-      {/* Match celebration overlay */}
       <MatchCelebration
         match={celebrationMatch}
         onViewMatch={handleViewMatch}
@@ -158,69 +158,31 @@ export default function DiscoverScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0D0A06' },
-  center: { flex: 1, backgroundColor: '#0D0A06', alignItems: 'center', justifyContent: 'center' },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#C8853A20',
-  },
-  headerTitle: {
-    color: '#F2E8D5',
-    fontSize: 22,
-    fontFamily: 'Georgia',
-    fontWeight: '700',
-  },
-  matchesButton: {
-    position: 'relative',
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  matchesIcon: {
-    color: '#C8853A',
-    fontSize: 22,
-  },
-  matchesBadge: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    backgroundColor: '#C8853A',
-    borderRadius: 8,
-    minWidth: 16,
-    height: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 3,
-  },
-  matchesBadgeText: {
-    color: '#0D0A06',
-    fontSize: 10,
-    fontFamily: 'SpaceMono',
-    fontWeight: '700',
-  },
-  stack: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 16,
+  center: { alignItems: 'center', backgroundColor: '#0D0A06', flex: 1, justifyContent: 'center' },
+  container: { backgroundColor: '#0D0A06', flex: 1 },
+  cardBehind: {
+    opacity: 0.7,
+    transform: [{ scale: 0.95 }, { translateY: 10 }],
   },
   cardWrapper: {
     position: 'absolute',
     width: '100%',
   },
-  cardBehind: {
-    transform: [{ scale: 0.95 }, { translateY: 10 }],
-    opacity: 0.7,
+  editProfileButton: {
+    paddingVertical: 10,
+  },
+  editProfileText: {
+    color: '#F2E8D550',
+    fontFamily: 'SpaceMono',
+    fontSize: 13,
+  },
+  emptyIcon: {
+    fontSize: 56,
+    marginBottom: 16,
   },
   emptySetup: {
-    flex: 1,
     alignItems: 'center',
+    flex: 1,
     justifyContent: 'center',
     padding: 32,
   },
@@ -228,26 +190,79 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 32,
   },
-  emptyIcon: {
-    fontSize: 56,
-    marginBottom: 16,
+  emptyText: {
+    color: '#F2E8D560',
+    fontFamily: 'Georgia',
+    fontStyle: 'italic',
+    fontSize: 14,
+    lineHeight: 22,
+    marginBottom: 28,
+    textAlign: 'center',
   },
   emptyTitle: {
     color: '#F2E8D5',
-    fontSize: 20,
     fontFamily: 'Georgia',
+    fontSize: 20,
     fontWeight: '700',
     marginBottom: 12,
     textAlign: 'center',
   },
-  emptyText: {
-    color: '#F2E8D560',
-    fontSize: 14,
+  header: {
+    alignItems: 'center',
+    borderBottomColor: '#C8853A20',
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+  },
+  headerTitle: {
+    color: '#F2E8D5',
     fontFamily: 'Georgia',
-    fontStyle: 'italic',
-    textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: 28,
+    fontSize: 22,
+    fontWeight: '700',
+  },
+  matchesBadge: {
+    alignItems: 'center',
+    backgroundColor: '#C8853A',
+    borderRadius: 8,
+    height: 16,
+    justifyContent: 'center',
+    minWidth: 16,
+    paddingHorizontal: 3,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
+  matchesBadgeText: {
+    color: '#0D0A06',
+    fontFamily: 'SpaceMono',
+    fontSize: 10,
+    fontWeight: '700',
+  },
+  matchesButton: {
+    alignItems: 'center',
+    height: 40,
+    justifyContent: 'center',
+    position: 'relative',
+    width: 40,
+  },
+  matchesIcon: {
+    color: '#C8853A',
+    fontSize: 22,
+  },
+  reloadButton: {
+    borderColor: '#C8853A',
+    borderRadius: 12,
+    borderWidth: 1,
+    marginBottom: 12,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+  },
+  reloadText: {
+    color: '#C8853A',
+    fontFamily: 'SpaceMono',
+    fontSize: 14,
   },
   setupButton: {
     backgroundColor: '#C8853A',
@@ -257,29 +272,14 @@ const styles = StyleSheet.create({
   },
   setupButtonText: {
     color: '#0D0A06',
-    fontSize: 15,
     fontFamily: 'SpaceMono',
+    fontSize: 15,
     fontWeight: '700',
   },
-  reloadButton: {
-    borderWidth: 1,
-    borderColor: '#C8853A',
-    borderRadius: 12,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    marginBottom: 12,
-  },
-  reloadText: {
-    color: '#C8853A',
-    fontSize: 14,
-    fontFamily: 'SpaceMono',
-  },
-  editProfileButton: {
-    paddingVertical: 10,
-  },
-  editProfileText: {
-    color: '#F2E8D550',
-    fontSize: 13,
-    fontFamily: 'SpaceMono',
+  stack: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 16,
   },
 })
