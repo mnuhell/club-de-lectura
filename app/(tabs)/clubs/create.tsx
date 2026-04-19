@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import {
   View,
   Text,
@@ -10,11 +10,186 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Image,
+  FlatList,
 } from 'react-native'
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker'
 import { useRouter } from 'expo-router'
 import { colors } from '@/src/ui/theme'
 import { useClubs } from '@/src/ui/hooks/useClubs'
+import { useBookSearch } from '@/src/ui/hooks/useBookSearch'
 import { useAuth } from '@/src/ui/hooks/useAuth'
+import type { Book } from '@/src/domain'
+
+// ─── DateInput ───────────────────────────────────────────────────────────────
+
+function formatDisplay(date: Date, withTime: boolean): string {
+  const d = date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' })
+  if (!withTime) return d
+  const t = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+  return `${d} ${t}`
+}
+
+function DateInput({
+  value,
+  onChange,
+  mode,
+  placeholder,
+}: {
+  value: Date | null
+  onChange: (date: Date | null) => void
+  mode: 'date' | 'datetime'
+  placeholder: string
+}) {
+  const [showPicker, setShowPicker] = useState(false)
+
+  function handleChange(_event: DateTimePickerEvent, selected?: Date) {
+    if (Platform.OS === 'android') setShowPicker(false)
+    if (selected) onChange(selected)
+  }
+
+  return (
+    <View>
+      <TouchableOpacity style={styles.dateButton} onPress={() => setShowPicker(v => !v)}>
+        <Text style={value ? styles.dateValue : styles.datePlaceholder}>
+          {value ? formatDisplay(value, mode === 'datetime') : placeholder}
+        </Text>
+        <Text style={styles.dateIcon}>📅</Text>
+      </TouchableOpacity>
+
+      {showPicker && (
+        <View style={styles.pickerContainer}>
+          <DateTimePicker
+            value={value ?? new Date()}
+            mode={mode}
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            onChange={handleChange}
+            locale="es-ES"
+          />
+          {Platform.OS === 'ios' && (
+            <View style={styles.pickerActions}>
+              {value && (
+                <TouchableOpacity
+                  onPress={() => {
+                    onChange(null)
+                    setShowPicker(false)
+                  }}
+                >
+                  <Text style={styles.pickerClear}>Quitar</Text>
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity onPress={() => setShowPicker(false)}>
+                <Text style={styles.pickerDone}>Hecho</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      )}
+    </View>
+  )
+}
+
+// ─── BookPicker ──────────────────────────────────────────────────────────────
+
+function BookPicker({
+  userId,
+  selected,
+  onSelect,
+}: {
+  userId: string
+  selected: Book | null
+  onSelect: (book: Book | null) => void
+}) {
+  const [query, setQuery] = useState('')
+  const { results, loading, search } = useBookSearch(userId)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  function handleChange(text: string) {
+    setQuery(text)
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    if (text.length >= 3) {
+      debounceRef.current = setTimeout(() => search(text), 500)
+    }
+  }
+
+  if (selected) {
+    return (
+      <View style={styles.selectedBook}>
+        {selected.coverUrl ? (
+          <Image source={{ uri: selected.coverUrl }} style={styles.selectedCover} />
+        ) : (
+          <View style={styles.selectedCoverFallback} />
+        )}
+        <View style={styles.selectedBookInfo}>
+          <Text style={styles.selectedBookTitle} numberOfLines={2}>
+            {selected.title}
+          </Text>
+          <Text style={styles.selectedBookAuthor} numberOfLines={1}>
+            {selected.author}
+          </Text>
+        </View>
+        <TouchableOpacity onPress={() => onSelect(null)} style={styles.removeBook}>
+          <Text style={styles.removeBookText}>✕</Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
+  return (
+    <View>
+      <TextInput
+        style={styles.input}
+        value={query}
+        onChangeText={handleChange}
+        placeholder="Busca por título o autor..."
+        placeholderTextColor={colors.textMuted}
+        returnKeyType="search"
+      />
+      {loading && (
+        <ActivityIndicator color={colors.amber} style={{ marginTop: 8 }} size="small" />
+      )}
+      {results.length > 0 && (
+        <FlatList
+          data={results.slice(0, 5)}
+          keyExtractor={b => b.externalId ?? b.id}
+          scrollEnabled={false}
+          style={styles.searchResults}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.searchResult}
+              onPress={() => {
+                onSelect(item)
+                setQuery('')
+              }}
+            >
+              {item.coverUrl ? (
+                <Image source={{ uri: item.coverUrl }} style={styles.resultCover} />
+              ) : (
+                <View style={styles.resultCoverFallback} />
+              )}
+              <View style={styles.resultInfo}>
+                <Text style={styles.resultTitle} numberOfLines={1}>
+                  {item.title}
+                </Text>
+                <Text style={styles.resultAuthor} numberOfLines={1}>
+                  {item.author}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        />
+      )}
+    </View>
+  )
+}
+
+// ─── SectionHeader ───────────────────────────────────────────────────────────
+
+function SectionHeader({ title }: { title: string }) {
+  return <Text style={styles.sectionHeader}>{title}</Text>
+}
+
+// ─── Main screen ─────────────────────────────────────────────────────────────
 
 export default function CreateClubScreen() {
   const router = useRouter()
@@ -24,14 +199,40 @@ export default function CreateClubScreen() {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [isPrivate, setIsPrivate] = useState(false)
+
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null)
+
+  const [startDate, setStartDate] = useState<Date | null>(null)
+  const [meetingDate, setMeetingDate] = useState<Date | null>(null)
+
+  const [bookstoreName, setBookstoreName] = useState('')
+  const [bookstoreUrl, setBookstoreUrl] = useState('')
+  const [bookstoreAddress, setBookstoreAddress] = useState('')
+  const [bookstorePhone, setBookstorePhone] = useState('')
+
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   async function handleCreate() {
+    if (!name.trim()) {
+      setError('El nombre del club es obligatorio')
+      return
+    }
     setError(null)
     setLoading(true)
     try {
-      await create({ name, description: description.trim() || null, isPrivate })
+      await create({
+        name: name.trim(),
+        description: description.trim() || null,
+        isPrivate,
+        book: selectedBook,
+        startDate: startDate ? startDate.toISOString().split('T')[0] : null,
+        meetingDate: meetingDate ? meetingDate.toISOString() : null,
+        bookstoreName: bookstoreName.trim() || null,
+        bookstoreUrl: bookstoreUrl.trim() || null,
+        bookstoreAddress: bookstoreAddress.trim() || null,
+        bookstorePhone: bookstorePhone.trim() || null,
+      })
       router.back()
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'No se pudo crear el club')
@@ -46,7 +247,10 @@ export default function CreateClubScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={styles.label}>Nombre del club *</Text>
+        {/* ── Club ── */}
+        <SectionHeader title="Datos del club" />
+
+        <Text style={styles.label}>Nombre *</Text>
         <TextInput
           style={styles.input}
           value={name}
@@ -82,6 +286,83 @@ export default function CreateClubScreen() {
           />
         </View>
 
+        {/* ── Libro ── */}
+        <SectionHeader title="Libro a leer" />
+        <Text style={styles.label}>Buscar libro</Text>
+        <BookPicker
+          userId={user?.id ?? ''}
+          selected={selectedBook}
+          onSelect={setSelectedBook}
+        />
+
+        {/* ── Fechas ── */}
+        <SectionHeader title="Fechas" />
+
+        <Text style={styles.label}>Inicio de lectura</Text>
+        <DateInput
+          value={startDate}
+          onChange={setStartDate}
+          mode="date"
+          placeholder="Selecciona una fecha"
+        />
+
+        <Text style={styles.label}>Reunión del club</Text>
+        <DateInput
+          value={meetingDate}
+          onChange={setMeetingDate}
+          mode="datetime"
+          placeholder="Selecciona fecha y hora"
+        />
+
+        {/* ── Librería ── */}
+        <SectionHeader title="Librería colaboradora" />
+        <Text style={styles.sectionHint}>
+          Añade los datos de la librería donde los lectores pueden comprar o reservar el libro.
+        </Text>
+
+        <Text style={styles.label}>Nombre de la librería</Text>
+        <TextInput
+          style={styles.input}
+          value={bookstoreName}
+          onChangeText={setBookstoreName}
+          placeholder="Librería Cervantes..."
+          placeholderTextColor={colors.textMuted}
+          maxLength={120}
+        />
+
+        <Text style={styles.label}>Web / enlace de compra</Text>
+        <TextInput
+          style={styles.input}
+          value={bookstoreUrl}
+          onChangeText={setBookstoreUrl}
+          placeholder="https://libreria.com/libro"
+          placeholderTextColor={colors.textMuted}
+          keyboardType="url"
+          autoCapitalize="none"
+          maxLength={300}
+        />
+
+        <Text style={styles.label}>Dirección</Text>
+        <TextInput
+          style={styles.input}
+          value={bookstoreAddress}
+          onChangeText={setBookstoreAddress}
+          placeholder="Calle Mayor 1, Madrid"
+          placeholderTextColor={colors.textMuted}
+          maxLength={200}
+        />
+
+        <Text style={styles.label}>Teléfono</Text>
+        <TextInput
+          style={styles.input}
+          value={bookstorePhone}
+          onChangeText={setBookstorePhone}
+          placeholder="+34 91 000 00 00"
+          placeholderTextColor={colors.textMuted}
+          keyboardType="phone-pad"
+          maxLength={30}
+        />
+
         {error && <Text style={styles.error}>{error}</Text>}
 
         <TouchableOpacity
@@ -116,7 +397,21 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   container: { backgroundColor: colors.bg, flex: 1 },
-  content: { gap: 8, padding: 24 },
+  content: { gap: 8, padding: 24, paddingBottom: 48 },
+  dateButton: {
+    alignItems: 'center',
+    backgroundColor: colors.surfaceUp,
+    borderColor: colors.border,
+    borderRadius: 10,
+    borderWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  dateIcon: { fontSize: 16 },
+  datePlaceholder: { color: colors.textMuted, fontFamily: 'Georgia', fontSize: 15 },
+  dateValue: { color: colors.textPrimary, fontFamily: 'Georgia', fontSize: 15 },
   error: { color: colors.error, fontFamily: 'SpaceMono', fontSize: 12, marginTop: 8 },
   input: {
     backgroundColor: colors.surfaceUp,
@@ -135,14 +430,94 @@ const styles = StyleSheet.create({
     fontFamily: 'SpaceMono',
     fontSize: 11,
     marginBottom: 6,
-    marginTop: 16,
+    marginTop: 12,
+  },
+  pickerActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  pickerClear: { color: colors.textMuted, fontFamily: 'SpaceMono', fontSize: 13 },
+  pickerContainer: {
+    backgroundColor: colors.surfaceUp,
+    borderColor: colors.border,
+    borderRadius: 10,
+    borderWidth: 1,
+    marginTop: 6,
+    overflow: 'hidden',
+  },
+  pickerDone: { color: colors.amber, fontFamily: 'SpaceMono', fontSize: 13 },
+  removeBook: { alignItems: 'center', height: 28, justifyContent: 'center', width: 28 },
+  removeBookText: { color: colors.textMuted, fontSize: 16 },
+  resultAuthor: { color: colors.textSecondary, fontFamily: 'SpaceMono', fontSize: 10 },
+  resultCover: { borderRadius: 4, height: 44, width: 30 },
+  resultCoverFallback: { backgroundColor: colors.border, borderRadius: 4, height: 44, width: 30 },
+  resultInfo: { flex: 1, gap: 3 },
+  resultTitle: { color: colors.textPrimary, fontFamily: 'Georgia', fontSize: 13 },
+  searchResult: {
+    alignItems: 'center',
+    borderBottomColor: colors.border,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    gap: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  searchResults: {
+    backgroundColor: colors.surfaceUp,
+    borderColor: colors.border,
+    borderRadius: 10,
+    borderWidth: 1,
+    marginTop: 6,
+    overflow: 'hidden',
+  },
+  sectionHeader: {
+    borderBottomColor: colors.border,
+    borderBottomWidth: 1,
+    color: colors.amber,
+    fontFamily: 'SpaceMono',
+    fontSize: 11,
+    letterSpacing: 1.5,
+    marginTop: 24,
+    paddingBottom: 8,
+    textTransform: 'uppercase',
+  },
+  sectionHint: {
+    color: colors.textMuted,
+    fontFamily: 'Georgia',
+    fontSize: 12,
+    fontStyle: 'italic',
+    lineHeight: 18,
+    marginTop: 6,
+  },
+  selectedBook: {
+    alignItems: 'center',
+    backgroundColor: colors.surfaceUp,
+    borderColor: colors.amber,
+    borderRadius: 10,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 6,
+    padding: 12,
+  },
+  selectedBookAuthor: { color: colors.textSecondary, fontFamily: 'SpaceMono', fontSize: 11 },
+  selectedBookInfo: { flex: 1, gap: 4 },
+  selectedBookTitle: { color: colors.textPrimary, fontFamily: 'Georgia', fontSize: 14 },
+  selectedCover: { borderRadius: 4, height: 54, width: 36 },
+  selectedCoverFallback: {
+    backgroundColor: colors.border,
+    borderRadius: 4,
+    height: 54,
+    width: 36,
   },
   switchHint: { color: colors.textMuted, fontFamily: 'SpaceMono', fontSize: 10, marginTop: 2 },
   switchRow: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 16,
+    marginTop: 12,
     paddingVertical: 4,
   },
 })

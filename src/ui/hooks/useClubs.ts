@@ -1,16 +1,29 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { IClubRepository } from '../../repositories'
-import type { Club, ClubWithDetails } from '../../domain'
+import type { Book, Club, ClubCreateData, ClubWithDetails } from '../../domain'
 import { ClubRepository } from '../../infrastructure/supabase/repositories'
+import { BookRepository } from '../../infrastructure/supabase/repositories'
 import { createClub, joinClub, getMyClubs } from '../../usecases/clubs'
 
 export function createUseClubsActions(repo: IClubRepository) {
   return {
-    create: (data: Pick<Club, 'name' | 'description' | 'isPrivate' | 'ownerId'>) =>
-      createClub(repo, data),
+    create: (data: ClubCreateData) => createClub(repo, data),
     join: (inviteCode: string, userId: string) => joinClub(repo, inviteCode, userId),
     fetchMyClubs: (userId: string) => getMyClubs(repo, userId),
   }
+}
+
+export type CreateClubInput = {
+  name: string
+  description: string | null
+  isPrivate: boolean
+  book?: Book | null
+  startDate?: string | null
+  meetingDate?: string | null
+  bookstoreName?: string | null
+  bookstoreUrl?: string | null
+  bookstoreAddress?: string | null
+  bookstorePhone?: string | null
 }
 
 interface ClubsState {
@@ -18,7 +31,7 @@ interface ClubsState {
   loading: boolean
   error: string | null
   refresh: () => void
-  create: (data: Pick<Club, 'name' | 'description' | 'isPrivate'>) => Promise<Club>
+  create: (data: CreateClubInput) => Promise<Club>
   join: (inviteCode: string) => Promise<void>
 }
 
@@ -46,8 +59,25 @@ export function useClubs(userId: string): ClubsState {
     if (userId) load()
   }, [userId, load])
 
-  async function create(data: Pick<Club, 'name' | 'description' | 'isPrivate'>) {
-    const club = await _actions.create({ ...data, ownerId: userId })
+  async function create(input: CreateClubInput) {
+    let currentBookId: string | null = null
+    if (input.book) {
+      const saved = await BookRepository.upsert(input.book)
+      currentBookId = saved.id
+    }
+    const club = await _actions.create({
+      name: input.name,
+      description: input.description,
+      isPrivate: input.isPrivate,
+      ownerId: userId,
+      currentBookId,
+      startDate: input.startDate ?? null,
+      meetingDate: input.meetingDate ?? null,
+      bookstoreName: input.bookstoreName ?? null,
+      bookstoreUrl: input.bookstoreUrl ?? null,
+      bookstoreAddress: input.bookstoreAddress ?? null,
+      bookstorePhone: input.bookstorePhone ?? null,
+    })
     await load()
     return club
   }

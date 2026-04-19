@@ -1,6 +1,7 @@
 import { supabase } from '../client'
 import type { IClubRepository } from '../../../repositories'
 import type { Club, ClubMember, ClubWithDetails } from '../../../domain'
+import type { ClubCreateData } from '../../../domain/Club'
 import type { Database } from '../types'
 
 type ClubRow = Database['public']['Tables']['clubs']['Row']
@@ -16,6 +17,12 @@ function mapClub(row: ClubRow): Club {
     inviteCode: row.invite_code,
     ownerId: row.owner_id,
     currentBookId: row.current_book_id,
+    startDate: row.start_date,
+    meetingDate: row.meeting_date,
+    bookstoreName: row.bookstore_name,
+    bookstoreUrl: row.bookstore_url,
+    bookstoreAddress: row.bookstore_address,
+    bookstorePhone: row.bookstore_phone,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   }
@@ -81,7 +88,7 @@ export const ClubRepository: IClubRepository = {
     })) as ClubWithDetails[]
   },
 
-  async create(fields) {
+  async create(fields: ClubCreateData) {
     const { data, error } = await supabase
       .from('clubs')
       .insert({
@@ -89,6 +96,13 @@ export const ClubRepository: IClubRepository = {
         description: fields.description,
         is_private: fields.isPrivate,
         owner_id: fields.ownerId,
+        current_book_id: fields.currentBookId ?? null,
+        start_date: fields.startDate ?? null,
+        meeting_date: fields.meetingDate ?? null,
+        bookstore_name: fields.bookstoreName ?? null,
+        bookstore_url: fields.bookstoreUrl ?? null,
+        bookstore_address: fields.bookstoreAddress ?? null,
+        bookstore_phone: fields.bookstorePhone ?? null,
       })
       .select()
       .single()

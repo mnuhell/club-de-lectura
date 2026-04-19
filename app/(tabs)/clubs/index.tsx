@@ -44,10 +44,18 @@ export default function ClubsScreen() {
       <View style={styles.header}>
         <Text style={styles.title}>Mis clubs</Text>
         <View style={styles.headerActions}>
-          <TouchableOpacity style={styles.secondaryButton} onPress={() => router.push('./join')}>
+          <TouchableOpacity
+            style={styles.secondaryButton}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onPress={() => router.push('/(tabs)/clubs/join' as any)}
+          >
             <Text style={styles.secondaryButtonText}>Unirse</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.primaryButton} onPress={() => router.push('./create')}>
+          <TouchableOpacity
+            style={styles.primaryButton}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onPress={() => router.push('/(tabs)/clubs/create' as any)}
+          >
             <Text style={styles.primaryButtonText}>+ Nuevo</Text>
           </TouchableOpacity>
         </View>

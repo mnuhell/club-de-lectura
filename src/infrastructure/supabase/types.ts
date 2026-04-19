@@ -113,6 +113,10 @@ export type Database = {
       }
       clubs: {
         Row: {
+          bookstore_address: string | null
+          bookstore_name: string | null
+          bookstore_phone: string | null
+          bookstore_url: string | null
           cover_url: string | null
           created_at: string
           current_book_id: string | null
@@ -120,11 +124,17 @@ export type Database = {
           id: string
           invite_code: string
           is_private: boolean
+          meeting_date: string | null
           name: string
           owner_id: string
+          start_date: string | null
           updated_at: string
         }
         Insert: {
+          bookstore_address?: string | null
+          bookstore_name?: string | null
+          bookstore_phone?: string | null
+          bookstore_url?: string | null
           cover_url?: string | null
           created_at?: string
           current_book_id?: string | null
@@ -132,11 +142,17 @@ export type Database = {
           id?: string
           invite_code?: string
           is_private?: boolean
+          meeting_date?: string | null
           name: string
           owner_id: string
+          start_date?: string | null
           updated_at?: string
         }
         Update: {
+          bookstore_address?: string | null
+          bookstore_name?: string | null
+          bookstore_phone?: string | null
+          bookstore_url?: string | null
           cover_url?: string | null
           created_at?: string
           current_book_id?: string | null
@@ -144,8 +160,10 @@ export type Database = {
           id?: string
           invite_code?: string
           is_private?: boolean
+          meeting_date?: string | null
           name?: string
           owner_id?: string
+          start_date?: string | null
           updated_at?: string
         }
         Relationships: [

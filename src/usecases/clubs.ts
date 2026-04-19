@@ -1,10 +1,7 @@
-import type { Club, ClubMember, ClubWithDetails } from '../domain'
+import type { Club, ClubCreateData, ClubMember, ClubWithDetails } from '../domain'
 import type { IClubRepository } from '../repositories'
 
-export async function createClub(
-  repo: IClubRepository,
-  data: Pick<Club, 'name' | 'description' | 'isPrivate' | 'ownerId'>,
-): Promise<Club> {
+export async function createClub(repo: IClubRepository, data: ClubCreateData): Promise<Club> {
   if (!data.name.trim()) throw new Error('El nombre del club es obligatorio')
   return repo.create(data)
 }

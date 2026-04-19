@@ -9,8 +9,28 @@ export type Club = {
   inviteCode: string
   ownerId: string
   currentBookId: string | null
+  startDate: string | null
+  meetingDate: string | null
+  bookstoreName: string | null
+  bookstoreUrl: string | null
+  bookstoreAddress: string | null
+  bookstorePhone: string | null
   createdAt: string
   updatedAt: string
+}
+
+export type ClubCreateData = {
+  name: string
+  description: string | null
+  isPrivate: boolean
+  ownerId: string
+  currentBookId?: string | null
+  startDate?: string | null
+  meetingDate?: string | null
+  bookstoreName?: string | null
+  bookstoreUrl?: string | null
+  bookstoreAddress?: string | null
+  bookstorePhone?: string | null
 }
 
 export type ClubMember = {
