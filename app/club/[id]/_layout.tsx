@@ -6,6 +6,7 @@ export default function ClubLayout() {
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="reading" />
+      <Stack.Screen name="member/[userId]" />
     </Stack>
   )
 }

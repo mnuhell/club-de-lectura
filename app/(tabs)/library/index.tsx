@@ -55,7 +55,11 @@ function BookCard({
     <TouchableOpacity style={styles.card} onPress={handleOptions} activeOpacity={0.75}>
       <View style={styles.cardCover}>
         {item.book.coverUrl ? (
-          <Image source={{ uri: item.book.coverUrl }} style={styles.cardCoverImage} resizeMode="cover" />
+          <Image
+            source={{ uri: item.book.coverUrl }}
+            style={styles.cardCoverImage}
+            resizeMode="cover"
+          />
         ) : (
           <Ionicons name="book-outline" size={24} color={colors.amber} />
         )}
@@ -77,10 +81,15 @@ function BookCard({
 export default function LibraryScreen() {
   const router = useRouter()
   const { user } = useAuth()
+
   const { books, loading, error, setStatus, remove, refresh } = useLibrary(user?.id ?? '')
   const [activeTab, setActiveTab] = useState<BookStatus>('reading')
 
-  useFocusEffect(useCallback(() => { refresh() }, [refresh]))
+  useFocusEffect(
+    useCallback(() => {
+      refresh()
+    }, [refresh]),
+  )
 
   const filtered = books.filter(b => b.status === activeTab)
 

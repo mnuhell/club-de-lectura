@@ -46,13 +46,22 @@ function Tag({ icon, label, color }: { icon: string; label: string; color?: stri
 
 // ─── Member row ──────────────────────────────────────────────────────────────
 
-function MemberRow({ member }: { member: ClubMember }) {
+function MemberRow({
+  member,
+  clubId,
+  isMe,
+}: {
+  member: ClubMember
+  clubId: string
+  isMe: boolean
+}) {
+  const router = useRouter()
   const name = member.displayName ?? member.username ?? 'Lector'
   const initial = name.charAt(0).toUpperCase()
   const roleColor = ROLE_COLOR[member.role] ?? colors.textMuted
   const roleLabel = ROLE_LABEL[member.role] ?? member.role
 
-  return (
+  const inner = (
     <View style={styles.memberRow}>
       {member.avatarUrl ? (
         <Image source={{ uri: member.avatarUrl }} style={styles.memberAvatar} />
@@ -74,7 +83,19 @@ function MemberRow({ member }: { member: ClubMember }) {
       >
         <Text style={[styles.roleBadgeText, { color: roleColor }]}>{roleLabel}</Text>
       </View>
+      {!isMe && <Ionicons name="chevron-forward" size={14} color={colors.textMuted} />}
     </View>
+  )
+
+  if (isMe) return inner
+
+  return (
+    <TouchableOpacity
+      activeOpacity={0.7}
+      onPress={() => router.push(`/club/${clubId}/member/${member.userId}` as never)}
+    >
+      {inner}
+    </TouchableOpacity>
   )
 }
 
@@ -138,7 +159,9 @@ export default function ClubDetailScreen() {
       <FlatList
         data={members}
         keyExtractor={m => m.userId}
-        renderItem={({ item }) => <MemberRow member={item} />}
+        renderItem={({ item }) => (
+          <MemberRow member={item} clubId={id} isMe={item.userId === user?.id} />
+        )}
         onRefresh={refresh}
         refreshing={loading}
         ListHeaderComponent={
