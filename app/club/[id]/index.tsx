@@ -4,10 +4,13 @@ import { useClubDetail } from '@/src/ui/hooks/useClubDetail'
 import { colors } from '@/src/ui/theme'
 import { Ionicons } from '@expo/vector-icons'
 import { useLocalSearchParams, useRouter } from 'expo-router'
+import * as Clipboard from 'expo-clipboard'
 import {
   ActivityIndicator,
   Alert,
   FlatList,
+  Image,
+  Share,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -81,19 +84,10 @@ export default function ClubDetailScreen() {
     )
   }
 
+  const coverUrl = club.currentBook?.coverUrl ?? null
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={22} color={colors.textSecondary} />
-        </TouchableOpacity>
-        {club.myRole !== 'owner' && (
-          <TouchableOpacity onPress={handleLeave} style={styles.leaveButton}>
-            <Text style={styles.leaveText}>Abandonar</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-
       <FlatList
         data={members}
         keyExtractor={m => m.userId}
@@ -101,6 +95,29 @@ export default function ClubDetailScreen() {
         onRefresh={refresh}
         refreshing={loading}
         ListHeaderComponent={
+          <>
+            {/* ── Portada a ancho completo ── */}
+            <View style={styles.coverHero}>
+              {coverUrl ? (
+                <Image source={{ uri: coverUrl }} style={styles.coverImage} resizeMode="contain" />
+              ) : (
+                <View style={styles.coverFallback}>
+                  <Ionicons name="book-outline" size={48} color={colors.border} />
+                </View>
+              )}
+              {/* Header flotando sobre la imagen */}
+              <View style={styles.headerOverlay}>
+                <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                  <Ionicons name="arrow-back" size={22} color={colors.textPrimary} />
+                </TouchableOpacity>
+                {club.myRole !== 'owner' && (
+                  <TouchableOpacity onPress={handleLeave} style={styles.leaveButton}>
+                    <Text style={styles.leaveText}>Abandonar</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
+
           <View style={styles.heroSection}>
             <Text style={styles.clubName}>{club.name}</Text>
             {club.description && <Text style={styles.clubDesc}>{club.description}</Text>}
@@ -144,10 +161,34 @@ export default function ClubDetailScreen() {
             <View style={styles.inviteRow}>
               <Text style={styles.inviteLabel}>Código de invitación</Text>
               <Text style={styles.inviteCode}>{club.inviteCode}</Text>
+              <View style={styles.inviteActions}>
+                <TouchableOpacity
+                  style={styles.inviteButton}
+                  onPress={async () => {
+                    await Clipboard.setStringAsync(club.inviteCode)
+                    Alert.alert('Copiado', 'Código copiado al portapapeles')
+                  }}
+                >
+                  <Ionicons name="copy-outline" size={14} color={colors.amber} />
+                  <Text style={styles.inviteButtonText}>Copiar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.inviteButton}
+                  onPress={() =>
+                    Share.share({
+                      message: `Únete a mi club de lectura "${club.name}" en Folio con el código: ${club.inviteCode}`,
+                    })
+                  }
+                >
+                  <Ionicons name="share-outline" size={14} color={colors.amber} />
+                  <Text style={styles.inviteButtonText}>Compartir</Text>
+                </TouchableOpacity>
+              </View>
             </View>
 
             <Text style={styles.sectionTitle}>Miembros ({members.length})</Text>
           </View>
+          </>
         }
         contentContainerStyle={styles.list}
       />
@@ -156,8 +197,38 @@ export default function ClubDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  backButton: { padding: 4 },
+  backButton: {
+    backgroundColor: '#00000040',
+    borderRadius: 20,
+    padding: 6,
+  },
   centered: { alignItems: 'center', flex: 1, gap: 12, justifyContent: 'center' },
+  coverFallback: {
+    alignItems: 'center',
+    backgroundColor: colors.surfaceUp,
+    flex: 1,
+    justifyContent: 'center',
+  },
+  coverHero: {
+    height: 280,
+    width: '100%',
+  },
+  coverImage: {
+    backgroundColor: colors.surface,
+    height: '100%',
+    width: '100%',
+  },
+  headerOverlay: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    left: 0,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
   clubDesc: {
     color: colors.textSecondary,
     fontFamily: 'Georgia',
@@ -197,8 +268,21 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   inviteLabel: { color: colors.textMuted, fontFamily: 'SpaceMono', fontSize: 10 },
+  inviteActions: { flexDirection: 'row', gap: 8, marginTop: 12 },
+  inviteButton: {
+    alignItems: 'center',
+    borderColor: colors.amber,
+    borderRadius: 20,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 5,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+  },
+  inviteButtonText: { color: colors.amber, fontFamily: 'SpaceMono', fontSize: 11 },
   inviteRow: { marginTop: 20 },
   leaveButton: {
+    backgroundColor: '#00000040',
     borderColor: colors.error,
     borderRadius: 16,
     borderWidth: 1,
