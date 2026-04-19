@@ -33,12 +33,8 @@ async function registerForPushNotifications(): Promise<string | null> {
     })
   }
 
-  const projectId =
-    Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId
-  if (!projectId) {
-    console.warn('[Push] No projectId found — run: npx eas init')
-    return null
-  }
+  const projectId = Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId
+  if (!projectId) return null
   const token = (await Notifications.getExpoPushTokenAsync({ projectId })).data
   return token
 }
@@ -47,18 +43,9 @@ export function usePushNotifications(userId: string) {
   useEffect(() => {
     if (!userId) return
 
-    registerForPushNotifications().then(async token => {
-      if (!token) {
-        console.log('[Push] No token — simulator or permission denied')
-        return
-      }
-      console.log('[Push] Token obtained:', token)
-      const { error } = await supabase
-        .from('profiles')
-        .update({ push_token: token })
-        .eq('id', userId)
-      if (error) console.error('[Push] Failed to save token:', error.message, error.code)
-      else console.log('[Push] Token saved successfully')
+    registerForPushNotifications().then(token => {
+      if (!token) return
+      supabase.from('profiles').update({ push_token: token }).eq('id', userId)
     })
 
     // Navigate to chat when user taps a notification

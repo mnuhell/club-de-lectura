@@ -1,12 +1,6 @@
+import { SafeAreaView } from 'react-native-safe-area-context'
 import React, { useState } from 'react'
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ActivityIndicator,
-  SafeAreaView,
-} from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { router } from 'expo-router'
 import { useAuth } from '@/src/ui/hooks/useAuth'
 import { useDiscover, useMatches, useReaderPreferences } from '@/src/ui/hooks/useDiscover'

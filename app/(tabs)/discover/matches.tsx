@@ -1,3 +1,4 @@
+import { SafeAreaView } from 'react-native-safe-area-context'
 import type { ReaderMatch } from '@/src/domain/ReaderProfile'
 import { GenreChip } from '@/src/ui/components/GenreChip'
 import { useAuth } from '@/src/ui/hooks/useAuth'
@@ -8,7 +9,6 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,

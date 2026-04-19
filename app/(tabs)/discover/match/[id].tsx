@@ -1,3 +1,4 @@
+import { SafeAreaView } from 'react-native-safe-area-context'
 import React from 'react'
 import {
   View,
@@ -7,19 +8,20 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
-  SafeAreaView,
 } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
 import { useAuth } from '@/src/ui/hooks/useAuth'
 import { useMatches } from '@/src/ui/hooks/useDiscover'
+import { useChat } from '@/src/ui/hooks/useChat'
 import { GenreChip } from '@/src/ui/components/GenreChip'
 
 export default function MatchDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const { user } = useAuth()
   const { matches, loading } = useMatches(user?.id ?? '')
-
   const match = matches.find(m => m.matchId === id)
+  const { messages } = useChat(match?.matchId ?? '', user?.id ?? '')
+  const hasMessages = messages.length > 0
 
   if (loading) {
     return (
@@ -92,7 +94,9 @@ export default function MatchDetailScreen() {
           style={styles.chatButton}
           onPress={() => router.push(`/discover/chat/${match.matchId}`)}
         >
-          <Text style={styles.chatButtonText}>✉ Enviar mensaje</Text>
+          <Text style={styles.chatButtonText}>
+            {hasMessages ? '💬 Ver conversación' : '✉ Enviar mensaje'}
+          </Text>
         </TouchableOpacity>
 
         {/* Reader bio */}
