@@ -1,7 +1,7 @@
-import { supabase } from '../client'
-import type { IClubRepository } from '../../../repositories'
 import type { Club, ClubMember, ClubWithDetails } from '../../../domain'
 import type { ClubCreateData } from '../../../domain/Club'
+import type { IClubRepository } from '../../../repositories'
+import { supabase } from '../client'
 import type { Database } from '../types'
 
 type ClubRow = Database['public']['Tables']['clubs']['Row']
@@ -29,7 +29,13 @@ function mapClub(row: ClubRow): Club {
   }
 }
 
-function mapMember(row: MemberRow & { display_name?: string | null; username?: string | null; avatar_url?: string | null }): ClubMember {
+function mapMember(
+  row: MemberRow & {
+    display_name?: string | null
+    username?: string | null
+    avatar_url?: string | null
+  },
+): ClubMember {
   return {
     clubId: row.club_id,
     userId: row.user_id,
