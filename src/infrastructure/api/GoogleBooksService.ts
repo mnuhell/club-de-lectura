@@ -44,7 +44,7 @@ const API_KEY = process.env.EXPO_PUBLIC_GOOGLE_BOOKS_API_KEY ?? ''
 export const GoogleBooksService: IBookSearchService = {
   async search(query: string): Promise<Book[]> {
     const key = API_KEY ? `&key=${API_KEY}` : ''
-    const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=20&langRestrict=es${key}`
+    const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=20${key}`
     const res = await fetch(url)
     if (!res.ok) throw new Error('Error al buscar en Google Books')
     const json = await res.json()

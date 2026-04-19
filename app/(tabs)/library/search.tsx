@@ -5,7 +5,7 @@ import { colors } from '@/src/ui/theme'
 import { Ionicons } from '@expo/vector-icons'
 import { CameraView, useCameraPermissions } from 'expo-camera'
 import { useRouter } from 'expo-router'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import {
   ActivityIndicator,
   Alert,
@@ -100,6 +100,15 @@ export default function SearchScreen() {
   const { results, loading, error, search, save } = useBookSearch(user?.id ?? '')
   const [query, setQuery] = useState('')
   const [saving, setSaving] = useState(false)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  function handleQueryChange(text: string) {
+    setQuery(text)
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    if (text.trim().length >= 3) {
+      debounceRef.current = setTimeout(() => search(text.trim()), 500)
+    }
+  }
   const [showScanner, setShowScanner] = useState(false)
   const [permission, requestPermission] = useCameraPermissions()
 
@@ -154,7 +163,7 @@ export default function SearchScreen() {
             placeholder="Título, autor o ISBN..."
             placeholderTextColor={colors.textMuted}
             value={query}
-            onChangeText={setQuery}
+            onChangeText={handleQueryChange}
             onSubmitEditing={() => handleSearch()}
             returnKeyType="search"
             autoFocus

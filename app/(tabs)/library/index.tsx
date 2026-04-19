@@ -3,12 +3,13 @@ import { useAuth } from '@/src/ui/hooks/useAuth'
 import { useLibrary } from '@/src/ui/hooks/useLibrary'
 import { colors } from '@/src/ui/theme'
 import { Ionicons } from '@expo/vector-icons'
-import { useRouter } from 'expo-router'
-import { useState } from 'react'
+import { useFocusEffect, useRouter } from 'expo-router'
+import { useCallback, useState } from 'react'
 import {
   ActivityIndicator,
   Alert,
   FlatList,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -53,7 +54,9 @@ function BookCard({
   return (
     <TouchableOpacity style={styles.card} onPress={handleOptions} activeOpacity={0.75}>
       <View style={styles.cardCover}>
-        {item.book.coverUrl ? null : (
+        {item.book.coverUrl ? (
+          <Image source={{ uri: item.book.coverUrl }} style={styles.cardCoverImage} resizeMode="cover" />
+        ) : (
           <Ionicons name="book-outline" size={24} color={colors.amber} />
         )}
       </View>
@@ -76,6 +79,8 @@ export default function LibraryScreen() {
   const { user } = useAuth()
   const { books, loading, error, setStatus, remove, refresh } = useLibrary(user?.id ?? '')
   const [activeTab, setActiveTab] = useState<BookStatus>('reading')
+
+  useFocusEffect(useCallback(() => { refresh() }, [refresh]))
 
   const filtered = books.filter(b => b.status === activeTab)
 
@@ -182,8 +187,10 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     height: 56,
     justifyContent: 'center',
+    overflow: 'hidden',
     width: 40,
   },
+  cardCoverImage: { height: '100%', width: '100%' },
   cardMeta: { color: colors.textMuted, fontFamily: 'SpaceMono', fontSize: 10 },
   cardTitle: { color: colors.textPrimary, fontFamily: 'Georgia', fontSize: 15 },
   centered: { alignItems: 'center', flex: 1, gap: 8, justifyContent: 'center' },
