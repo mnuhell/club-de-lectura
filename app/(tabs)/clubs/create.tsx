@@ -1,25 +1,25 @@
-import { useState, useRef } from 'react'
+import type { Book } from '@/src/domain'
+import { useAuth } from '@/src/ui/hooks/useAuth'
+import { useBookSearch } from '@/src/ui/hooks/useBookSearch'
+import { useClubs } from '@/src/ui/hooks/useClubs'
+import { colors } from '@/src/ui/theme'
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker'
+import { useRouter } from 'expo-router'
+import { useRef, useState } from 'react'
 import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  Switch,
   ActivityIndicator,
+  FlatList,
+  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Image,
-  FlatList,
+  StyleSheet,
+  Switch,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native'
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker'
-import { useRouter } from 'expo-router'
-import { colors } from '@/src/ui/theme'
-import { useClubs } from '@/src/ui/hooks/useClubs'
-import { useBookSearch } from '@/src/ui/hooks/useBookSearch'
-import { useAuth } from '@/src/ui/hooks/useAuth'
-import type { Book } from '@/src/domain'
 
 // ─── DateInput ───────────────────────────────────────────────────────────────
 
@@ -145,10 +145,7 @@ function BookPicker({
         placeholderTextColor={colors.textMuted}
         returnKeyType="search"
       />
-      {loading && (
-        <ActivityIndicator color={colors.amber} style={{ marginTop: 8 }} size="small" />
-      )}
-      {results.length > 0 && (
+      {loading && results.length > 0 && (
         <FlatList
           data={results.slice(0, 5)}
           keyExtractor={b => b.externalId ?? b.id}
@@ -289,17 +286,9 @@ export default function CreateClubScreen() {
         {/* ── Libro ── */}
         <SectionHeader title="Libro a leer" />
         <Text style={styles.label}>Buscar libro</Text>
-        <BookPicker
-          userId={user?.id ?? ''}
-          selected={selectedBook}
-          onSelect={setSelectedBook}
-        />
+        <BookPicker userId={user?.id ?? ''} selected={selectedBook} onSelect={setSelectedBook} />
 
-        {/* ── Fechas ── */}
-        <SectionHeader title="Fechas" />
-
-        <Text style={styles.label}>Inicio de lectura</Text>
-        <DateInput
+        {/* ── Fech ectionHeader title="FecText style={styles.label}>I <DateInput
           value={startDate}
           onChange={setStartDate}
           mode="date"
