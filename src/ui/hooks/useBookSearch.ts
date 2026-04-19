@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import type { IBookSearchService } from '../../infrastructure/api/IBookSearchService'
 import type { IBookRepository } from '../../repositories'
 import type { IUserBookRepository } from '../../repositories'
@@ -27,29 +27,35 @@ interface BookSearchState {
   save: (book: Book, status: BookStatus) => Promise<void>
 }
 
+const _actions = createUseBookSearchActions(GoogleBooksService, BookRepository, UserBookRepository)
+
 export function useBookSearch(userId: string): BookSearchState {
   const [results, setResults] = useState<Book[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const actions = createUseBookSearchActions(GoogleBooksService, BookRepository, UserBookRepository)
-
-  async function search(query: string) {
+  const search = useCallback(async (query: string) => {
+    const trimmed = query.trim()
+    if (!trimmed) return
     setLoading(true)
     setError(null)
     try {
-      const data = await actions.search(query)
+      const data = await _actions.search(trimmed)
       setResults(data)
     } catch {
       setError('No se pudo buscar. Comprueba tu conexión.')
+      setResults([])
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  async function save(book: Book, status: BookStatus) {
-    await actions.save(userId, book, status)
-  }
+  const save = useCallback(
+    async (book: Book, status: BookStatus) => {
+      await _actions.save(userId, book, status)
+    },
+    [userId],
+  )
 
   return { results, loading, error, search, save }
 }

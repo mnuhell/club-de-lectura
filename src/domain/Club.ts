@@ -9,6 +9,7 @@ export type Club = {
   inviteCode: string
   ownerId: string
   currentBookId: string | null
+  city: string | null
   startDate: string | null
   meetingDate: string | null
   closeDate: string | null
@@ -25,6 +26,7 @@ export type ClubCreateData = {
   description: string | null
   isPrivate: boolean
   ownerId: string
+  city?: string | null
   currentBookId?: string | null
   startDate?: string | null
   meetingDate?: string | null

@@ -35,6 +35,14 @@ export async function getClubDetail(
   return repo.getById(id, userId)
 }
 
+export async function discoverClubs(
+  repo: IClubRepository,
+  userId: string,
+  city?: string,
+): Promise<ClubWithDetails[]> {
+  return repo.getPublicClubs(userId, city)
+}
+
 export async function getClubMembers(repo: IClubRepository, clubId: string): Promise<ClubMember[]> {
   return repo.getMembers(clubId)
 }

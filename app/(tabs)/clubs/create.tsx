@@ -1,15 +1,13 @@
 import type { Book } from '@/src/domain'
+import { BookSearchInput } from '@/src/ui/components/BookSearchInput'
 import { useAuth } from '@/src/ui/hooks/useAuth'
-import { useBookSearch } from '@/src/ui/hooks/useBookSearch'
 import { useClubs } from '@/src/ui/hooks/useClubs'
 import { colors } from '@/src/ui/theme'
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker'
 import { useRouter } from 'expo-router'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import {
   ActivityIndicator,
-  FlatList,
-  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -84,97 +82,6 @@ function DateInput({
             </View>
           )}
         </View>
-      )}
-    </View>
-  )
-}
-
-// ─── BookPicker ──────────────────────────────────────────────────────────────
-
-function BookPicker({
-  userId,
-  selected,
-  onSelect,
-}: {
-  userId: string
-  selected: Book | null
-  onSelect: (book: Book | null) => void
-}) {
-  const [query, setQuery] = useState('')
-  const { results, loading, search } = useBookSearch(userId)
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  function handleChange(text: string) {
-    setQuery(text)
-    if (debounceRef.current) clearTimeout(debounceRef.current)
-    if (text.length >= 3) {
-      debounceRef.current = setTimeout(() => search(text), 500)
-    }
-  }
-
-  if (selected) {
-    return (
-      <View style={styles.selectedBook}>
-        {selected.coverUrl ? (
-          <Image source={{ uri: selected.coverUrl }} style={styles.selectedCover} />
-        ) : (
-          <View style={styles.selectedCoverFallback} />
-        )}
-        <View style={styles.selectedBookInfo}>
-          <Text style={styles.selectedBookTitle} numberOfLines={2}>
-            {selected.title}
-          </Text>
-          <Text style={styles.selectedBookAuthor} numberOfLines={1}>
-            {selected.author}
-          </Text>
-        </View>
-        <TouchableOpacity onPress={() => onSelect(null)} style={styles.removeBook}>
-          <Text style={styles.removeBookText}>✕</Text>
-        </TouchableOpacity>
-      </View>
-    )
-  }
-
-  return (
-    <View>
-      <TextInput
-        style={styles.input}
-        value={query}
-        onChangeText={handleChange}
-        placeholder="Busca por título o autor..."
-        placeholderTextColor={colors.textMuted}
-        returnKeyType="search"
-      />
-      {loading && results.length > 0 && (
-        <FlatList
-          data={results.slice(0, 5)}
-          keyExtractor={b => b.externalId ?? b.id}
-          scrollEnabled={false}
-          style={styles.searchResults}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.searchResult}
-              onPress={() => {
-                onSelect(item)
-                setQuery('')
-              }}
-            >
-              {item.coverUrl ? (
-                <Image source={{ uri: item.coverUrl }} style={styles.resultCover} />
-              ) : (
-                <View style={styles.resultCoverFallback} />
-              )}
-              <View style={styles.resultInfo}>
-                <Text style={styles.resultTitle} numberOfLines={1}>
-                  {item.title}
-                </Text>
-                <Text style={styles.resultAuthor} numberOfLines={1}>
-                  {item.author}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          )}
-        />
       )}
     </View>
   )
@@ -288,7 +195,11 @@ export default function CreateClubScreen() {
         {/* ── Libro ── */}
         <SectionHeader title="Libro a leer" />
         <Text style={styles.label}>Buscar libro</Text>
-        <BookPicker userId={user?.id ?? ''} selected={selectedBook} onSelect={setSelectedBook} />
+        <BookSearchInput
+          userId={user?.id ?? ''}
+          selected={selectedBook}
+          onSelect={setSelectedBook}
+        />
 
         {/* ── Fechas ── */}
         <SectionHeader title="Fechas" />
@@ -455,30 +366,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   pickerDone: { color: colors.amber, fontFamily: 'SpaceMono', fontSize: 13 },
-  removeBook: { alignItems: 'center', height: 28, justifyContent: 'center', width: 28 },
-  removeBookText: { color: colors.textMuted, fontSize: 16 },
-  resultAuthor: { color: colors.textSecondary, fontFamily: 'SpaceMono', fontSize: 10 },
-  resultCover: { borderRadius: 4, height: 44, width: 30 },
-  resultCoverFallback: { backgroundColor: colors.border, borderRadius: 4, height: 44, width: 30 },
-  resultInfo: { flex: 1, gap: 3 },
-  resultTitle: { color: colors.textPrimary, fontFamily: 'Georgia', fontSize: 13 },
-  searchResult: {
-    alignItems: 'center',
-    borderBottomColor: colors.border,
-    borderBottomWidth: 1,
-    flexDirection: 'row',
-    gap: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  searchResults: {
-    backgroundColor: colors.surfaceUp,
-    borderColor: colors.border,
-    borderRadius: 10,
-    borderWidth: 1,
-    marginTop: 6,
-    overflow: 'hidden',
-  },
+
   sectionHeader: {
     borderBottomColor: colors.border,
     borderBottomWidth: 1,
@@ -497,27 +385,6 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     lineHeight: 18,
     marginTop: 6,
-  },
-  selectedBook: {
-    alignItems: 'center',
-    backgroundColor: colors.surfaceUp,
-    borderColor: colors.amber,
-    borderRadius: 10,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 6,
-    padding: 12,
-  },
-  selectedBookAuthor: { color: colors.textSecondary, fontFamily: 'SpaceMono', fontSize: 11 },
-  selectedBookInfo: { flex: 1, gap: 4 },
-  selectedBookTitle: { color: colors.textPrimary, fontFamily: 'Georgia', fontSize: 14 },
-  selectedCover: { borderRadius: 4, height: 54, width: 36 },
-  selectedCoverFallback: {
-    backgroundColor: colors.border,
-    borderRadius: 4,
-    height: 54,
-    width: 36,
   },
   switchHint: { color: colors.textMuted, fontFamily: 'SpaceMono', fontSize: 10, marginTop: 2 },
   switchRow: {

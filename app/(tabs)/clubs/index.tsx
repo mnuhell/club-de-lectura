@@ -47,6 +47,13 @@ export default function ClubsScreen() {
           <TouchableOpacity
             style={styles.secondaryButton}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onPress={() => router.push('/(tabs)/clubs/explore' as any)}
+          >
+            <Text style={styles.secondaryButtonText}>Explorar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.secondaryButton}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onPress={() => router.push('/(tabs)/clubs/join' as any)}
           >
             <Text style={styles.secondaryButtonText}>Unirse</Text>

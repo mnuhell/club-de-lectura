@@ -185,7 +185,7 @@ export default function ClubDetailScreen() {
                     <Text style={styles.closedBadgeText}>CERRADO</Text>
                   </View>
                 )}
-                {club.myRole !== 'owner' && !isClosed && (
+                {club.myRole !== null && club.myRole !== 'owner' && !isClosed && (
                   <TouchableOpacity onPress={handleLeave} style={styles.leaveButton}>
                     <Text style={styles.leaveText}>Abandonar</Text>
                   </TouchableOpacity>

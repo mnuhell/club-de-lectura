@@ -117,6 +117,7 @@ export type Database = {
           bookstore_name: string | null
           bookstore_phone: string | null
           bookstore_url: string | null
+          city: string | null
           cover_url: string | null
           created_at: string
           current_book_id: string | null
@@ -136,6 +137,7 @@ export type Database = {
           bookstore_name?: string | null
           bookstore_phone?: string | null
           bookstore_url?: string | null
+          city?: string | null
           cover_url?: string | null
           created_at?: string
           current_book_id?: string | null
@@ -155,6 +157,7 @@ export type Database = {
           bookstore_name?: string | null
           bookstore_phone?: string | null
           bookstore_url?: string | null
+          city?: string | null
           cover_url?: string | null
           created_at?: string
           current_book_id?: string | null

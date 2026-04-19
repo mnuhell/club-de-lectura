@@ -12,4 +12,5 @@ export interface IClubRepository {
   joinByCode(inviteCode: string, userId: string): Promise<ClubMember>
   leave(clubId: string, userId: string): Promise<void>
   getMembers(clubId: string): Promise<ClubMember[]>
+  getPublicClubs(userId: string, city?: string): Promise<ClubWithDetails[]>
 }

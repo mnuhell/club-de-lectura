@@ -30,6 +30,8 @@ const makeClub = (overrides: Partial<Club> = {}): Club => ({
   bookstoreUrl: null,
   bookstoreAddress: null,
   bookstorePhone: null,
+  city: null,
+  closeDate: null,
   createdAt: '2026-01-01T00:00:00Z',
   updatedAt: '2026-01-01T00:00:00Z',
   ...overrides,
@@ -64,6 +66,7 @@ function makeRepo(overrides: Partial<IClubRepository> = {}): IClubRepository {
     joinByCode: jest.fn().mockResolvedValue(makeMember()),
     leave: jest.fn().mockResolvedValue(undefined),
     getMembers: jest.fn().mockResolvedValue([makeMember(), makeMember({ userId: 'user-3' })]),
+    getPublicClubs: jest.fn().mockResolvedValue([]),
     ...overrides,
   }
 }

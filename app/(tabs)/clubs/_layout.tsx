@@ -11,6 +11,7 @@ export default function ClubsLayout() {
       }}
     >
       <Stack.Screen name="index" />
+      <Stack.Screen name="explore" />
       <Stack.Screen
         name="create"
         options={{
