@@ -201,6 +201,7 @@ export default function CreateClubScreen() {
 
   const [startDate, setStartDate] = useState<Date | null>(null)
   const [meetingDate, setMeetingDate] = useState<Date | null>(null)
+  const [closeDate, setCloseDate] = useState<Date | null>(null)
 
   const [bookstoreName, setBookstoreName] = useState('')
   const [bookstoreUrl, setBookstoreUrl] = useState('')
@@ -225,6 +226,7 @@ export default function CreateClubScreen() {
         book: selectedBook,
         startDate: startDate ? startDate.toISOString().split('T')[0] : null,
         meetingDate: meetingDate ? meetingDate.toISOString() : null,
+        closeDate: closeDate ? closeDate.toISOString() : null,
         bookstoreName: bookstoreName.trim() || null,
         bookstoreUrl: bookstoreUrl.trim() || null,
         bookstoreAddress: bookstoreAddress.trim() || null,
@@ -288,7 +290,11 @@ export default function CreateClubScreen() {
         <Text style={styles.label}>Buscar libro</Text>
         <BookPicker userId={user?.id ?? ''} selected={selectedBook} onSelect={setSelectedBook} />
 
-        {/* ── Fech ectionHeader title="FecText style={styles.label}>I <DateInput
+        {/* ── Fechas ── */}
+        <SectionHeader title="Fechas" />
+
+        <Text style={styles.label}>Inicio de lectura</Text>
+        <DateInput
           value={startDate}
           onChange={setStartDate}
           mode="date"
@@ -301,6 +307,18 @@ export default function CreateClubScreen() {
           onChange={setMeetingDate}
           mode="datetime"
           placeholder="Selecciona fecha y hora"
+        />
+
+        <Text style={styles.label}>Cierre del club</Text>
+        <Text style={styles.sectionHint}>
+          A partir de esta fecha el club se cerrará automáticamente y nadie podrá unirse ni
+          abandonarlo.
+        </Text>
+        <DateInput
+          value={closeDate}
+          onChange={setCloseDate}
+          mode="datetime"
+          placeholder="Sin fecha de cierre"
         />
 
         {/* ── Librería ── */}

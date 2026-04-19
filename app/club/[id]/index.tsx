@@ -153,6 +153,7 @@ export default function ClubDetailScreen() {
 
   const coverUrl = club.currentBook?.coverUrl ?? null
   const owner = members.find(m => m.role === 'owner')
+  const isClosed = !!club.closeDate && new Date(club.closeDate) <= new Date()
 
   return (
     <SafeAreaView style={styles.container}>
@@ -179,7 +180,12 @@ export default function ClubDetailScreen() {
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                   <Ionicons name="arrow-back" size={22} color={colors.textPrimary} />
                 </TouchableOpacity>
-                {club.myRole !== 'owner' && (
+                {isClosed && (
+                  <View style={styles.closedBadge}>
+                    <Text style={styles.closedBadgeText}>CERRADO</Text>
+                  </View>
+                )}
+                {club.myRole !== 'owner' && !isClosed && (
                   <TouchableOpacity onPress={handleLeave} style={styles.leaveButton}>
                     <Text style={styles.leaveText}>Abandonar</Text>
                   </TouchableOpacity>
@@ -379,6 +385,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 12,
   },
+  closedBadge: {
+    backgroundColor: colors.error + '20',
+    borderColor: colors.error + '60',
+    borderRadius: 16,
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  closedBadgeText: { color: colors.error, fontFamily: 'SpaceMono', fontSize: 10 },
   noBook: { marginTop: 20 },
   noBookText: { color: colors.textMuted, fontFamily: 'SpaceMono', fontSize: 12 },
   readingCta: { alignItems: 'center', flexDirection: 'row', gap: 4, marginTop: 8 },

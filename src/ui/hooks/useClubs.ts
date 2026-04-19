@@ -20,6 +20,7 @@ export type CreateClubInput = {
   book?: Book | null
   startDate?: string | null
   meetingDate?: string | null
+  closeDate?: string | null
   bookstoreName?: string | null
   bookstoreUrl?: string | null
   bookstoreAddress?: string | null
@@ -73,6 +74,7 @@ export function useClubs(userId: string): ClubsState {
       currentBookId,
       startDate: input.startDate ?? null,
       meetingDate: input.meetingDate ?? null,
+      closeDate: input.closeDate ?? null,
       bookstoreName: input.bookstoreName ?? null,
       bookstoreUrl: input.bookstoreUrl ?? null,
       bookstoreAddress: input.bookstoreAddress ?? null,

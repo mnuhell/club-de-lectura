@@ -125,6 +125,7 @@ export type Database = {
           invite_code: string
           is_private: boolean
           meeting_date: string | null
+          close_date: string | null
           name: string
           owner_id: string
           start_date: string | null
@@ -143,6 +144,7 @@ export type Database = {
           invite_code?: string
           is_private?: boolean
           meeting_date?: string | null
+          close_date?: string | null
           name: string
           owner_id: string
           start_date?: string | null
@@ -161,6 +163,7 @@ export type Database = {
           invite_code?: string
           is_private?: boolean
           meeting_date?: string | null
+          close_date?: string | null
           name?: string
           owner_id?: string
           start_date?: string | null

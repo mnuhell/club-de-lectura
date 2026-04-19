@@ -1,8 +1,8 @@
+import { supabase } from '@/src/infrastructure/supabase/client'
+import { MatchingRepository } from '@/src/infrastructure/supabase/repositories/MatchingRepository'
 import { useAuth } from '@/src/ui/hooks/useAuth'
 import { colors } from '@/src/ui/theme'
-import { MatchingRepository } from '@/src/infrastructure/supabase/repositories/MatchingRepository'
 import { createMatchingActions } from '@/src/usecases/matching'
-import { supabase } from '@/src/infrastructure/supabase/client'
 import { Ionicons } from '@expo/vector-icons'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useCallback, useEffect, useState } from 'react'
@@ -78,12 +78,18 @@ export default function MemberProfileScreen() {
       const matchId = await matchingActions.like(user.id, userId)
       if (matchId) {
         setMatched(true)
-        Alert.alert('¡Es un match! 📚', `Tú y ${profile?.displayName ?? 'este lector'} tenéis gustos en común.`)
+        Alert.alert(
+          '\u00a1Es un match! \ud83d\udcda',
+          `T\u00fa y ${profile?.displayName ?? 'este lector'} ten\u00e9is gustos en com\u00fan.`,
+        )
       } else {
-        Alert.alert('¡Interés enviado!', 'Si la otra persona también te da like, haréis match.')
+        Alert.alert(
+          '\u00a1Inter\u00e9s enviado!',
+          'Si la otra persona tambi\u00e9n te da like, har\u00e9is match.',
+        )
       }
     } catch {
-      Alert.alert('Error', 'No se pudo registrar el interés.')
+      Alert.alert('Error', 'No se pudo registrar el inter\u00e9s.')
     } finally {
       setMatching(false)
     }
@@ -91,6 +97,8 @@ export default function MemberProfileScreen() {
 
   const name = profile?.displayName ?? profile?.username ?? 'Lector'
   const initial = name.charAt(0).toUpperCase()
+  const matchLabel = matched ? 'Match enviado' : 'Quiero conectar'
+  const matchIcon = matched ? '\u2713' : '\ud83d\udcda'
 
   if (loading) {
     return (
@@ -122,7 +130,6 @@ export default function MemberProfileScreen() {
       </TouchableOpacity>
 
       <ScrollView contentContainerStyle={styles.scroll}>
-        {/* Avatar */}
         <View style={styles.avatarWrap}>
           {profile.avatarUrl ? (
             <Image source={{ uri: profile.avatarUrl }} style={styles.avatar} />
@@ -133,13 +140,11 @@ export default function MemberProfileScreen() {
           )}
         </View>
 
-        {/* Nombre */}
         <Text style={styles.name}>{name}</Text>
         {profile.username && profile.displayName && (
           <Text style={styles.username}>@{profile.username}</Text>
         )}
 
-        {/* Ciudad */}
         {profile.city && (
           <View style={styles.metaRow}>
             <Ionicons name="location-outline" size={14} color={colors.textMuted} />
@@ -147,7 +152,6 @@ export default function MemberProfileScreen() {
           </View>
         )}
 
-        {/* Bio lectora */}
         {profile.readerBio && (
           <View style={styles.section}>
             <Text style={styles.sectionLabel}>SOBRE ESTE LECTOR</Text>
@@ -155,10 +159,9 @@ export default function MemberProfileScreen() {
           </View>
         )}
 
-        {/* Géneros */}
         {profile.genres.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>GÉNEROS FAVORITOS</Text>
+            <Text style={styles.sectionLabel}>G\u00c9NEROS FAVORITOS</Text>
             <View style={styles.genreRow}>
               {profile.genres.map(g => (
                 <View key={g} style={styles.genreChip}>
@@ -169,7 +172,6 @@ export default function MemberProfileScreen() {
           </View>
         )}
 
-        {/* Botón match */}
         <TouchableOpacity
           style={[styles.matchBtn, matched && styles.matchBtnDone]}
           onPress={handleMatch}
@@ -179,12 +181,9 @@ export default function MemberProfileScreen() {
           {matching ? (
             <ActivityIndicator color={colors.bg} size="small" />
           ) : (
-            <>
-              <Text style={styles.matchIcon}>{matched ? '✓' : '📚'}</Text>
-              <Text style={styles.matchText}>
-                {matched ? 'Match enviado' : 'Quiero conectar'}
-              </Text>
-            </>
+            <Text style={[styles.matchText, matched && styles.matchTextDone]}>
+              {matchIcon} {matchLabel}
+            </Text>
           )}
         </TouchableOpacity>
       </ScrollView>
@@ -231,17 +230,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.amber,
     borderRadius: 14,
-    flexDirection: 'row',
-    gap: 8,
     justifyContent: 'center',
     marginHorizontal: 24,
     marginTop: 36,
     paddingVertical: 14,
   },
   matchBtnDone: { backgroundColor: colors.surfaceUp, borderColor: colors.border, borderWidth: 1 },
-  matchIcon: { fontSize: 18 },
   matchText: { color: colors.bg, fontFamily: 'SpaceMono', fontSize: 13 },
-  metaRow: { alignItems: 'center', flexDirection: 'row', gap: 4, marginTop: 4 },
+  matchTextDone: { color: colors.textSecondary },
+  metaRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 4,
+    justifyContent: 'center',
+    marginTop: 4,
+  },
   metaText: { color: colors.textMuted, fontFamily: 'SpaceMono', fontSize: 12 },
   name: { color: colors.textPrimary, fontFamily: 'Georgia', fontSize: 24, textAlign: 'center' },
   scroll: { paddingBottom: 48, paddingHorizontal: 24 },

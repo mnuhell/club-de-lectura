@@ -19,6 +19,7 @@ function mapClub(row: ClubRow): Club {
     currentBookId: row.current_book_id,
     startDate: row.start_date,
     meetingDate: row.meeting_date,
+    closeDate: (row as any).close_date ?? null,
     bookstoreName: row.bookstore_name,
     bookstoreUrl: row.bookstore_url,
     bookstoreAddress: row.bookstore_address,
@@ -102,6 +103,7 @@ export const ClubRepository: IClubRepository = {
         current_book_id: fields.currentBookId ?? null,
         start_date: fields.startDate ?? null,
         meeting_date: fields.meetingDate ?? null,
+        close_date: fields.closeDate ?? null,
         bookstore_name: fields.bookstoreName ?? null,
         bookstore_url: fields.bookstoreUrl ?? null,
         bookstore_address: fields.bookstoreAddress ?? null,
@@ -138,10 +140,13 @@ export const ClubRepository: IClubRepository = {
   async joinByCode(inviteCode, userId) {
     const { data: club, error: clubError } = await supabase
       .from('clubs')
-      .select('id')
+      .select('id, close_date')
       .eq('invite_code', inviteCode)
       .single()
     if (clubError) throw new Error('Código de invitación inválido')
+    if (club.close_date && new Date(club.close_date) <= new Date()) {
+      throw new Error('Este club ya está cerrado y no admite nuevos miembros')
+    }
 
     const { data, error } = await supabase
       .from('club_members')

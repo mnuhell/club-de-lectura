@@ -11,6 +11,7 @@ export type Club = {
   currentBookId: string | null
   startDate: string | null
   meetingDate: string | null
+  closeDate: string | null
   bookstoreName: string | null
   bookstoreUrl: string | null
   bookstoreAddress: string | null
@@ -27,6 +28,7 @@ export type ClubCreateData = {
   currentBookId?: string | null
   startDate?: string | null
   meetingDate?: string | null
+  closeDate?: string | null
   bookstoreName?: string | null
   bookstoreUrl?: string | null
   bookstoreAddress?: string | null
