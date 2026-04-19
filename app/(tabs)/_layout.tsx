@@ -49,7 +49,7 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="library/index"
+        name="library"
         options={{
           title: 'Biblioteca',
           tabBarIcon: ({ color }) => <TabIcon name="library-outline" color={color} />,
