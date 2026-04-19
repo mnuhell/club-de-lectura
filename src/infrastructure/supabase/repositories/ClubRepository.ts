@@ -28,12 +28,15 @@ function mapClub(row: ClubRow): Club {
   }
 }
 
-function mapMember(row: MemberRow): ClubMember {
+function mapMember(row: MemberRow & { display_name?: string | null; username?: string | null; avatar_url?: string | null }): ClubMember {
   return {
     clubId: row.club_id,
     userId: row.user_id,
     role: row.role,
     joinedAt: row.joined_at,
+    displayName: row.display_name ?? null,
+    username: row.username ?? null,
+    avatarUrl: row.avatar_url ?? null,
   }
 }
 
@@ -158,8 +161,37 @@ export const ClubRepository: IClubRepository = {
     if (error) throw new Error('No se pudo abandonar el club')
   },
   async getMembers(clubId) {
-    const { data, error } = await supabase.rpc('get_club_members', { p_club_id: clubId })
-    if (error) throw new Error('No se pudieron cargar los miembros')
-    return (data ?? []).map(mapMember)
+    const { data: members, error } = await supabase
+      .from('club_members')
+      .select('club_id, user_id, role, joined_at')
+      .eq('club_id', clubId)
+    if (error) {
+      console.error('[ClubRepository.getMembers] error:', JSON.stringify(error))
+      throw new Error('No se pudieron cargar los miembros')
+    }
+    if (!members || members.length === 0) return []
+
+    const userIds = members.map(m => m.user_id)
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, display_name, username, avatar_url')
+      .in('id', userIds)
+
+    const profileMap = Object.fromEntries((profiles ?? []).map(p => [p.id, p]))
+
+    return members
+      .map(m => ({
+        clubId: m.club_id,
+        userId: m.user_id,
+        role: m.role as ClubMember['role'],
+        joinedAt: m.joined_at,
+        displayName: profileMap[m.user_id]?.display_name ?? null,
+        username: profileMap[m.user_id]?.username ?? null,
+        avatarUrl: profileMap[m.user_id]?.avatar_url ?? null,
+      }))
+      .sort((a, b) => {
+        const order = { owner: 0, admin: 1, member: 2 }
+        return (order[a.role] ?? 2) - (order[b.role] ?? 2)
+      })
   },
 }

@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { IClubRepository } from '../../repositories'
 import type { ClubMember, ClubWithDetails } from '../../domain'
-import { ClubRepository } from '../../infrastructure/supabase/repositories'
 import { SupabaseRealtimeService } from '../../infrastructure/supabase/realtime'
+import { ClubRepository } from '../../infrastructure/supabase/repositories'
+import type { IClubRepository } from '../../repositories'
 import { getClubDetail, getClubMembers, leaveClub } from '../../usecases/clubs'
 import { createRealtimeManager } from '../../usecases/realtime'
 

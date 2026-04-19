@@ -38,6 +38,9 @@ export type ClubMember = {
   userId: string
   role: ClubRole
   joinedAt: string
+  displayName: string | null
+  username: string | null
+  avatarUrl: string | null
 }
 
 export type ClubWithDetails = Club & {

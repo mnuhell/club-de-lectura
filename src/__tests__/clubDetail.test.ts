@@ -48,6 +48,9 @@ const makeMember = (overrides: Partial<ClubMember> = {}): ClubMember => ({
   userId: 'user-2',
   role: 'member',
   joinedAt: '2026-01-01T00:00:00Z',
+  displayName: null,
+  username: null,
+  avatarUrl: null,
   ...overrides,
 })
 
