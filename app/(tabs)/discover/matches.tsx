@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   },
   avatarInitial: {
     color: '#C8853A',
-    fontFamily: 'Georgia',
+    fontFamily: 'Inter-Regular',
     fontSize: 28,
     fontWeight: '700',
   },
@@ -134,8 +134,8 @@ const styles = StyleSheet.create({
   },
   discoverButtonText: {
     color: '#C8853A',
-    fontFamily: 'SpaceMono',
-    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    fontSize: 15,
   },
   empty: {
     alignItems: 'center',
@@ -146,8 +146,8 @@ const styles = StyleSheet.create({
   emptyIcon: { fontSize: 56, marginBottom: 16 },
   emptyText: {
     color: '#F2E8D560',
-    fontFamily: 'Georgia',
-    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    fontSize: 15,
     fontStyle: 'italic',
     lineHeight: 22,
     marginBottom: 28,
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     color: '#F2E8D5',
-    fontFamily: 'Georgia',
+    fontFamily: 'Inter-Regular',
     fontSize: 20,
     fontWeight: '700',
     marginBottom: 12,
@@ -177,15 +177,15 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: '#F2E8D5',
-    fontFamily: 'Georgia',
+    fontFamily: 'Inter-Regular',
     fontSize: 18,
     fontWeight: '700',
   },
   list: { padding: 16 },
   matchBio: {
     color: '#F2E8D570',
-    fontFamily: 'Georgia',
-    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    fontSize: 13,
     fontStyle: 'italic',
     lineHeight: 17,
     marginBottom: 8,
@@ -201,8 +201,8 @@ const styles = StyleSheet.create({
   },
   matchCity: {
     color: '#F2E8D550',
-    fontFamily: 'SpaceMono',
-    fontSize: 12,
+    fontFamily: 'Inter-Regular',
+    fontSize: 13,
     marginBottom: 6,
   },
   matchDot: {
@@ -219,15 +219,15 @@ const styles = StyleSheet.create({
   matchInfo: { flex: 1 },
   matchName: {
     color: '#F2E8D5',
-    fontFamily: 'Georgia',
-    fontSize: 16,
+    fontFamily: 'Inter-Regular',
+    fontSize: 17,
     fontWeight: '600',
     marginBottom: 2,
   },
   matchedAt: {
     color: '#F2E8D530',
-    fontFamily: 'SpaceMono',
-    fontSize: 11,
+    fontFamily: 'Inter-Regular',
+    fontSize: 12,
   },
   separator: { height: 10 },
 })

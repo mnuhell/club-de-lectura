@@ -13,7 +13,7 @@ export default function LibraryLayout() {
           headerTitle: 'Buscar libros',
           headerStyle: { backgroundColor: colors.surfaceUp },
           headerTintColor: colors.textPrimary,
-          headerTitleStyle: { fontFamily: 'Georgia', fontSize: 18 },
+          headerTitleStyle: { fontFamily: 'Inter-Regular', fontSize: 18 },
         }}
       />
     </Stack>

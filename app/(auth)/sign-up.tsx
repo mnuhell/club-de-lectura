@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
   },
   confirmBody: {
     color: colors.textSecondary,
-    fontFamily: 'Georgia',
+    fontFamily: 'Inter-Regular',
     fontSize: fontSize.base,
     lineHeight: 22,
     textAlign: 'center',
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   confirmOrnament: { fontSize: 48, marginBottom: spacing[2] },
   confirmTitle: {
     color: colors.textPrimary,
-    fontFamily: 'Georgia',
+    fontFamily: 'Inter-Regular',
     fontSize: fontSize.xl,
     fontWeight: fontWeight.bold,
   },
@@ -259,12 +259,12 @@ const styles = StyleSheet.create({
   pressed: { opacity: 0.75 },
   subtitle: {
     color: colors.textMuted,
-    fontFamily: 'Georgia',
+    fontFamily: 'Inter-Regular',
     fontSize: fontSize.base,
   },
   title: {
     color: colors.textPrimary,
-    fontFamily: 'Georgia',
+    fontFamily: 'Inter-Regular',
     fontSize: fontSize['2xl'],
     fontWeight: fontWeight.bold,
   },
@@ -286,7 +286,7 @@ const fieldStyles = StyleSheet.create({
   },
   label: {
     color: colors.textSecondary,
-    fontFamily: 'SpaceMono',
+    fontFamily: 'Inter-Regular',
     fontSize: fontSize.sm,
     letterSpacing: 0.5,
   },

@@ -118,15 +118,15 @@ const styles = StyleSheet.create({
   title: {
     color: '#C8853A',
     fontSize: 26,
-    fontFamily: 'Georgia',
+    fontFamily: 'Inter-Regular',
     fontWeight: '700',
     textAlign: 'center',
     marginBottom: 8,
   },
   subtitle: {
     color: '#F2E8D580',
-    fontSize: 14,
-    fontFamily: 'Georgia',
+    fontSize: 15,
+    fontFamily: 'Inter-Regular',
     fontStyle: 'italic',
     textAlign: 'center',
     marginBottom: 24,
@@ -138,8 +138,8 @@ const styles = StyleSheet.create({
   },
   revealHint: {
     color: '#C8853A60',
-    fontSize: 11,
-    fontFamily: 'SpaceMono',
+    fontSize: 12,
+    fontFamily: 'Inter-Regular',
     marginBottom: 12,
     letterSpacing: 1,
     textTransform: 'uppercase',
@@ -169,20 +169,20 @@ const styles = StyleSheet.create({
   avatarFallbackText: {
     color: '#C8853A',
     fontSize: 44,
-    fontFamily: 'Georgia',
+    fontFamily: 'Inter-Regular',
     fontWeight: '700',
   },
   name: {
     color: '#F2E8D5',
     fontSize: 20,
-    fontFamily: 'Georgia',
+    fontFamily: 'Inter-Regular',
     fontWeight: '600',
     marginTop: 8,
   },
   city: {
     color: '#F2E8D560',
-    fontSize: 13,
-    fontFamily: 'SpaceMono',
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
     marginTop: 4,
     marginBottom: 24,
   },
@@ -197,8 +197,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#0D0A06',
-    fontSize: 15,
-    fontFamily: 'SpaceMono',
+    fontSize: 16,
+    fontFamily: 'Inter-Regular',
     fontWeight: '700',
   },
   secondaryButton: {
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     color: '#F2E8D550',
-    fontSize: 13,
-    fontFamily: 'SpaceMono',
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
   },
 })

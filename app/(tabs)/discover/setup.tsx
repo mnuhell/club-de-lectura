@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   title: {
     color: '#F2E8D5',
     fontSize: 26,
-    fontFamily: 'Georgia',
+    fontFamily: 'Inter-Regular',
     fontWeight: '700',
     marginBottom: 8,
     textAlign: 'center',
@@ -117,8 +117,8 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     color: '#F2E8D560',
-    fontSize: 14,
-    fontFamily: 'Georgia',
+    fontSize: 15,
+    fontFamily: 'Inter-Regular',
     fontStyle: 'italic',
     textAlign: 'center',
     marginBottom: 32,
@@ -126,8 +126,8 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     color: '#C8853A',
-    fontSize: 12,
-    fontFamily: 'SpaceMono',
+    fontSize: 13,
+    fontFamily: 'Inter-Regular',
     textTransform: 'uppercase',
     letterSpacing: 1.5,
     marginBottom: 8,
@@ -139,8 +139,8 @@ const styles = StyleSheet.create({
     borderColor: '#C8853A30',
     borderRadius: 12,
     color: '#F2E8D5',
-    fontFamily: 'Georgia',
-    fontSize: 15,
+    fontFamily: 'Inter-Regular',
+    fontSize: 16,
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
@@ -158,8 +158,8 @@ const styles = StyleSheet.create({
   buttonDisabled: { opacity: 0.6 },
   buttonText: {
     color: '#0D0A06',
-    fontSize: 15,
-    fontFamily: 'SpaceMono',
+    fontSize: 16,
+    fontFamily: 'Inter-Regular',
     fontWeight: '700',
   },
 })

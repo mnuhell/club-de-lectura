@@ -21,8 +21,8 @@ export default function TabsLayout() {
         tabBarActiveTintColor: colors.amber,
         tabBarInactiveTintColor: colors.textMuted,
         tabBarLabelStyle: {
-          fontFamily: 'SpaceMono',
-          fontSize: 10,
+          fontFamily: 'Inter-Regular',
+          fontSize: 11,
           marginBottom: 2,
         },
       }}

@@ -187,8 +187,8 @@ const styles = StyleSheet.create({
   },
   likeText: {
     color: '#C8853A',
-    fontFamily: 'SpaceMono',
-    fontSize: 13,
+    fontFamily: 'Inter-Regular',
+    fontSize: 14,
     fontWeight: 'bold',
   },
   passLabel: {
@@ -198,8 +198,8 @@ const styles = StyleSheet.create({
   },
   passText: {
     color: '#666',
-    fontFamily: 'SpaceMono',
-    fontSize: 13,
+    fontFamily: 'Inter-Regular',
+    fontSize: 14,
     fontWeight: 'bold',
   },
   avatarPlaceholder: {
@@ -220,15 +220,15 @@ const styles = StyleSheet.create({
   name: {
     color: '#F2E8D5',
     fontSize: 22,
-    fontFamily: 'Georgia',
+    fontFamily: 'Inter-Regular',
     fontWeight: '600',
     marginBottom: 4,
     textAlign: 'center',
   },
   city: {
     color: '#F2E8D560',
-    fontSize: 13,
-    fontFamily: 'SpaceMono',
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
     marginBottom: 12,
   },
   sharedBadge: {
@@ -242,13 +242,13 @@ const styles = StyleSheet.create({
   },
   sharedText: {
     color: '#C8853A',
-    fontSize: 12,
-    fontFamily: 'SpaceMono',
+    fontSize: 13,
+    fontFamily: 'Inter-Regular',
   },
   bio: {
     color: '#F2E8D580',
-    fontSize: 14,
-    fontFamily: 'Georgia',
+    fontSize: 15,
+    fontFamily: 'Inter-Regular',
     fontStyle: 'italic',
     textAlign: 'center',
     marginBottom: 16,
@@ -262,8 +262,8 @@ const styles = StyleSheet.create({
   },
   moreGenres: {
     color: '#F2E8D540',
-    fontSize: 12,
-    fontFamily: 'SpaceMono',
+    fontSize: 13,
+    fontFamily: 'Inter-Regular',
     alignSelf: 'center',
     marginLeft: 4,
   },

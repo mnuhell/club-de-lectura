@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 28,
   },
-  addText: { color: colors.textMuted, fontSize: 16, lineHeight: 20 },
+  addText: { color: colors.textMuted, fontSize: 17, lineHeight: 20 },
   badge: {
     alignItems: 'center',
     backgroundColor: colors.surfaceHigh,
@@ -87,9 +87,9 @@ const styles = StyleSheet.create({
   },
   badgesRow: { alignItems: 'center', flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   container: { gap: 8, marginTop: 10 },
-  count: { color: colors.textSecondary, fontFamily: 'SpaceMono', fontSize: 11 },
+  count: { color: colors.textSecondary, fontFamily: 'Inter-Regular', fontSize: 12 },
   countActive: { color: colors.amber },
-  emoji: { fontSize: 14 },
+  emoji: { fontSize: 15 },
   picker: {
     backgroundColor: colors.surfaceUp,
     borderColor: colors.border,

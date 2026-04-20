@@ -43,8 +43,8 @@ export function GenreSelector({ selected, onChange, max = 5 }: Props) {
 const styles = StyleSheet.create({
   hint: {
     color: '#F2E8D560',
-    fontSize: 13,
-    fontFamily: 'SpaceMono',
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
     marginBottom: 12,
     textAlign: 'center',
   },
@@ -55,8 +55,8 @@ const styles = StyleSheet.create({
   },
   counter: {
     color: '#C8853A',
-    fontSize: 12,
-    fontFamily: 'SpaceMono',
+    fontSize: 13,
+    fontFamily: 'Inter-Regular',
     textAlign: 'center',
     marginTop: 8,
   },

@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   },
   linkText: {
     color: colors.amber,
-    fontSize: 14,
+    fontSize: 15,
   },
   title: {
     fontSize: 20,

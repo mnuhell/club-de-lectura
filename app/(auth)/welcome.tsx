@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   },
   eyebrow: {
     color: colors.textMuted,
-    fontFamily: 'SpaceMono',
+    fontFamily: 'Inter-Regular',
     fontSize: fontSize.sm,
     letterSpacing: 2,
     textTransform: 'uppercase',
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   },
   quoteAuthor: {
     color: colors.textMuted,
-    fontFamily: 'SpaceMono',
+    fontFamily: 'Inter-Regular',
     fontSize: fontSize.sm,
   },
   quoteBlock: {
@@ -133,21 +133,21 @@ const styles = StyleSheet.create({
   },
   quoteText: {
     color: colors.textSecondary,
-    fontFamily: 'Georgia',
+    fontFamily: 'Inter-Regular',
     fontSize: fontSize.base,
     fontStyle: 'italic',
     lineHeight: 22,
   },
   tagline: {
     color: colors.textSecondary,
-    fontFamily: 'Georgia',
+    fontFamily: 'Inter-Regular',
     fontSize: fontSize.md,
     lineHeight: 26,
     textAlign: 'center',
   },
   title: {
     color: colors.textPrimary,
-    fontFamily: 'Georgia',
+    fontFamily: 'Inter-Regular',
     fontSize: fontSize['3xl'],
     fontWeight: fontWeight.bold,
     letterSpacing: 3,

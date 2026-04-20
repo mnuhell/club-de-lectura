@@ -1,36 +1,36 @@
-// Paleta oscura inspirada en librerías antiguas, cuero y páginas envejecidas
+// Paleta clara inspirada en páginas de libro, papel crema y librerías luminosas
 export const colors = {
   // Fondos
-  bg: '#0D0A06', // negro con calor, como cuero muy oscuro
-  surface: '#161009', // superficie principal
-  surfaceUp: '#221810', // tarjetas, modales
-  surfaceHigh: '#2E2016', // elementos elevados
+  bg: '#F9F5EE', // crema cálida, como papel de libro nuevo
+  surface: '#FFFFFF', // superficie blanca
+  surfaceUp: '#FFFFFF', // tarjetas, modales
+  surfaceHigh: '#EDE8DF', // elementos elevados, hover
 
   // Bordes
-  border: '#3A2A1A',
-  borderLight: '#4D3A26',
+  border: '#E0D8CE',
+  borderLight: '#EDE8DF',
 
   // Acento — ámbar dorado, como las letras de un lomo antiguo
   amber: '#C8853A',
   amberLight: '#E8A95A',
-  amberFaint: '#C8853A26', // para fondos tenues
+  amberFaint: '#C8853A18', // para fondos tenues
 
-  // Texto — tono crema de página envejecida
-  textPrimary: '#F2E8D5',
-  textSecondary: '#A89070',
-  textMuted: '#6B5540',
-  textInverse: '#0D0A06',
+  // Texto — tinta sobre papel
+  textPrimary: '#1A1208', // casi negro con calor
+  textSecondary: '#5C4A35', // marrón medio
+  textMuted: '#9E8472', // marrón claro
+  textInverse: '#F9F5EE', // crema sobre fondo oscuro
 
   // Semánticos
-  success: '#5C9B6E',
+  success: '#4A8A5C',
   error: '#C0614A',
-  errorFaint: '#C0614A20',
+  errorFaint: '#C0614A15',
 
   // Transparencias
   white: '#FFFFFF',
   transparent: 'transparent',
-  overlay: 'rgba(13, 10, 6, 0.85)',
-  scrim: 'rgba(0, 0, 0, 0.6)',
+  overlay: 'rgba(26, 18, 8, 0.75)',
+  scrim: 'rgba(0, 0, 0, 0.45)',
   scannerBg: 'rgba(0,0,0,0.5)',
 } as const
 

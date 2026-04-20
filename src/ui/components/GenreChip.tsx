@@ -44,13 +44,13 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#F2E8D580',
-    fontSize: 13,
-    fontFamily: 'SpaceMono',
+    fontSize: 14,
+    fontFamily: 'Inter-Regular',
   },
   textSelected: {
     color: '#C8853A',
   },
   textSmall: {
-    fontSize: 11,
+    fontSize: 12,
   },
 })

@@ -159,8 +159,8 @@ const styles = StyleSheet.create({
   },
   editProfileText: {
     color: '#F2E8D550',
-    fontFamily: 'SpaceMono',
-    fontSize: 13,
+    fontFamily: 'Inter-Regular',
+    fontSize: 14,
   },
   emptyIcon: {
     fontSize: 56,
@@ -178,16 +178,16 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     color: '#F2E8D560',
-    fontFamily: 'Georgia',
+    fontFamily: 'Inter-Regular',
     fontStyle: 'italic',
-    fontSize: 14,
+    fontSize: 15,
     lineHeight: 22,
     marginBottom: 28,
     textAlign: 'center',
   },
   emptyTitle: {
     color: '#F2E8D5',
-    fontFamily: 'Georgia',
+    fontFamily: 'Inter-Regular',
     fontSize: 20,
     fontWeight: '700',
     marginBottom: 12,
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: '#F2E8D5',
-    fontFamily: 'Georgia',
+    fontFamily: 'Inter-Regular',
     fontSize: 22,
     fontWeight: '700',
   },
@@ -222,8 +222,8 @@ const styles = StyleSheet.create({
   },
   matchesBadgeText: {
     color: '#0D0A06',
-    fontFamily: 'SpaceMono',
-    fontSize: 10,
+    fontFamily: 'Inter-Regular',
+    fontSize: 11,
     fontWeight: '700',
   },
   matchesButton: {
@@ -247,8 +247,8 @@ const styles = StyleSheet.create({
   },
   reloadText: {
     color: '#C8853A',
-    fontFamily: 'SpaceMono',
-    fontSize: 14,
+    fontFamily: 'Inter-Regular',
+    fontSize: 15,
   },
   setupButton: {
     backgroundColor: '#C8853A',
@@ -258,8 +258,8 @@ const styles = StyleSheet.create({
   },
   setupButtonText: {
     color: '#0D0A06',
-    fontFamily: 'SpaceMono',
-    fontSize: 15,
+    fontFamily: 'Inter-Regular',
+    fontSize: 16,
     fontWeight: '700',
   },
   stack: {

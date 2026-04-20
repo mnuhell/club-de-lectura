@@ -19,7 +19,7 @@ export default function ClubsLayout() {
           title: 'Nuevo club',
           headerStyle: { backgroundColor: colors.surface },
           headerTintColor: colors.amber,
-          headerTitleStyle: { fontFamily: 'Georgia', color: colors.textPrimary },
+          headerTitleStyle: { fontFamily: 'Inter-Regular', color: colors.textPrimary },
           presentation: 'modal',
         }}
       />
@@ -30,7 +30,7 @@ export default function ClubsLayout() {
           title: 'Unirse a un club',
           headerStyle: { backgroundColor: colors.surface },
           headerTintColor: colors.amber,
-          headerTitleStyle: { fontFamily: 'Georgia', color: colors.textPrimary },
+          headerTitleStyle: { fontFamily: 'Inter-Regular', color: colors.textPrimary },
           presentation: 'modal',
         }}
       />

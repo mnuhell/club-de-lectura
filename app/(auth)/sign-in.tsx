@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
   subtitle: { color: colors.textMuted, fontSize: fontSize.base },
   title: {
     color: colors.textPrimary,
-    fontFamily: 'Georgia',
+    fontFamily: 'Inter-Regular',
     fontSize: fontSize['2xl'],
     fontWeight: fontWeight.bold,
     lineHeight: 36,
@@ -218,7 +218,7 @@ const fieldStyles = StyleSheet.create({
   },
   label: {
     color: colors.textSecondary,
-    fontFamily: 'SpaceMono',
+    fontFamily: 'Inter-Regular',
     fontSize: fontSize.sm,
     letterSpacing: 0.5,
   },
