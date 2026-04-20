@@ -200,6 +200,11 @@ export default function CreateClubScreen() {
           selected={selectedBook}
           onSelect={setSelectedBook}
         />
+        {!selectedBook && (
+          <Text style={styles.sectionHint}>
+            Sin libro asignado. Puedes añadirlo ahora o más tarde desde el detalle del club.
+          </Text>
+        )}
 
         {/* ── Fechas ── */}
         <SectionHeader title="Fechas" />

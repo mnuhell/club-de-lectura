@@ -47,6 +47,43 @@ export async function getClubMembers(repo: IClubRepository, clubId: string): Pro
   return repo.getMembers(clubId)
 }
 
+export async function updateClub(
+  repo: IClubRepository,
+  clubId: string,
+  data: Partial<
+    Pick<
+      Club,
+      | 'name'
+      | 'description'
+      | 'city'
+      | 'isPrivate'
+      | 'startDate'
+      | 'meetingDate'
+      | 'closeDate'
+      | 'bookstoreName'
+      | 'bookstoreUrl'
+      | 'bookstoreAddress'
+      | 'bookstorePhone'
+    >
+  >,
+): Promise<Club> {
+  if (data.name !== undefined && !data.name.trim())
+    throw new Error('El nombre del club es obligatorio')
+  return repo.update(clubId, data)
+}
+
+export async function updateClubBook(
+  repo: IClubRepository,
+  clubId: string,
+  bookId: string | null,
+): Promise<void> {
+  await repo.update(clubId, { currentBookId: bookId })
+}
+
+export async function deleteClub(repo: IClubRepository, clubId: string): Promise<void> {
+  await repo.delete(clubId)
+}
+
 export async function leaveClub(
   repo: IClubRepository,
   clubId: string,

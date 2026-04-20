@@ -3,7 +3,13 @@ import type { ClubMember, ClubWithDetails } from '../../domain'
 import { SupabaseRealtimeService } from '../../infrastructure/supabase/realtime'
 import { ClubRepository } from '../../infrastructure/supabase/repositories'
 import type { IClubRepository } from '../../repositories'
-import { getClubDetail, getClubMembers, leaveClub } from '../../usecases/clubs'
+import {
+  deleteClub,
+  getClubDetail,
+  getClubMembers,
+  leaveClub,
+  updateClubBook,
+} from '../../usecases/clubs'
 import { createRealtimeManager } from '../../usecases/realtime'
 
 export function createUseClubDetailActions(repo: IClubRepository) {
@@ -11,6 +17,8 @@ export function createUseClubDetailActions(repo: IClubRepository) {
     fetchDetail: (id: string, userId: string) => getClubDetail(repo, id, userId),
     fetchMembers: (clubId: string) => getClubMembers(repo, clubId),
     leave: (clubId: string, userId: string) => leaveClub(repo, clubId, userId),
+    updateBook: (clubId: string, bookId: string | null) => updateClubBook(repo, clubId, bookId),
+    delete: (clubId: string) => deleteClub(repo, clubId),
   }
 }
 
@@ -20,6 +28,8 @@ interface ClubDetailState {
   loading: boolean
   error: string | null
   leave: () => Promise<void>
+  updateBook: (bookId: string | null) => Promise<void>
+  deleteClub: () => Promise<void>
   refresh: () => void
 }
 
@@ -67,5 +77,14 @@ export function useClubDetail(id: string, userId: string): ClubDetailState {
     await _clubDetailActions.leave(id, userId)
   }
 
-  return { club, members, loading, error, leave, refresh: load }
+  async function updateBook(bookId: string | null) {
+    await _clubDetailActions.updateBook(id, bookId)
+    await load()
+  }
+
+  async function deleteClub() {
+    await _clubDetailActions.delete(id)
+  }
+
+  return { club, members, loading, error, leave, updateBook, deleteClub, refresh: load }
 }

@@ -4,12 +4,11 @@
 jest.mock('../infrastructure/supabase/repositories', () => ({}))
 jest.mock('../infrastructure/api/GoogleBooksService', () => ({}))
 
-import { searchExternalBooks } from '../usecases/discovery'
-import { createUseBookSearchActions } from '../ui/hooks/useBookSearch'
-import type { IBookSearchService } from '../infrastructure/api/IBookSearchService'
-import type { IBookRepository } from '../repositories'
-import type { IUserBookRepository } from '../repositories'
 import type { Book } from '../domain'
+import type { IBookSearchService } from '../infrastructure/api/IBookSearchService'
+import type { IBookRepository, IUserBookRepository } from '../repositories'
+import { createUseBookSearchActions } from '../ui/hooks/useBookSearch'
+import { searchExternalBooks } from '../usecases/discovery'
 
 const makeBook = (overrides: Partial<Book> = {}): Book => ({
   id: 'book-1',
@@ -138,8 +137,6 @@ describe('createUseBookSearchActions', () => {
     const userBookRepo = makeUserBookRepo()
     const actions = createUseBookSearchActions(makeService(), makeBookRepo(), userBookRepo)
     await actions.save('user-1', book, 'read')
-    expect(userBookRepo.upsert).toHaveBeenCalledWith(
-      expect.objectContaining({ status: 'read' }),
-    )
+    expect(userBookRepo.upsert).toHaveBeenCalledWith(expect.objectContaining({ status: 'read' }))
   })
 })

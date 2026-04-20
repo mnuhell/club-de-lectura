@@ -7,6 +7,7 @@ export default function ClubLayout() {
       <Stack.Screen name="index" />
       <Stack.Screen name="reading" />
       <Stack.Screen name="member/[userId]" />
+      <Stack.Screen name="edit" />
     </Stack>
   )
 }

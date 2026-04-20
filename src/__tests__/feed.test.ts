@@ -93,6 +93,7 @@ function makeClubRepo(overrides: Partial<IClubRepository> = {}): IClubRepository
     joinByCode: jest.fn(),
     leave: jest.fn(),
     getMembers: jest.fn().mockResolvedValue([]),
+    getPublicClubs: jest.fn().mockResolvedValue([]),
     ...overrides,
   }
 }

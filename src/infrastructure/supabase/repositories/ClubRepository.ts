@@ -144,10 +144,21 @@ export const ClubRepository: IClubRepository = {
     const { data, error } = await supabase
       .from('clubs')
       .update({
-        name: fields.name,
-        description: fields.description,
-        cover_url: fields.coverUrl,
-        current_book_id: fields.currentBookId,
+        ...(fields.name !== undefined && { name: fields.name }),
+        ...(fields.description !== undefined && { description: fields.description }),
+        ...(fields.coverUrl !== undefined && { cover_url: fields.coverUrl }),
+        ...(fields.currentBookId !== undefined && { current_book_id: fields.currentBookId }),
+        ...(fields.city !== undefined && { city: fields.city }),
+        ...(fields.isPrivate !== undefined && { is_private: fields.isPrivate }),
+        ...(fields.startDate !== undefined && { start_date: fields.startDate }),
+        ...(fields.meetingDate !== undefined && { meeting_date: fields.meetingDate }),
+        ...(fields.closeDate !== undefined && { close_date: fields.closeDate }),
+        ...(fields.bookstoreName !== undefined && { bookstore_name: fields.bookstoreName }),
+        ...(fields.bookstoreUrl !== undefined && { bookstore_url: fields.bookstoreUrl }),
+        ...(fields.bookstoreAddress !== undefined && {
+          bookstore_address: fields.bookstoreAddress,
+        }),
+        ...(fields.bookstorePhone !== undefined && { bookstore_phone: fields.bookstorePhone }),
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)

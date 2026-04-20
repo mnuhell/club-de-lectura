@@ -6,7 +6,24 @@ export interface IClubRepository {
   create(data: ClubCreateData): Promise<Club>
   update(
     id: string,
-    data: Partial<Pick<Club, 'name' | 'description' | 'coverUrl' | 'currentBookId'>>,
+    data: Partial<
+      Pick<
+        Club,
+        | 'name'
+        | 'description'
+        | 'coverUrl'
+        | 'currentBookId'
+        | 'city'
+        | 'isPrivate'
+        | 'startDate'
+        | 'meetingDate'
+        | 'closeDate'
+        | 'bookstoreName'
+        | 'bookstoreUrl'
+        | 'bookstoreAddress'
+        | 'bookstorePhone'
+      >
+    >,
   ): Promise<Club>
   delete(id: string): Promise<void>
   joinByCode(inviteCode: string, userId: string): Promise<ClubMember>

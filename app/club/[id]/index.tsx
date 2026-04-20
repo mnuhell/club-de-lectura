@@ -1,10 +1,12 @@
-import type { ClubMember } from '@/src/domain'
+import type { Book, ClubMember } from '@/src/domain'
+import { BookSearchInput } from '@/src/ui/components/BookSearchInput'
 import { useAuth } from '@/src/ui/hooks/useAuth'
 import { useClubDetail } from '@/src/ui/hooks/useClubDetail'
 import { colors } from '@/src/ui/theme'
 import { Ionicons } from '@expo/vector-icons'
 import * as Clipboard from 'expo-clipboard'
 import { useLocalSearchParams, useRouter } from 'expo-router'
+import { useState } from 'react'
 import {
   ActivityIndicator,
   Alert,
@@ -105,7 +107,11 @@ export default function ClubDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const { user } = useAuth()
-  const { club, members, loading, error, leave, refresh } = useClubDetail(id, user?.id ?? '')
+  const { club, members, loading, error, leave, updateBook, deleteClub, refresh } = useClubDetail(
+    id,
+    user?.id ?? '',
+  )
+  const [showBookSearch, setShowBookSearch] = useState(false)
 
   function handleLeave() {
     Alert.alert('Abandonar club', `¿Seguro que quieres abandonar "${club?.name}"?`, [
@@ -123,6 +129,38 @@ export default function ClubDetailScreen() {
         },
       },
     ])
+  }
+
+  function handleDeleteClub() {
+    Alert.alert(
+      'Eliminar club',
+      `¿Seguro que quieres eliminar "${club?.name}"? Esta acción no se puede deshacer.`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteClub()
+              router.back()
+            } catch (e: unknown) {
+              Alert.alert('Error', e instanceof Error ? e.message : 'No se pudo eliminar el club')
+            }
+          },
+        },
+      ],
+    )
+  }
+
+  async function handleBookSelect(book: Book | null) {
+    if (!book) return
+    setShowBookSearch(false)
+    try {
+      await updateBook(book.id)
+    } catch (e: unknown) {
+      Alert.alert('Error', e instanceof Error ? e.message : 'No se pudo actualizar el libro')
+    }
   }
 
   if (loading) {
@@ -154,6 +192,7 @@ export default function ClubDetailScreen() {
   const coverUrl = club.currentBook?.coverUrl ?? null
   const owner = members.find(m => m.role === 'owner')
   const isClosed = !!club.closeDate && new Date(club.closeDate) <= new Date()
+  const isOwner = club.myRole === 'owner' || club.ownerId === user?.id
 
   return (
     <SafeAreaView style={styles.container}>
@@ -237,6 +276,43 @@ export default function ClubDetailScreen() {
               ) : (
                 <View style={styles.noBook}>
                   <Text style={styles.noBookText}>Sin libro asignado</Text>
+                </View>
+              )}
+
+              {/* Controles del owner */}
+              {isOwner && (
+                <View style={styles.ownerActions}>
+                  <TouchableOpacity
+                    style={styles.ownerBtn}
+                    onPress={() => router.push(`/club/${id}/edit` as never)}
+                  >
+                    <Ionicons name="create-outline" size={14} color={colors.amber} />
+                    <Text style={styles.ownerBtnText}>Editar club</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.ownerBtn}
+                    onPress={() => setShowBookSearch(v => !v)}
+                  >
+                    <Ionicons name="book-outline" size={14} color={colors.amber} />
+                    <Text style={styles.ownerBtnText}>
+                      {club.currentBook ? 'Cambiar libro' : 'Asignar libro'}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.ownerBtnDanger} onPress={handleDeleteClub}>
+                    <Ionicons name="trash-outline" size={14} color={colors.error} />
+                    <Text style={styles.ownerBtnDangerText}>Eliminar club</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+
+              {showBookSearch && isOwner && (
+                <View style={styles.bookSearchWrap}>
+                  <BookSearchInput
+                    userId={user?.id ?? ''}
+                    selected={null}
+                    onSelect={handleBookSelect}
+                    placeholder="Buscar nuevo libro..."
+                  />
                 </View>
               )}
 
@@ -432,4 +508,28 @@ const styles = StyleSheet.create({
   tagIcon: { fontSize: 12 },
   tagLabel: { fontFamily: 'SpaceMono', fontSize: 11 },
   tagsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 14 },
+  ownerActions: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 20 },
+  ownerBtn: {
+    alignItems: 'center',
+    borderColor: colors.amber,
+    borderRadius: 20,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+  },
+  ownerBtnText: { color: colors.amber, fontFamily: 'SpaceMono', fontSize: 11 },
+  ownerBtnDanger: {
+    alignItems: 'center',
+    borderColor: colors.error,
+    borderRadius: 20,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+  },
+  ownerBtnDangerText: { color: colors.error, fontFamily: 'SpaceMono', fontSize: 11 },
+  bookSearchWrap: { marginTop: 12 },
 })

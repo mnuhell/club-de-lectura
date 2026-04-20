@@ -189,11 +189,7 @@ export default function ExploreClubsScreen() {
           data={clubs}
           keyExtractor={c => c.id}
           renderItem={({ item }) => (
-            <ClubCard
-              club={item}
-              onJoin={() => handleJoin(item)}
-              joining={joiningId === item.id}
-            />
+            <ClubCard club={item} onJoin={() => handleJoin(item)} joining={joiningId === item.id} />
           )}
           contentContainerStyle={styles.list}
           onRefresh={refresh}
