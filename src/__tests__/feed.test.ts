@@ -10,12 +10,12 @@ jest.mock('../infrastructure/supabase/realtime', () => ({
   },
 }))
 
+import type { Club, ClubWithDetails, PostWithDetails, ReadingSession, User } from '../domain'
 import type { IClubRepository } from '../repositories'
 import type { IPostRepository } from '../repositories/IPostRepository'
 import type { IReadingSessionRepository } from '../repositories/IReadingSessionRepository'
-import type { Club, ClubWithDetails, PostWithDetails, ReadingSession, User } from '../domain'
-import { getFeed } from '../usecases/feed'
 import { createUseFeedActions } from '../ui/hooks/useFeed'
+import { getFeed } from '../usecases/feed'
 
 const makeUser = (): User => ({
   id: 'user-1',
@@ -42,6 +42,8 @@ const makeClub = (overrides: Partial<Club> = {}): Club => ({
   bookstoreUrl: null,
   bookstoreAddress: null,
   bookstorePhone: null,
+  city: null,
+  closeDate: null,
   createdAt: '2026-01-01T00:00:00Z',
   updatedAt: '2026-01-01T00:00:00Z',
   ...overrides,
