@@ -246,7 +246,12 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   metaText: { color: colors.textMuted, fontFamily: 'Inter-Regular', fontSize: 13 },
-  name: { color: colors.textPrimary, fontFamily: 'Inter-Regular', fontSize: 24, textAlign: 'center' },
+  name: {
+    color: colors.textPrimary,
+    fontFamily: 'Inter-Regular',
+    fontSize: 24,
+    textAlign: 'center',
+  },
   scroll: { paddingBottom: 48, paddingHorizontal: 24 },
   section: { marginTop: 28 },
   sectionLabel: {

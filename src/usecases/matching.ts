@@ -1,5 +1,5 @@
+import type { ReaderMatch, ReaderProfile } from '../domain/ReaderProfile'
 import type { IMatchingRepository } from '../repositories/IMatchingRepository'
-import type { ReaderProfile, ReaderMatch } from '../domain/ReaderProfile'
 
 export function createMatchingActions(repo: IMatchingRepository) {
   return {

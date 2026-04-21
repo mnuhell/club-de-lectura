@@ -214,7 +214,12 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   cardBody: { flex: 1, gap: 6 },
-  cardDesc: { color: colors.textSecondary, fontFamily: 'Inter-Regular', fontSize: 14, lineHeight: 18 },
+  cardDesc: {
+    color: colors.textSecondary,
+    fontFamily: 'Inter-Regular',
+    fontSize: 14,
+    lineHeight: 18,
+  },
   cardHeader: { alignItems: 'center', flexDirection: 'row', gap: 8 },
   cardMeta: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 2 },
   cardName: { color: colors.textPrimary, flex: 1, fontFamily: 'Inter-Regular', fontSize: 18 },

@@ -115,7 +115,12 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   cardArrow: { color: colors.textMuted, fontSize: 22, marginLeft: 8 },
-  cardDesc: { color: colors.textSecondary, fontFamily: 'Inter-Regular', fontSize: 12, lineHeight: 16 },
+  cardDesc: {
+    color: colors.textSecondary,
+    fontFamily: 'Inter-Regular',
+    fontSize: 12,
+    lineHeight: 16,
+  },
   cardLeft: { flex: 1, gap: 4 },
   cardMeta: { color: colors.textMuted, fontFamily: 'Inter-Regular', fontSize: 11 },
   cardName: { color: colors.textPrimary, fontFamily: 'Inter-Regular', fontSize: 18 },

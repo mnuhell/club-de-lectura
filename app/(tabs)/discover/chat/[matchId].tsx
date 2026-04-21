@@ -219,7 +219,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 38,
   },
-  headerAvatarInitial: { color: '#C8853A', fontFamily: 'Inter-Regular', fontSize: 17, fontWeight: '700' },
+  headerAvatarInitial: {
+    color: '#C8853A',
+    fontFamily: 'Inter-Regular',
+    fontSize: 17,
+    fontWeight: '700',
+  },
   headerName: { color: '#F2E8D5', fontFamily: 'Inter-Regular', fontSize: 16, fontWeight: '600' },
   headerProfile: { alignItems: 'center', flexDirection: 'row', gap: 10 },
   headerSub: { color: '#C8853A80', fontFamily: 'Inter-Regular', fontSize: 11 },
