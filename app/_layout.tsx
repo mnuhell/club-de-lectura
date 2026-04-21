@@ -5,15 +5,15 @@ import config from '@/tamagui.config'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 import { TamaguiProvider } from '@tamagui/core'
 import { useFonts } from 'expo-font'
-
-// Inter font paths — loaded under legacy names so no screen code needs changing
-const Inter_400 = require('@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf')
-const Inter_500 = require('@expo-google-fonts/inter/500Medium/Inter_500Medium.ttf')
-const Inter_600 = require('@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf')
-const Inter_700 = require('@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf')
 import { Stack, router } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect } from 'react'
+
+// Inter font paths — loaded under legacy names so no screen code needs changing
+import { Inter_400Regular as Inter_400 } from '@expo-google-fonts/inter/400Regular'
+import { Inter_500Medium as Inter_500 } from '@expo-google-fonts/inter/500Medium'
+import { Inter_600SemiBold as Inter_600 } from '@expo-google-fonts/inter/600SemiBold'
+import { Inter_700Bold as Inter_700 } from '@expo-google-fonts/inter/700Bold'
 
 SplashScreen.preventAutoHideAsync()
 
