@@ -1,6 +1,6 @@
-import type { IReadingSessionRepository } from '../repositories/IReadingSessionRepository'
+import type { Post, ReadingSession } from '../domain'
 import type { IPostRepository } from '../repositories/IPostRepository'
-import type { ReadingSession, Post } from '../domain'
+import type { IReadingSessionRepository } from '../repositories/IReadingSessionRepository'
 
 export async function getReadingProgress(
   repo: IReadingSessionRepository,
@@ -42,4 +42,11 @@ export async function updateProgress(
     currentChapter: data.chapter,
     currentPage: data.page,
   })
+}
+
+export async function finishReading(
+  repo: IReadingSessionRepository,
+  sessionId: string,
+): Promise<ReadingSession> {
+  return repo.finish(sessionId)
 }

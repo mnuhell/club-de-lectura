@@ -263,7 +263,9 @@ export default function ClubDetailScreen() {
               {club.currentBook ? (
                 <TouchableOpacity
                   style={styles.currentBook}
-                  onPress={() => router.push(`/club/${id}/reading` as never)}
+                  onPress={() =>
+                    router.push(`/club/${id}/reading?bookId=${club.currentBook!.id}` as never)
+                  }
                   activeOpacity={0.75}
                 >
                   <Text style={styles.currentBookLabel}>Leyendo ahora</Text>

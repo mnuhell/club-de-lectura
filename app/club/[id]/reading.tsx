@@ -6,7 +6,7 @@ import { useReadingProgress } from '@/src/ui/hooks/useReadingProgress'
 import { colors } from '@/src/ui/theme'
 import { Ionicons } from '@expo/vector-icons'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   ActivityIndicator,
   Alert,
@@ -93,6 +93,13 @@ function AdvanceModal({
   const [page, setPage] = useState(currentPage != null ? String(currentPage) : '')
   const [saving, setSaving] = useState(false)
 
+  useEffect(() => {
+    if (visible) {
+      setChapter(String(currentChapter))
+      setPage(currentPage != null ? String(currentPage) : '')
+    }
+  }, [visible, currentChapter, currentPage])
+
   async function handleSave() {
     const ch = parseInt(chapter, 10)
     const pg = page.trim() ? parseInt(page, 10) : null
@@ -153,19 +160,44 @@ function AdvanceModal({
 }
 
 export default function ReadingScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>()
+  const { id, bookId } = useLocalSearchParams<{ id: string; bookId?: string }>()
   const router = useRouter()
   const { user } = useAuth()
-  const { session, posts, loading, error, comment, advance, refresh } = useReadingProgress(
+  const { session, posts, loading, error, comment, advance, finish, refresh } = useReadingProgress(
     id,
     user?.id ?? '',
+    bookId,
   )
 
   const [commentText, setCommentText] = useState('')
   const [hasSpoiler, setHasSpoiler] = useState(false)
   const [sending, setSending] = useState(false)
   const [showAdvance, setShowAdvance] = useState(false)
+  const [finishing, setFinishing] = useState(false)
   const inputRef = useRef<TextInput>(null)
+
+  function handleFinish() {
+    Alert.alert('Finalizar lectura', '¿Confirmas que el club ha terminado de leer este libro?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Finalizar',
+        style: 'destructive',
+        onPress: async () => {
+          setFinishing(true)
+          try {
+            await finish()
+            Alert.alert('¡Lectura completada!', 'El libro ha sido marcado como finalizado.', [
+              { text: 'OK', onPress: () => router.back() },
+            ])
+          } catch (e: unknown) {
+            Alert.alert('Error', e instanceof Error ? e.message : 'No se pudo finalizar la lectura')
+          } finally {
+            setFinishing(false)
+          }
+        },
+      },
+    ])
+  }
 
   async function handleComment() {
     if (!commentText.trim()) return
@@ -228,9 +260,21 @@ export default function ReadingScreen() {
             <Text style={styles.pageLabel}>Página {session.currentPage}</Text>
           )}
         </View>
-        <View style={styles.progressBadge}>
-          <Ionicons name="book-outline" size={13} color={colors.success} />
-          <Text style={styles.progressBadgeText}>en curso</Text>
+        <View style={styles.progressBannerActions}>
+          <View style={styles.progressBadge}>
+            <Ionicons name="book-outline" size={13} color={colors.success} />
+            <Text style={styles.progressBadgeText}>en curso</Text>
+          </View>
+          <TouchableOpacity style={styles.finishButton} onPress={handleFinish} disabled={finishing}>
+            {finishing ? (
+              <ActivityIndicator size="small" color={colors.textInverse} />
+            ) : (
+              <>
+                <Ionicons name="checkmark-circle-outline" size={13} color={colors.textInverse} />
+                <Text style={styles.finishButtonText}>Finalizar</Text>
+              </>
+            )}
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -439,7 +483,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 14,
   },
+  progressBannerActions: { alignItems: 'flex-end', gap: 6 },
   progressInfo: { gap: 2 },
+  finishButton: {
+    alignItems: 'center',
+    backgroundColor: colors.success,
+    borderRadius: 12,
+    flexDirection: 'row',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  finishButtonText: { color: colors.textInverse, fontFamily: 'Inter-Regular', fontSize: 11 },
   retryButton: {
     borderColor: colors.border,
     borderRadius: 8,

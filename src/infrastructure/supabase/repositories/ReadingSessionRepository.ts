@@ -43,24 +43,49 @@ export const ReadingSessionRepository: IReadingSessionRepository = {
   },
 
   async updateProgress(id, fields) {
-    const { data, error } = await supabase
+    console.log('[updateProgress] session id:', id)
+    console.log('[updateProgress] fields:', fields)
+
+    const { error } = await supabase
       .from('reading_sessions')
       .update({ current_chapter: fields.currentChapter, current_page: fields.currentPage })
       .eq('id', id)
-      .select()
+    console.log('[updateProgress] update error:', error)
+
+    const { data, error: readError } = await supabase
+      .from('reading_sessions')
+      .select('*')
+      .eq('id', id)
       .single()
-    if (error) throw new Error('No se pudo actualizar el progreso')
+    console.log(
+      '[updateProgress] after update, db has:',
+      data?.current_chapter,
+      '| expected:',
+      fields.currentChapter,
+    )
+
+    if (readError) throw new Error('No se pudo leer el progreso actualizado')
+    if (data.current_chapter !== fields.currentChapter) {
+      throw new Error('Sin permisos para actualizar el progreso. Revisa las políticas RLS.')
+    }
     return mapSession(data)
   },
 
   async finish(id) {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('reading_sessions')
       .update({ finished_at: new Date().toISOString() })
       .eq('id', id)
-      .select()
+    if (error) {
+      console.error('[ReadingSessionRepository] finish error:', error)
+      throw new Error(error.message ?? 'No se pudo finalizar la sesión')
+    }
+    const { data, error: readError } = await supabase
+      .from('reading_sessions')
+      .select('*')
+      .eq('id', id)
       .single()
-    if (error) throw new Error('No se pudo finalizar la sesión')
+    if (readError) throw new Error('No se pudo leer la sesión finalizada')
     return mapSession(data)
   },
 }

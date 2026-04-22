@@ -137,6 +137,12 @@ export const ClubRepository: IClubRepository = {
       .select()
       .single()
     if (error) throw new Error('No se pudo crear el club')
+
+    const { error: memberError } = await supabase
+      .from('club_members')
+      .insert({ club_id: data.id, user_id: fields.ownerId, role: 'owner' })
+    if (memberError) throw new Error('No se pudo registrar al creador como miembro')
+
     return mapClub(data)
   },
 

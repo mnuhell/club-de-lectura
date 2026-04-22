@@ -1,13 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { IReadingSessionRepository } from '../../repositories/IReadingSessionRepository'
-import type { IPostRepository } from '../../repositories/IPostRepository'
 import type { PostWithDetails, ReadingSession } from '../../domain'
-import {
-  ReadingSessionRepository,
-  PostRepository,
-} from '../../infrastructure/supabase/repositories'
 import { SupabaseRealtimeService } from '../../infrastructure/supabase/realtime'
-import { getReadingProgress, postComment, updateProgress } from '../../usecases/readingProgress'
+import {
+  PostRepository,
+  ReadingSessionRepository,
+} from '../../infrastructure/supabase/repositories'
+import type { IPostRepository } from '../../repositories/IPostRepository'
+import type { IReadingSessionRepository } from '../../repositories/IReadingSessionRepository'
+import {
+  finishReading,
+  getReadingProgress,
+  postComment,
+  updateProgress,
+} from '../../usecases/readingProgress'
 import { createRealtimeManager } from '../../usecases/realtime'
 
 export function createUseReadingProgressActions(
@@ -16,6 +21,7 @@ export function createUseReadingProgressActions(
 ) {
   return {
     fetchProgress: (clubId: string) => getReadingProgress(sessionRepo, clubId),
+    startSession: (clubId: string, bookId: string) => sessionRepo.create({ clubId, bookId }),
     fetchChapterPosts: (clubId: string, chapterRef: number) =>
       postRepo.getByClub(clubId, { chapterRef }),
     comment: (data: {
@@ -28,6 +34,7 @@ export function createUseReadingProgressActions(
     }) => postComment(postRepo, data),
     advance: (sessionId: string, data: { chapter: number; page: number | null }) =>
       updateProgress(sessionRepo, sessionId, data),
+    finish: (sessionId: string) => finishReading(sessionRepo, sessionId),
   }
 }
 
@@ -38,12 +45,17 @@ interface ReadingProgressState {
   error: string | null
   comment: (content: string, hasSpoiler: boolean) => Promise<void>
   advance: (chapter: number, page: number | null) => Promise<void>
+  finish: () => Promise<void>
   refresh: () => void
 }
 
 const _readingActions = createUseReadingProgressActions(ReadingSessionRepository, PostRepository)
 
-export function useReadingProgress(clubId: string, userId: string): ReadingProgressState {
+export function useReadingProgress(
+  clubId: string,
+  userId: string,
+  currentBookId?: string | null,
+): ReadingProgressState {
   const [session, setSession] = useState<ReadingSession | null>(null)
   const [posts, setPosts] = useState<PostWithDetails[]>([])
   const [loading, setLoading] = useState(true)
@@ -55,7 +67,10 @@ export function useReadingProgress(clubId: string, userId: string): ReadingProgr
     setLoading(true)
     setError(null)
     try {
-      const activeSession = await _readingActions.fetchProgress(clubId)
+      let activeSession = await _readingActions.fetchProgress(clubId)
+      if (!activeSession && currentBookId) {
+        activeSession = await _readingActions.startSession(clubId, currentBookId)
+      }
       setSession(activeSession)
       if (activeSession) {
         const chapterPosts = await _readingActions.fetchChapterPosts(
@@ -71,7 +86,7 @@ export function useReadingProgress(clubId: string, userId: string): ReadingProgr
     } finally {
       setLoading(false)
     }
-  }, [clubId])
+  }, [clubId, currentBookId])
 
   useEffect(() => {
     const manager = realtimeManager.current
@@ -93,12 +108,19 @@ export function useReadingProgress(clubId: string, userId: string): ReadingProgr
   }
 
   async function advance(chapter: number, page: number | null) {
-    if (!session) return
+    if (!session) throw new Error('No hay sesión de lectura activa')
     const updated = await _readingActions.advance(session.id, { chapter, page })
     setSession(updated)
     const chapterPosts = await _readingActions.fetchChapterPosts(clubId, chapter)
     setPosts(chapterPosts)
   }
 
-  return { session, posts, loading, error, comment, advance, refresh: load }
+  async function finish() {
+    if (!session) throw new Error('No hay sesión de lectura activa')
+    const updated = await _readingActions.finish(session.id)
+    setSession(updated)
+    setPosts([])
+  }
+
+  return { session, posts, loading, error, comment, advance, finish, refresh: load }
 }
