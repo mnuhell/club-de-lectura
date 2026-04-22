@@ -123,14 +123,14 @@ function makeSessionRepo(
 
 describe('getFeed', () => {
   it('incluye posts del club como items de tipo post', async () => {
-    const items = await getFeed(makeClubRepo(), makePostRepo(), makeSessionRepo(), 'user-1')
+    const { items } = await getFeed(makeClubRepo(), makePostRepo(), makeSessionRepo(), 'user-1')
     const postItems = items.filter(i => i.type === 'post')
     expect(postItems).toHaveLength(1)
     expect(postItems[0].type).toBe('post')
   })
 
   it('incluye sesiones activas como items de tipo progress', async () => {
-    const items = await getFeed(makeClubRepo(), makePostRepo(), makeSessionRepo(), 'user-1')
+    const { items } = await getFeed(makeClubRepo(), makePostRepo(), makeSessionRepo(), 'user-1')
     const progressItems = items.filter(i => i.type === 'progress')
     expect(progressItems).toHaveLength(1)
     expect(progressItems[0].type).toBe('progress')
@@ -150,7 +150,7 @@ describe('getFeed', () => {
         .fn()
         .mockResolvedValue(makeSession({ startedAt: '2026-04-13T00:00:00Z' })),
     })
-    const items = await getFeed(makeClubRepo(), postRepo, sessionRepo, 'user-1')
+    const { items } = await getFeed(makeClubRepo(), postRepo, sessionRepo, 'user-1')
     expect(items[0].timestamp).toBe('2026-04-17T00:00:00Z')
     expect(items[1].timestamp).toBe('2026-04-13T00:00:00Z')
     expect(items[2].timestamp).toBe('2026-04-10T00:00:00Z')
@@ -160,13 +160,13 @@ describe('getFeed', () => {
     const clubRepo = makeClubRepo({
       getMyClubs: jest.fn().mockResolvedValue([makeClubWithDetails({ name: 'Club de Prueba' })]),
     })
-    const items = await getFeed(clubRepo, makePostRepo(), makeSessionRepo(), 'user-1')
+    const { items } = await getFeed(clubRepo, makePostRepo(), makeSessionRepo(), 'user-1')
     const postItem = items.find(i => i.type === 'post')
     expect(postItem?.clubName).toBe('Club de Prueba')
   })
 
   it('el item progress lleva capítulo y página actuales', async () => {
-    const items = await getFeed(makeClubRepo(), makePostRepo(), makeSessionRepo(), 'user-1')
+    const { items } = await getFeed(makeClubRepo(), makePostRepo(), makeSessionRepo(), 'user-1')
     const progressItem = items.find(i => i.type === 'progress')
     if (progressItem?.type !== 'progress') throw new Error('expected progress item')
     expect(progressItem.chapter).toBe(5)
@@ -175,15 +175,34 @@ describe('getFeed', () => {
 
   it('devuelve feed vacío si el usuario no tiene clubs', async () => {
     const clubRepo = makeClubRepo({ getMyClubs: jest.fn().mockResolvedValue([]) })
-    const items = await getFeed(clubRepo, makePostRepo(), makeSessionRepo(), 'user-1')
+    const { items } = await getFeed(clubRepo, makePostRepo(), makeSessionRepo(), 'user-1')
     expect(items).toHaveLength(0)
+  })
+
+  it('allClubIds incluye todos los clubs aunque no tengan posts', async () => {
+    const clubRepo = makeClubRepo({
+      getMyClubs: jest
+        .fn()
+        .mockResolvedValue([
+          makeClubWithDetails({ id: 'club-1' }),
+          makeClubWithDetails({ id: 'club-2' }),
+        ]),
+    })
+    const postRepo = makePostRepo({
+      getByClub: jest.fn().mockResolvedValue([]),
+    })
+    const sessionRepo = makeSessionRepo({
+      getActiveByClub: jest.fn().mockResolvedValue(null),
+    })
+    const { allClubIds } = await getFeed(clubRepo, postRepo, sessionRepo, 'user-1')
+    expect(allClubIds).toEqual(['club-1', 'club-2'])
   })
 
   it('omite el item progress si el club no tiene sesión activa', async () => {
     const sessionRepo = makeSessionRepo({
       getActiveByClub: jest.fn().mockResolvedValue(null),
     })
-    const items = await getFeed(makeClubRepo(), makePostRepo(), sessionRepo, 'user-1')
+    const { items } = await getFeed(makeClubRepo(), makePostRepo(), sessionRepo, 'user-1')
     const progressItems = items.filter(i => i.type === 'progress')
     expect(progressItems).toHaveLength(0)
   })
@@ -192,7 +211,7 @@ describe('getFeed', () => {
     const postRepo = makePostRepo({
       getByClub: jest.fn().mockResolvedValue([makePost({ hasSpoiler: true })]),
     })
-    const items = await getFeed(makeClubRepo(), postRepo, makeSessionRepo(), 'user-1')
+    const { items } = await getFeed(makeClubRepo(), postRepo, makeSessionRepo(), 'user-1')
     const postItem = items.find(i => i.type === 'post')
     if (postItem?.type !== 'post') throw new Error('expected post item')
     expect(postItem.post.hasSpoiler).toBe(true)
@@ -202,14 +221,14 @@ describe('getFeed', () => {
 describe('useFeed actions', () => {
   it('fetchFeed devuelve los items del feed', async () => {
     const actions = createUseFeedActions(makeClubRepo(), makePostRepo(), makeSessionRepo())
-    const items = await actions.fetchFeed('user-1')
+    const { items } = await actions.fetchFeed('user-1')
     expect(items.length).toBeGreaterThan(0)
   })
 
   it('fetchFeed devuelve array vacío si no hay clubs', async () => {
     const clubRepo = makeClubRepo({ getMyClubs: jest.fn().mockResolvedValue([]) })
     const actions = createUseFeedActions(clubRepo, makePostRepo(), makeSessionRepo())
-    const items = await actions.fetchFeed('user-1')
+    const { items } = await actions.fetchFeed('user-1')
     expect(items).toHaveLength(0)
   })
 })

@@ -1,0 +1,8 @@
+-- Push notifications for reactions are handled via Supabase Database Webhooks (Dashboard).
+-- The notifications table is NOT partitioned, so webhooks work correctly here.
+--
+-- Configure in: Dashboard → Database → Webhooks → Create webhook
+--   Table: notifications  |  Event: INSERT  |  Function: send-reaction-push
+--
+-- Supabase injects SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY automatically.
+-- No additional SQL needed.

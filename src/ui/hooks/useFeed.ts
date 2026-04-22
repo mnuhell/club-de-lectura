@@ -26,6 +26,7 @@ export function createUseFeedActions(
 interface FeedState {
   items: FeedItem[]
   loading: boolean
+  refreshing: boolean
   error: string | null
   refresh: () => void
 }
@@ -35,24 +36,35 @@ const _feedActions = createUseFeedActions(ClubRepository, PostRepository, Readin
 export function useFeed(userId: string): FeedState {
   const [items, setItems] = useState<FeedItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const initialLoadDone = useRef(false)
 
   const realtimeManager = useRef(createRealtimeManager(SupabaseRealtimeService))
 
-  const load = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const data = await _feedActions.fetchFeed(userId)
-      setItems(data)
-      const clubIds = [...new Set(data.map(i => i.clubId))]
-      realtimeManager.current.subscribeToClubs(clubIds, load)
-    } catch {
-      setError('No se pudo cargar el feed')
-    } finally {
-      setLoading(false)
-    }
-  }, [userId])
+  const load = useCallback(
+    async (opts?: { background?: boolean }) => {
+      const isBackground = opts?.background ?? false
+      if (isBackground) {
+        setRefreshing(true)
+      } else {
+        setLoading(true)
+      }
+      setError(null)
+      try {
+        const { items: data, allClubIds } = await _feedActions.fetchFeed(userId)
+        setItems(data)
+        realtimeManager.current.subscribeToClubs(allClubIds, () => load({ background: true }))
+        initialLoadDone.current = true
+      } catch {
+        setError('No se pudo cargar el feed')
+      } finally {
+        setLoading(false)
+        setRefreshing(false)
+      }
+    },
+    [userId],
+  )
 
   useEffect(() => {
     const manager = realtimeManager.current
@@ -60,5 +72,9 @@ export function useFeed(userId: string): FeedState {
     return () => manager.unsubscribeAll()
   }, [userId, load])
 
-  return { items, loading, error, refresh: load }
+  const refresh = useCallback(() => {
+    load({ background: initialLoadDone.current })
+  }, [load])
+
+  return { items, loading, refreshing, error, refresh }
 }

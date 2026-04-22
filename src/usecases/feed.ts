@@ -1,7 +1,12 @@
+import type { FeedItem } from '../domain'
 import type { IClubRepository } from '../repositories'
 import type { IPostRepository } from '../repositories/IPostRepository'
 import type { IReadingSessionRepository } from '../repositories/IReadingSessionRepository'
-import type { FeedItem } from '../domain'
+
+export interface FeedResult {
+  items: FeedItem[]
+  allClubIds: string[]
+}
 
 export async function getFeed(
   clubRepo: IClubRepository,
@@ -9,9 +14,11 @@ export async function getFeed(
   sessionRepo: IReadingSessionRepository,
   userId: string,
   limit = 30,
-): Promise<FeedItem[]> {
+): Promise<FeedResult> {
   const clubs = await clubRepo.getMyClubs(userId)
-  if (clubs.length === 0) return []
+  if (clubs.length === 0) return { items: [], allClubIds: [] }
+
+  const allClubIds = clubs.map(c => c.id)
 
   const results = await Promise.all(
     clubs.map(async club => {
@@ -48,8 +55,10 @@ export async function getFeed(
     }),
   )
 
-  return results
+  const items = results
     .flat()
     .sort((a, b) => b.timestamp.localeCompare(a.timestamp))
     .slice(0, limit)
+
+  return { items, allClubIds }
 }

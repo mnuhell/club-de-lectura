@@ -12,10 +12,12 @@ import { useNotifications } from '@/src/ui/hooks/useNotifications'
 import { useReaction } from '@/src/ui/hooks/useReaction'
 import { colors } from '@/src/ui/theme'
 import { Ionicons } from '@expo/vector-icons'
-import { useMemo, useState } from 'react'
+import { useFocusEffect, useRouter } from 'expo-router'
+import { useCallback, useMemo, useState } from 'react'
 import {
   ActivityIndicator,
   FlatList,
+  Image,
   Modal,
   ScrollView,
   StyleSheet,
@@ -35,7 +37,24 @@ function timeAgo(iso: string): string {
   return `${Math.floor(h / 24)}d`
 }
 
-function Avatar({ name, size = 40 }: { name: string; size?: number }) {
+function Avatar({
+  name,
+  avatarUrl,
+  size = 40,
+}: {
+  name: string
+  avatarUrl?: string | null
+  size?: number
+}) {
+  const borderRadius = size / 2
+  if (avatarUrl) {
+    return (
+      <Image
+        source={{ uri: avatarUrl }}
+        style={[styles.avatar, { width: size, height: size, borderRadius }]}
+      />
+    )
+  }
   const initial = name.slice(0, 1).toUpperCase()
   const hue = name.charCodeAt(0) % 6
   const palettes = [
@@ -48,12 +67,7 @@ function Avatar({ name, size = 40 }: { name: string; size?: number }) {
   ]
   const { bg, fg } = palettes[hue]
   return (
-    <View
-      style={[
-        styles.avatar,
-        { width: size, height: size, borderRadius: size / 2, backgroundColor: bg },
-      ]}
-    >
+    <View style={[styles.avatar, { width: size, height: size, borderRadius, backgroundColor: bg }]}>
       <Text style={[styles.avatarInitial, { color: fg, fontSize: size * 0.38 }]}>{initial}</Text>
     </View>
   )
@@ -61,7 +75,9 @@ function Avatar({ name, size = 40 }: { name: string; size?: number }) {
 
 function PostCard({ item, userId }: { item: PostFeedItem; userId: string }) {
   const [spoilerRevealed, setSpoilerRevealed] = useState(false)
+  const router = useRouter()
   const authorName = item.post.author.displayName ?? item.post.author.username
+  const isMe = item.post.author.id === userId
 
   const initialReactions = useMemo<ReactionSummary[]>(
     () =>
@@ -82,11 +98,20 @@ function PostCard({ item, userId }: { item: PostFeedItem; userId: string }) {
 
   const { reactions, toggle } = useReaction(item.post.id, userId, initialReactions)
 
+  function goToProfile() {
+    if (isMe) return
+    router.push(`/club/${item.clubId}/member/${item.post.author.id}`)
+  }
+
   return (
     <View style={styles.card}>
-      {/* Header row */}
-      <View style={styles.cardTop}>
-        <Avatar name={authorName} size={42} />
+      <TouchableOpacity
+        style={styles.cardTop}
+        onPress={goToProfile}
+        disabled={isMe}
+        activeOpacity={isMe ? 1 : 0.7}
+      >
+        <Avatar name={authorName} avatarUrl={item.post.author.avatarUrl} size={42} />
         <View style={styles.cardTopInfo}>
           <View style={styles.cardTopRow}>
             <Text style={styles.authorName} numberOfLines={1}>
@@ -106,7 +131,7 @@ function PostCard({ item, userId }: { item: PostFeedItem; userId: string }) {
             <Text style={styles.timestamp}>{timeAgo(item.timestamp)}</Text>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
 
       {/* Content */}
       {item.post.hasSpoiler && !spoilerRevealed ? (
@@ -192,7 +217,11 @@ function NotificationsSheet({
           <ScrollView contentContainerStyle={styles.notifList}>
             {notifications.map(n => (
               <View key={n.id} style={[styles.notifItem, !n.read && styles.notifItemUnread]}>
-                <Avatar name={n.actor.displayName ?? n.actor.username} size={38} />
+                <Avatar
+                  name={n.actor.displayName ?? n.actor.username}
+                  avatarUrl={n.actor.avatarUrl}
+                  size={38}
+                />
                 <View style={styles.notifBody}>
                   <Text style={styles.notifText}>
                     <Text style={styles.notifActor}>{n.actor.displayName ?? n.actor.username}</Text>
@@ -214,9 +243,15 @@ function NotificationsSheet({
 
 export default function FeedScreen() {
   const { user } = useAuth()
-  const { items, loading, error, refresh } = useFeed(user?.id ?? '')
+  const { items, loading, refreshing, error, refresh } = useFeed(user?.id ?? '')
   const { notifications, unreadCount, markAllRead } = useNotifications(user?.id ?? '')
   const [notifVisible, setNotifVisible] = useState(false)
+
+  useFocusEffect(
+    useCallback(() => {
+      refresh()
+    }, [refresh]),
+  )
 
   function openNotifications() {
     setNotifVisible(true)
@@ -267,7 +302,7 @@ export default function FeedScreen() {
           renderItem={({ item }) => <FeedCard item={item} userId={user?.id ?? ''} />}
           contentContainerStyle={styles.list}
           onRefresh={refresh}
-          refreshing={loading}
+          refreshing={refreshing}
           showsVerticalScrollIndicator={false}
         />
       )}
