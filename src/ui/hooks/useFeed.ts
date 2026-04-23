@@ -44,6 +44,7 @@ export function useFeed(userId: string): FeedState {
 
   const load = useCallback(
     async (opts?: { background?: boolean }) => {
+      if (!userId) return
       const isBackground = opts?.background ?? false
       if (isBackground) {
         setRefreshing(true)

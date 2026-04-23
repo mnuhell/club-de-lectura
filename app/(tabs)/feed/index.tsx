@@ -93,7 +93,13 @@ function PostCard({ item, userId }: { item: PostFeedItem; userId: string }) {
         ),
       ).map(([emoji, { count, reactedByMe }]) => ({ emoji, count, reactedByMe })),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [item.post.id],
+    [
+      item.post.id,
+      item.post.reactions
+        .map(r => `${r.userId}:${r.emoji}`)
+        .sort()
+        .join('|'),
+    ],
   )
 
   const { reactions, toggle } = useReaction(item.post.id, userId, initialReactions)

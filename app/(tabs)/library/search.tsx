@@ -52,7 +52,7 @@ function BookResult({ book, onAdd }: { book: Book; onAdd: (status: BookStatus) =
         <Text style={styles.resultAuthor} numberOfLines={1}>
           {book.author}
         </Text>
-        {book.publishedYear && <Text style={styles.resultMeta}>{book.publishedYear}</Text>}
+        {!!book.publishedYear && <Text style={styles.resultMeta}>{book.publishedYear}</Text>}
       </View>
       <TouchableOpacity style={styles.addButton} onPress={handleAdd}>
         <Ionicons name="add" size={20} color={colors.amber} />

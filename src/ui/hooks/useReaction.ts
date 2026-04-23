@@ -1,10 +1,15 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { ReactionSummary } from '../../domain'
 import { ReactionRepository } from '../../infrastructure/supabase/repositories'
 import { computeReactionToggle } from '../../usecases/reactions'
 
 export function useReaction(postId: string, userId: string, initialReactions: ReactionSummary[]) {
   const [reactions, setReactions] = useState<ReactionSummary[]>(initialReactions)
+
+  useEffect(() => {
+    setReactions(initialReactions)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialReactions])
 
   const toggle = useCallback(
     async (emoji: string) => {

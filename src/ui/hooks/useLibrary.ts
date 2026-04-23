@@ -30,6 +30,7 @@ export function useLibrary(userId: string): LibraryState {
   const [error, setError] = useState<string | null>(null)
 
   const load = useCallback(async () => {
+    if (!userId) return
     setLoading(true)
     setError(null)
     try {

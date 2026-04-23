@@ -71,7 +71,9 @@ function BookCard({
         <Text style={styles.cardAuthor} numberOfLines={1}>
           {item.book.author}
         </Text>
-        {item.book.pageCount && <Text style={styles.cardMeta}>{item.book.pageCount} páginas</Text>}
+        {!!item.book.pageCount && (
+          <Text style={styles.cardMeta}>{item.book.pageCount} páginas</Text>
+        )}
       </View>
       <Ionicons name="ellipsis-vertical" size={16} color={colors.textMuted} />
     </TouchableOpacity>
