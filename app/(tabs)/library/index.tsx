@@ -79,7 +79,11 @@ function BookCover({
     <TouchableOpacity style={styles.bookItem} onPress={handleOptions} activeOpacity={0.75}>
       <View style={styles.coverWrap}>
         {item.book.coverUrl ? (
-          <Image source={{ uri: item.book.coverUrl }} style={styles.coverImage} resizeMode="cover" />
+          <Image
+            source={{ uri: item.book.coverUrl }}
+            style={styles.coverImage}
+            resizeMode="cover"
+          />
         ) : (
           <View style={styles.coverFallback}>
             <Ionicons name="book" size={28} color={colors.amber} />
@@ -139,9 +143,7 @@ export default function LibraryScreen() {
               style={[styles.tab, isActive && styles.tabActive]}
               onPress={() => setActiveTab(tab.key)}
             >
-              <Text style={[styles.tabText, isActive && styles.tabTextActive]}>
-                {tab.label}
-              </Text>
+              <Text style={[styles.tabText, isActive && styles.tabTextActive]}>{tab.label}</Text>
               {count > 0 && (
                 <View style={[styles.tabBadge, isActive && styles.tabBadgeActive]}>
                   <Text style={[styles.tabBadgeText, isActive && styles.tabBadgeTextActive]}>

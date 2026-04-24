@@ -279,10 +279,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
   },
-  resultAuthor: { color: colors.textSecondary, fontFamily: 'Inter-Regular', fontSize: 13, marginTop: 2 },
+  resultAuthor: {
+    color: colors.textSecondary,
+    fontFamily: 'Inter-Regular',
+    fontSize: 13,
+    marginTop: 2,
+  },
   resultBody: { flex: 1, gap: 2 },
   resultMeta: { color: colors.textMuted, fontFamily: 'Inter-Regular', fontSize: 11, marginTop: 3 },
-  resultTitle: { color: colors.textPrimary, fontFamily: 'Inter-SemiBold', fontSize: 15, lineHeight: 20 },
+  resultTitle: {
+    color: colors.textPrimary,
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 15,
+    lineHeight: 20,
+  },
   savingOverlay: {
     alignItems: 'center',
     backgroundColor: colors.surfaceUp,

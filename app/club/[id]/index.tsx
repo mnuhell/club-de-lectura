@@ -71,7 +71,12 @@ function MemberRow({
           {name}
         </Text>
       </View>
-      <View style={[styles.roleBadge, { backgroundColor: roleColor + '18', borderColor: roleColor + '50' }]}>
+      <View
+        style={[
+          styles.roleBadge,
+          { backgroundColor: roleColor + '18', borderColor: roleColor + '50' },
+        ]}
+      >
         <Text style={[styles.roleBadgeText, { color: roleColor }]}>{roleLabel}</Text>
       </View>
       {!isMe && <Ionicons name="chevron-forward" size={14} color={colors.border} />}
@@ -255,7 +260,9 @@ export default function ClubDetailScreen() {
                 <TouchableOpacity
                   style={styles.currentBookCard}
                   onPress={() =>
-                    router.push(`/club/${id}/reading?bookId=${club.currentBook!.id}` as never)
+                    router.push(
+                      `/club/${id}/reading?bookId=${club.currentBook!.id}&isOwner=${isOwner ? '1' : '0'}` as never,
+                    )
                   }
                   activeOpacity={0.78}
                 >
@@ -372,7 +379,7 @@ export default function ClubDetailScreen() {
                 </View>
               </View>
 
-              <Text style={styles.sectionTitle}>MIEMBROS  ·  {members.length}</Text>
+              <Text style={styles.sectionTitle}>MIEMBROS · {members.length}</Text>
             </View>
           </>
         }
@@ -402,7 +409,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
-  closedBadgeText: { color: colors.error, fontFamily: 'Inter-SemiBold', fontSize: 10, letterSpacing: 0.5 },
+  closedBadgeText: {
+    color: colors.error,
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 10,
+    letterSpacing: 0.5,
+  },
   clubDesc: {
     color: colors.textSecondary,
     fontFamily: 'Inter-Regular',
@@ -410,7 +422,12 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     marginTop: 8,
   },
-  clubName: { color: colors.textPrimary, fontFamily: 'Playfair-Bold', fontSize: 28, lineHeight: 34 },
+  clubName: {
+    color: colors.textPrimary,
+    fontFamily: 'Playfair-Bold',
+    fontSize: 28,
+    lineHeight: 34,
+  },
   container: { backgroundColor: colors.bg, flex: 1 },
   coverFallback: {
     alignItems: 'center',

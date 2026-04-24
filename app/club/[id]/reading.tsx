@@ -164,7 +164,7 @@ function AdvanceModal({
             placeholder="Ej. 12"
             placeholderTextColor={colors.textMuted}
           />
-          <Text style={styles.fieldLabel}>PÁGINA  (opcional)</Text>
+          <Text style={styles.fieldLabel}>PÁGINA (opcional)</Text>
           <TextInput
             style={styles.fieldInput}
             value={page}
@@ -180,7 +180,12 @@ function AdvanceModal({
 }
 
 export default function ReadingScreen() {
-  const { id, bookId } = useLocalSearchParams<{ id: string; bookId?: string }>()
+  const {
+    id,
+    bookId,
+    isOwner: isOwnerParam,
+  } = useLocalSearchParams<{ id: string; bookId?: string; isOwner?: string }>()
+  const isOwner = isOwnerParam === '1'
   const router = useRouter()
   const { user } = useAuth()
   const { session, posts, loading, error, comment, advance, finish, refresh } = useReadingProgress(
@@ -270,25 +275,26 @@ export default function ReadingScreen() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={20} color={colors.textSecondary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle} numberOfLines={1}>Lectura en grupo</Text>
-        <TouchableOpacity
-          style={styles.finishButton}
-          onPress={handleFinish}
-          disabled={finishing}
-        >
-          {finishing ? (
-            <ActivityIndicator size="small" color={colors.textInverse} />
-          ) : (
-            <Text style={styles.finishButtonText}>Finalizar</Text>
-          )}
-        </TouchableOpacity>
+        <Text style={styles.headerTitle} numberOfLines={1}>
+          Lectura en grupo
+        </Text>
+        {isOwner && (
+          <TouchableOpacity style={styles.finishButton} onPress={handleFinish} disabled={finishing}>
+            {finishing ? (
+              <ActivityIndicator size="small" color={colors.textInverse} />
+            ) : (
+              <Text style={styles.finishButtonText}>Finalizar</Text>
+            )}
+          </TouchableOpacity>
+        )}
+        {!isOwner && <View style={{ width: 70 }} />}
       </View>
 
       {/* Progress hero */}
       <TouchableOpacity
         style={styles.progressHero}
-        onPress={() => setShowAdvance(true)}
-        activeOpacity={0.75}
+        onPress={() => isOwner && setShowAdvance(true)}
+        activeOpacity={isOwner ? 0.75 : 1}
       >
         <View style={styles.progressLeft}>
           <Text style={styles.chapterNumber}>{chapter}</Text>
@@ -300,10 +306,12 @@ export default function ReadingScreen() {
           </View>
         </View>
         <View style={styles.progressRight}>
-          <View style={styles.updateBtn}>
-            <Ionicons name="pencil-outline" size={13} color={colors.amber} />
-            <Text style={styles.updateBtnText}>Actualizar</Text>
-          </View>
+          {isOwner && (
+            <View style={styles.updateBtn}>
+              <Ionicons name="pencil-outline" size={13} color={colors.amber} />
+              <Text style={styles.updateBtnText}>Actualizar</Text>
+            </View>
+          )}
           <View style={styles.readingBadge}>
             <View style={styles.readingDot} />
             <Text style={styles.readingBadgeText}>en curso</Text>
@@ -313,7 +321,7 @@ export default function ReadingScreen() {
 
       {/* Comments section label */}
       <View style={styles.sectionRow}>
-        <Text style={styles.sectionLabel}>COMENTARIOS  ·  CAP. {chapter}</Text>
+        <Text style={styles.sectionLabel}>COMENTARIOS · CAP. {chapter}</Text>
       </View>
 
       <KeyboardAvoidingView
@@ -375,7 +383,11 @@ export default function ReadingScreen() {
               {sending ? (
                 <ActivityIndicator color={colors.textInverse} size="small" />
               ) : (
-                <Ionicons name="send" size={15} color={commentText.trim() ? colors.textInverse : colors.textMuted} />
+                <Ionicons
+                  name="send"
+                  size={15}
+                  color={commentText.trim() ? colors.textInverse : colors.textMuted}
+                />
               )}
             </TouchableOpacity>
           </View>

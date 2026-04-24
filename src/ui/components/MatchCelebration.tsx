@@ -25,6 +25,24 @@ export function MatchCelebration({ match, onViewMatch, onDismiss }: Props) {
   const opacity = useRef(new Animated.Value(0)).current
   const avatarReveal = useRef(new Animated.Value(0)).current
   const heartScale = useRef(new Animated.Value(0)).current
+  // Ripple rings — 3 concentric pulses
+  const ring1 = useRef(new Animated.Value(0)).current
+  const ring2 = useRef(new Animated.Value(0)).current
+  const ring3 = useRef(new Animated.Value(0)).current
+
+  const startRipple = () => {
+    const pulse = (ring: Animated.Value, delay: number) =>
+      Animated.loop(
+        Animated.sequence([
+          Animated.delay(delay),
+          Animated.parallel([
+            Animated.timing(ring, { toValue: 1, duration: 1400, useNativeDriver: true }),
+          ]),
+          Animated.timing(ring, { toValue: 0, duration: 0, useNativeDriver: true }),
+        ]),
+      )
+    Animated.parallel([pulse(ring1, 0), pulse(ring2, 460), pulse(ring3, 920)]).start()
+  }
 
   useEffect(() => {
     if (match) {
@@ -48,12 +66,15 @@ export function MatchCelebration({ match, onViewMatch, onDismiss }: Props) {
             friction: 5,
           }),
         ]),
-      ]).start()
+      ]).start(() => startRipple())
     } else {
       scale.setValue(0)
       opacity.setValue(0)
       avatarReveal.setValue(0)
       heartScale.setValue(0)
+      ring1.setValue(0)
+      ring2.setValue(0)
+      ring3.setValue(0)
     }
   }, [match])
 
@@ -62,6 +83,15 @@ export function MatchCelebration({ match, onViewMatch, onDismiss }: Props) {
   const avatarScale = avatarReveal.interpolate({
     inputRange: [0, 1],
     outputRange: [0.2, 1],
+  })
+
+  const makeRingStyle = (ring: Animated.Value) => ({
+    opacity: ring.interpolate({ inputRange: [0, 0.3, 1], outputRange: [0, 0.5, 0] }),
+    transform: [
+      {
+        scale: ring.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1.9] }),
+      },
+    ],
   })
 
   return (
@@ -78,25 +108,31 @@ export function MatchCelebration({ match, onViewMatch, onDismiss }: Props) {
             Tú y {match.reader.fullName} compartís los mismos gustos lectores
           </Text>
 
-          {/* Avatar reveal */}
+          {/* Avatar reveal with ripple rings */}
           <View style={styles.avatarWrapper}>
             <Text style={styles.revealHint}>YA PUEDES VER SU FOTO</Text>
-            <Animated.View
-              style={[
-                styles.avatarContainer,
-                { transform: [{ scale: avatarScale }], opacity: avatarReveal },
-              ]}
-            >
-              {match.reader.avatarUrl ? (
-                <Image source={{ uri: match.reader.avatarUrl }} style={styles.avatar} />
-              ) : (
-                <View style={styles.avatarFallback}>
-                  <Text style={styles.avatarFallbackText}>
-                    {match.reader.fullName.charAt(0).toUpperCase()}
-                  </Text>
-                </View>
-              )}
-            </Animated.View>
+            <View style={styles.rippleWrap}>
+              {/* Ripple rings behind avatar */}
+              <Animated.View style={[styles.ring, makeRingStyle(ring3)]} />
+              <Animated.View style={[styles.ring, makeRingStyle(ring2)]} />
+              <Animated.View style={[styles.ring, makeRingStyle(ring1)]} />
+              <Animated.View
+                style={[
+                  styles.avatarContainer,
+                  { transform: [{ scale: avatarScale }], opacity: avatarReveal },
+                ]}
+              >
+                {match.reader.avatarUrl ? (
+                  <Image source={{ uri: match.reader.avatarUrl }} style={styles.avatar} />
+                ) : (
+                  <View style={styles.avatarFallback}>
+                    <Text style={styles.avatarFallbackText}>
+                      {match.reader.fullName.charAt(0).toUpperCase()}
+                    </Text>
+                  </View>
+                )}
+              </Animated.View>
+            </View>
           </View>
 
           <Text style={styles.name}>{match.reader.fullName}</Text>
@@ -107,7 +143,11 @@ export function MatchCelebration({ match, onViewMatch, onDismiss }: Props) {
             </View>
           )}
 
-          <TouchableOpacity style={styles.button} onPress={() => onViewMatch(match.matchId)} activeOpacity={0.85}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => onViewMatch(match.matchId)}
+            activeOpacity={0.85}
+          >
             <Text style={styles.buttonText}>Ver mi coincidencia</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.secondaryButton} onPress={onDismiss}>
@@ -177,6 +217,21 @@ const styles = StyleSheet.create({
     fontSize: 10,
     letterSpacing: 1.2,
     marginBottom: 14,
+  },
+  rippleWrap: {
+    alignItems: 'center',
+    height: 116,
+    justifyContent: 'center',
+    width: 116,
+  },
+  ring: {
+    backgroundColor: 'transparent',
+    borderColor: '#C8853A',
+    borderRadius: 58,
+    borderWidth: 1.5,
+    height: 116,
+    position: 'absolute',
+    width: 116,
   },
   avatarContainer: {
     borderColor: '#C8853A',

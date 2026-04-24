@@ -194,7 +194,13 @@ const styles = StyleSheet.create({
   },
   clubAvatarText: { fontFamily: 'Inter-Bold', fontSize: 20 },
   container: { backgroundColor: colors.bg, flex: 1 },
-  empty: { alignItems: 'center', flex: 1, gap: 10, justifyContent: 'center', paddingHorizontal: 40 },
+  empty: {
+    alignItems: 'center',
+    flex: 1,
+    gap: 10,
+    justifyContent: 'center',
+    paddingHorizontal: 40,
+  },
   emptyActions: { flexDirection: 'row', gap: 10, marginTop: 8 },
   emptyActionPrimary: {
     backgroundColor: colors.amber,

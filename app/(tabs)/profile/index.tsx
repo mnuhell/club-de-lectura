@@ -359,7 +359,12 @@ const styles = StyleSheet.create({
   signOutText: { color: colors.textMuted, fontFamily: 'Inter-Regular', fontSize: 14 },
   statBox: { alignItems: 'center', flex: 1, gap: 4 },
   statDivider: { backgroundColor: colors.border, height: 36, width: 1 },
-  statLabel: { color: colors.textMuted, fontFamily: 'Inter-Regular', fontSize: 11, letterSpacing: 0.3 },
+  statLabel: {
+    color: colors.textMuted,
+    fontFamily: 'Inter-Regular',
+    fontSize: 11,
+    letterSpacing: 0.3,
+  },
   statValue: { color: colors.textPrimary, fontFamily: 'Playfair-Bold', fontSize: 28 },
   statsRow: {
     backgroundColor: colors.surfaceUp,

@@ -6,7 +6,13 @@ import { Platform } from 'react-native'
 type IoniconName = React.ComponentProps<typeof Ionicons>['name']
 
 function TabIcon({ name, color, focused }: { name: IoniconName; color: string; focused: boolean }) {
-  return <Ionicons name={focused ? name.replace('-outline', '') as IoniconName : name} size={22} color={color} />
+  return (
+    <Ionicons
+      name={focused ? (name.replace('-outline', '') as IoniconName) : name}
+      size={22}
+      color={color}
+    />
+  )
 }
 
 export default function TabsLayout() {

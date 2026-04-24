@@ -3,6 +3,7 @@ import type { ReaderMatch } from '@/src/domain/ReaderProfile'
 import { GenreChip } from '@/src/ui/components/GenreChip'
 import { useAuth } from '@/src/ui/hooks/useAuth'
 import { useMatches } from '@/src/ui/hooks/useDiscover'
+import { colors } from '@/src/ui/theme'
 import { Ionicons } from '@expo/vector-icons'
 import { router } from 'expo-router'
 import React from 'react'
@@ -16,96 +17,131 @@ import {
   View,
 } from 'react-native'
 
+function timeAgo(dateStr: string): string {
+  const days = Math.floor((Date.now() - new Date(dateStr).getTime()) / 86400000)
+  if (days === 0) return 'Hoy'
+  if (days === 1) return 'Ayer'
+  if (days < 7) return `Hace ${days} días`
+  if (days < 30) return `Hace ${Math.floor(days / 7)} sem.`
+  return new Date(dateStr).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
+}
+
+function MatchCard({ item }: { item: ReaderMatch }) {
+  const { reader, matchedAt } = item
+
+  return (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => router.push(`/discover/match/${item.matchId}`)}
+      activeOpacity={0.7}
+    >
+      {/* Top row — genres as editorial category tags + date */}
+      <View style={styles.cardTop}>
+        <View style={styles.genresRow}>
+          {reader.genres.slice(0, 2).map(g => (
+            <GenreChip key={g} genre={g} selected small light />
+          ))}
+          {reader.genres.length > 2 && (
+            <Text style={styles.moreGenres}>+{reader.genres.length - 2}</Text>
+          )}
+        </View>
+        <View style={styles.dateBadge}>
+          <Ionicons name="heart" size={9} color={colors.amber} />
+          <Text style={styles.dateText}>{timeAgo(matchedAt)}</Text>
+        </View>
+      </View>
+
+      {/* Middle — name left, avatar right (like author + author photo) */}
+      <View style={styles.cardMid}>
+        <View style={styles.nameBlock}>
+          <Text style={styles.matchName} numberOfLines={2}>
+            {reader.fullName}
+          </Text>
+          {reader.city && (
+            <View style={styles.cityRow}>
+              <Ionicons name="location-outline" size={11} color={colors.textMuted} />
+              <Text style={styles.cityText}>{reader.city}</Text>
+            </View>
+          )}
+        </View>
+
+        {/* Avatar — author photo style */}
+        <View style={styles.avatarWrap}>
+          {reader.avatarUrl ? (
+            <Image source={{ uri: reader.avatarUrl }} style={styles.avatar} />
+          ) : (
+            <View style={styles.avatarFallback}>
+              <Text style={styles.avatarInitial}>{reader.fullName.charAt(0).toUpperCase()}</Text>
+            </View>
+          )}
+        </View>
+      </View>
+
+      {/* Bio — book blurb style */}
+      {reader.readerBio ? (
+        <Text style={styles.bio} numberOfLines={2}>
+          &ldquo;{reader.readerBio}&rdquo;
+        </Text>
+      ) : null}
+
+      {/* Bottom rule + CTA */}
+      <View style={styles.cardBottom}>
+        <View style={styles.bottomRule} />
+        <Text style={styles.cta}>Ver perfil completo →</Text>
+      </View>
+    </TouchableOpacity>
+  )
+}
+
 export default function MatchesScreen() {
   const { user } = useAuth()
   const { matches, loading, reload } = useMatches(user?.id ?? '')
-
-  const renderMatch = ({ item }: { item: ReaderMatch }) => (
-    <TouchableOpacity
-      style={styles.matchCard}
-      onPress={() => router.push(`/discover/match/${item.matchId}`)}
-      activeOpacity={0.72}
-    >
-      <View style={styles.avatarContainer}>
-        {item.reader.avatarUrl ? (
-          <Image source={{ uri: item.reader.avatarUrl }} style={styles.avatar} />
-        ) : (
-          <View style={styles.avatarFallback}>
-            <Text style={styles.avatarInitial}>{item.reader.fullName.charAt(0).toUpperCase()}</Text>
-          </View>
-        )}
-        <View style={styles.matchDot} />
-      </View>
-
-      <View style={styles.matchInfo}>
-        <Text style={styles.matchName}>{item.reader.fullName}</Text>
-        {item.reader.city && (
-          <View style={styles.cityRow}>
-            <Ionicons name="location-outline" size={12} color="#F2E8D545" />
-            <Text style={styles.matchCity}>{item.reader.city}</Text>
-          </View>
-        )}
-        {item.reader.readerBio && (
-          <Text style={styles.matchBio} numberOfLines={2}>
-            {item.reader.readerBio}
-          </Text>
-        )}
-        <View style={styles.genresRow}>
-          {item.reader.genres.slice(0, 3).map(g => (
-            <GenreChip key={g} genre={g} selected small />
-          ))}
-        </View>
-        <Text style={styles.matchedAt}>
-          Coincidencia el{' '}
-          {new Date(item.matchedAt).toLocaleDateString('es-ES', {
-            day: 'numeric',
-            month: 'long',
-          })}
-        </Text>
-      </View>
-
-      <Ionicons name="chevron-forward" size={16} color="#C8853A40" style={styles.chevron} />
-    </TouchableOpacity>
-  )
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="chevron-back" size={22} color="#C8853A" />
+          <Ionicons name="chevron-back" size={22} color={colors.amber} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Mis coincidencias</Text>
+        <View style={styles.headerCenter}>
+          <Text style={styles.headerTitle}>Coincidencias</Text>
+          {matches.length > 0 && (
+            <Text style={styles.headerSub}>
+              {matches.length} {matches.length === 1 ? 'lector afín' : 'lectores afines'}
+            </Text>
+          )}
+        </View>
         <View style={{ width: 40 }} />
       </View>
 
       {loading ? (
         <View style={styles.center}>
-          <ActivityIndicator color="#C8853A" />
+          <ActivityIndicator color={colors.amber} />
         </View>
       ) : matches.length === 0 ? (
         <View style={styles.empty}>
           <View style={styles.emptyIconWrap}>
-            <Ionicons name="heart-outline" size={32} color="#C8853A60" />
+            <Ionicons name="book-outline" size={30} color={colors.amber} />
           </View>
           <Text style={styles.emptyTitle}>Aún no hay coincidencias</Text>
           <Text style={styles.emptyText}>
-            Sigue descubriendo lectores. Cuando alguien comparta tus gustos y se gusten
-            mutuamente, verás aquí su foto y su perfil completo.
+            Cuando alguien comparta tus gustos y se gusten mutuamente, aparecerá aquí con su foto y
+            perfil completo.
           </Text>
-          <TouchableOpacity style={styles.discoverButton} onPress={() => router.back()}>
-            <Text style={styles.discoverButtonText}>Volver a descubrir</Text>
+          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+            <Text style={styles.backBtnText}>Volver a descubrir</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <FlatList
           data={matches}
           keyExtractor={item => item.matchId}
-          renderItem={renderMatch}
+          renderItem={({ item }) => <MatchCard item={item} />}
           contentContainerStyle={styles.list}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
           onRefresh={reload}
           refreshing={loading}
           showsVerticalScrollIndicator={false}
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
       )}
     </SafeAreaView>
@@ -113,44 +149,117 @@ export default function MatchesScreen() {
 }
 
 const styles = StyleSheet.create({
-  avatar: { borderRadius: 38, height: 76, width: 76 },
-  avatarContainer: { position: 'relative' },
+  avatar: {
+    borderColor: colors.amber,
+    borderRadius: 36,
+    borderWidth: 2,
+    height: 72,
+    width: 72,
+  },
   avatarFallback: {
     alignItems: 'center',
-    backgroundColor: '#C8853A18',
-    borderColor: '#C8853A50',
-    borderRadius: 38,
-    borderWidth: 1.5,
-    height: 76,
+    backgroundColor: colors.amberFaint,
+    borderColor: colors.amber,
+    borderRadius: 36,
+    borderWidth: 2,
+    height: 72,
     justifyContent: 'center',
-    width: 76,
+    width: 72,
   },
   avatarInitial: {
-    color: '#C8853A',
+    color: colors.amber,
     fontFamily: 'Playfair-Bold',
-    fontSize: 30,
+    fontSize: 26,
   },
-  backButton: { alignItems: 'center', height: 40, justifyContent: 'center', width: 40 },
-  center: { alignItems: 'center', flex: 1, justifyContent: 'center' },
-  chevron: { alignSelf: 'center' },
-  cityRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 3,
-    marginBottom: 6,
+  avatarWrap: {
+    elevation: 3,
+    shadowColor: colors.amber,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 6,
   },
-  container: { backgroundColor: '#0D0A06', flex: 1 },
-  discoverButton: {
-    borderColor: '#C8853A',
+  backBtn: {
+    borderColor: colors.amber,
     borderRadius: 12,
     borderWidth: 1,
     paddingHorizontal: 24,
     paddingVertical: 12,
   },
-  discoverButtonText: {
-    color: '#C8853A',
+  backBtnText: {
+    color: colors.amber,
     fontFamily: 'Inter-Medium',
     fontSize: 15,
+  },
+  backButton: { alignItems: 'center', height: 40, justifyContent: 'center', width: 40 },
+  bio: {
+    color: colors.textMuted,
+    fontFamily: 'Inter-Regular',
+    fontStyle: 'italic',
+    fontSize: 13,
+    lineHeight: 19,
+    marginTop: 14,
+  },
+  bottomRule: {
+    backgroundColor: colors.border,
+    flex: 1,
+    height: 1,
+    marginRight: 12,
+  },
+  card: {
+    backgroundColor: colors.surfaceUp,
+    borderColor: colors.border,
+    borderRadius: 20,
+    borderWidth: 1,
+    elevation: 2,
+    padding: 20,
+    shadowColor: '#1A1208',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+  },
+  cardBottom: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginTop: 16,
+  },
+  cardMid: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 14,
+  },
+  cardTop: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  center: { alignItems: 'center', flex: 1, justifyContent: 'center' },
+  cityRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 3,
+    marginTop: 4,
+  },
+  cityText: {
+    color: colors.textMuted,
+    fontFamily: 'Inter-Regular',
+    fontSize: 12,
+  },
+  container: { backgroundColor: colors.bg, flex: 1 },
+  cta: {
+    color: colors.amber,
+    fontFamily: 'Inter-Medium',
+    fontSize: 13,
+  },
+  dateBadge: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 4,
+  },
+  dateText: {
+    color: colors.textMuted,
+    fontFamily: 'Inter-Regular',
+    fontSize: 11,
   },
   empty: {
     alignItems: 'center',
@@ -160,8 +269,8 @@ const styles = StyleSheet.create({
   },
   emptyIconWrap: {
     alignItems: 'center',
-    backgroundColor: '#C8853A15',
-    borderColor: '#C8853A30',
+    backgroundColor: colors.amberFaint,
+    borderColor: colors.amber + '30',
     borderRadius: 32,
     borderWidth: 1,
     height: 72,
@@ -170,7 +279,7 @@ const styles = StyleSheet.create({
     width: 72,
   },
   emptyText: {
-    color: '#F2E8D555',
+    color: colors.textMuted,
     fontFamily: 'Inter-Regular',
     fontSize: 15,
     lineHeight: 22,
@@ -178,78 +287,55 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   emptyTitle: {
-    color: '#F2E8D5',
+    color: colors.textPrimary,
     fontFamily: 'Playfair-Bold',
     fontSize: 22,
     marginBottom: 12,
     textAlign: 'center',
   },
   genresRow: {
+    alignItems: 'center',
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: 4,
-    marginBottom: 8,
   },
   header: {
     alignItems: 'center',
-    borderBottomColor: '#C8853A20',
+    backgroundColor: colors.bg,
+    borderBottomColor: colors.border,
     borderBottomWidth: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
-  headerTitle: {
-    color: '#F2E8D5',
-    fontFamily: 'Playfair-Bold',
-    fontSize: 20,
-  },
-  list: { padding: 16, paddingBottom: 32 },
-  matchBio: {
-    color: '#F2E8D565',
-    fontFamily: 'Inter-Regular',
-    fontStyle: 'italic',
-    fontSize: 13,
-    lineHeight: 18,
-    marginBottom: 8,
-  },
-  matchCard: {
-    alignItems: 'center',
-    backgroundColor: '#161009',
-    borderColor: '#C8853A20',
-    borderRadius: 18,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 14,
-    padding: 16,
-  },
-  matchCity: {
-    color: '#F2E8D545',
-    fontFamily: 'Inter-Regular',
-    fontSize: 12,
-  },
-  matchDot: {
-    backgroundColor: '#C8853A',
-    borderColor: '#161009',
-    borderRadius: 6,
-    borderWidth: 2,
-    bottom: 2,
-    height: 12,
-    position: 'absolute',
-    right: 2,
-    width: 12,
-  },
-  matchInfo: { flex: 1 },
-  matchName: {
-    color: '#F2E8D5',
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 17,
-    marginBottom: 3,
-  },
-  matchedAt: {
-    color: '#F2E8D528',
+  headerCenter: { alignItems: 'center' },
+  headerSub: {
+    color: colors.textMuted,
     fontFamily: 'Inter-Regular',
     fontSize: 11,
+    letterSpacing: 0.3,
+    marginTop: 1,
   },
-  separator: { height: 10 },
+  headerTitle: {
+    color: colors.textPrimary,
+    fontFamily: 'Playfair-Bold',
+    fontSize: 22,
+  },
+  list: { padding: 16, paddingBottom: 40 },
+  matchName: {
+    color: colors.textPrimary,
+    fontFamily: 'Playfair-Bold',
+    fontSize: 22,
+    flex: 1,
+    lineHeight: 28,
+    marginRight: 12,
+  },
+  moreGenres: {
+    color: colors.textMuted,
+    fontFamily: 'Inter-Regular',
+    fontSize: 12,
+    marginLeft: 2,
+  },
+  nameBlock: { flex: 1 },
+  separator: { height: 12 },
 })

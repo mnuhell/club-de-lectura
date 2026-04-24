@@ -135,9 +135,7 @@ export function ReaderCard({ reader, onLike, onPass, isTop }: Props) {
         )}
 
         {/* Bio */}
-        {reader.readerBio ? (
-          <Text style={styles.bio}>{reader.readerBio}</Text>
-        ) : null}
+        {reader.readerBio ? <Text style={styles.bio}>{reader.readerBio}</Text> : null}
 
         {/* Genres */}
         <View style={styles.genresRow}>
@@ -153,13 +151,21 @@ export function ReaderCard({ reader, onLike, onPass, isTop }: Props) {
       {/* Action buttons */}
       {isTop && (
         <View style={styles.buttons}>
-          <TouchableOpacity style={[styles.btn, styles.passBtn]} onPress={handlePass} activeOpacity={0.8}>
+          <TouchableOpacity
+            style={[styles.btn, styles.passBtn]}
+            onPress={handlePass}
+            activeOpacity={0.8}
+          >
             <Ionicons name="close" size={28} color="#888" />
           </TouchableOpacity>
           <View style={styles.hintWrap}>
             <Text style={styles.hintText}>desliza o toca</Text>
           </View>
-          <TouchableOpacity style={[styles.btn, styles.likeBtn]} onPress={handleLike} activeOpacity={0.8}>
+          <TouchableOpacity
+            style={[styles.btn, styles.likeBtn]}
+            onPress={handleLike}
+            activeOpacity={0.8}
+          >
             <Ionicons name="heart" size={26} color="#C8853A" />
           </TouchableOpacity>
         </View>
