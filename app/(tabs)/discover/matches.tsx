@@ -111,7 +111,7 @@ export default function MatchesScreen() {
             </Text>
           )}
         </View>
-        <View style={{ width: 40 }} />
+        <View style={styles.headerSpacer} />
       </View>
 
       {loading ? (
@@ -338,4 +338,5 @@ const styles = StyleSheet.create({
   },
   nameBlock: { flex: 1 },
   separator: { height: 12 },
+  headerSpacer: { width: 40 },
 })

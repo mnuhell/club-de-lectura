@@ -21,7 +21,7 @@ import { useChat } from '@/src/ui/hooks/useChat'
 import { GenreChip } from '@/src/ui/components/GenreChip'
 import { colors } from '@/src/ui/theme'
 
-const { width: SW, height: SH } = Dimensions.get('window')
+const { width: SW } = Dimensions.get('window')
 
 function PhotoViewer({
   uri,
@@ -47,6 +47,7 @@ function PhotoViewer({
       opacity.setValue(0)
       scale.setValue(0.88)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible])
 
   function handleClose() {
@@ -118,7 +119,7 @@ export default function MatchDetailScreen() {
           <Ionicons name="chevron-back" size={22} color={colors.amber} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Perfil del lector</Text>
-        <View style={{ width: 40 }} />
+        <View style={styles.headerSpacer} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -558,4 +559,5 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   sectionLabelRow: { alignItems: 'center', flexDirection: 'row', gap: 6, marginBottom: 12 },
+  headerSpacer: { width: 40 },
 })

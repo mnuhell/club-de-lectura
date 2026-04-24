@@ -287,7 +287,7 @@ export default function ReadingScreen() {
             )}
           </TouchableOpacity>
         )}
-        {!isOwner && <View style={{ width: 70 }} />}
+        {!isOwner && <View style={styles.headerSpacer} />}
       </View>
 
       {/* Progress hero */}
@@ -643,4 +643,5 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   updateBtnText: { color: colors.amber, fontFamily: 'Inter-Medium', fontSize: 12 },
+  headerSpacer: { width: 70 },
 })

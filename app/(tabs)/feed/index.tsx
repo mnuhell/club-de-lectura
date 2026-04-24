@@ -79,6 +79,7 @@ function PostCard({ item, userId }: { item: PostFeedItem; userId: string }) {
   const authorName = item.post.author.displayName ?? item.post.author.username
   const isMe = item.post.author.id === userId
 
+  /* eslint-disable react-hooks/exhaustive-deps */
   const initialReactions = useMemo<ReactionSummary[]>(
     () =>
       Object.entries(
@@ -92,7 +93,6 @@ function PostCard({ item, userId }: { item: PostFeedItem; userId: string }) {
           {},
         ),
       ).map(([emoji, { count, reactedByMe }]) => ({ emoji, count, reactedByMe })),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       item.post.id,
       item.post.reactions
@@ -101,6 +101,7 @@ function PostCard({ item, userId }: { item: PostFeedItem; userId: string }) {
         .join('|'),
     ],
   )
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   const { reactions, toggle } = useReaction(item.post.id, userId, initialReactions)
 

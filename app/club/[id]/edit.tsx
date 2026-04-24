@@ -6,7 +6,6 @@ import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useEffect, useState } from 'react'
 import {
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -88,7 +87,7 @@ export default function EditClubScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const { user } = useAuth()
-  const { club, loading, updateBook: _, refresh } = useClubDetail(id, user?.id ?? '')
+  const { club, loading, refresh } = useClubDetail(id, user?.id ?? '')
 
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
@@ -182,7 +181,7 @@ export default function EditClubScreen() {
       </View>
 
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        style={styles.grow}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
@@ -408,4 +407,5 @@ const styles = StyleSheet.create({
     marginTop: 14,
   },
   title: { color: colors.textPrimary, fontFamily: 'Inter-Regular', fontSize: 20 },
+  grow: { flex: 1 },
 })

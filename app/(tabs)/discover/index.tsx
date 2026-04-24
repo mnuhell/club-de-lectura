@@ -37,6 +37,7 @@ export default function DiscoverScreen() {
       }),
       Animated.timing(glowAnim, { toValue: 1, duration: 600, useNativeDriver: true }),
     ]).start()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   React.useEffect(() => {

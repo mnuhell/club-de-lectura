@@ -36,6 +36,7 @@ export default function DiscoverSetupScreen() {
       Animated.spring(heroAnim, { toValue: 1, useNativeDriver: true, tension: 60, friction: 10 }),
       Animated.spring(formAnim, { toValue: 1, useNativeDriver: true, tension: 55, friction: 10 }),
     ]).start()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {

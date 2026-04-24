@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useFocusEffect } from 'expo-router'
 import { MatchingRepository } from '@/src/infrastructure/supabase/repositories/MatchingRepository'
 import { createMatchingActions } from '@/src/usecases/matching'

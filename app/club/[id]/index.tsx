@@ -444,17 +444,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
   },
-  currentBook: {
-    backgroundColor: colors.surfaceUp,
-    borderColor: colors.amber + '40',
-    borderLeftColor: colors.amber,
-    borderLeftWidth: 3,
-    borderRadius: 12,
-    borderWidth: 1,
-    gap: 5,
-    marginTop: 20,
-    padding: 16,
-  },
   currentBookAuthor: {
     color: colors.textSecondary,
     fontFamily: 'Inter-Regular',
@@ -655,8 +644,6 @@ const styles = StyleSheet.create({
   },
   ownerBtnDangerText: { color: colors.error, fontFamily: 'Inter-Medium', fontSize: 12 },
   ownerBtnText: { color: colors.amber, fontFamily: 'Inter-Medium', fontSize: 12 },
-  readingCta: { alignItems: 'center', flexDirection: 'row', gap: 4, marginTop: 6 },
-  readingCtaText: { color: colors.amber, fontFamily: 'Inter-Medium', fontSize: 12 },
   retryButton: {
     borderColor: colors.border,
     borderRadius: 8,

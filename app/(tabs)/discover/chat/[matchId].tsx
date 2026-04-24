@@ -1,22 +1,22 @@
-import { SafeAreaView } from 'react-native-safe-area-context'
-import React, { useRef, useState } from 'react'
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TextInput,
-  TouchableOpacity,
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  Image,
-} from 'react-native'
-import { useLocalSearchParams, router } from 'expo-router'
+import type { Message } from '@/src/domain/Message'
 import { useAuth } from '@/src/ui/hooks/useAuth'
 import { useChat } from '@/src/ui/hooks/useChat'
 import { useMatches } from '@/src/ui/hooks/useDiscover'
-import type { Message } from '@/src/domain/Message'
+import { router, useLocalSearchParams } from 'expo-router'
+import React, { useRef, useState } from 'react'
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 function timeAgo(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime()
@@ -92,7 +92,7 @@ export default function ChatScreen() {
           </View>
         </TouchableOpacity>
 
-        <View style={{ width: 40 }} />
+        <View style={styles.spacer} />
       </View>
 
       <KeyboardAvoidingView
@@ -260,6 +260,7 @@ const styles = StyleSheet.create({
     width: 42,
   },
   sendBtnDisabled: { backgroundColor: '#C8853A40' },
+  spacer: { width: 40 },
   sendIcon: { color: '#0D0A06', fontSize: 20, fontWeight: '700' },
   timeDivider: {
     color: '#F2E8D530',

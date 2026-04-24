@@ -76,6 +76,7 @@ export function MatchCelebration({ match, onViewMatch, onDismiss }: Props) {
       ring2.setValue(0)
       ring3.setValue(0)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [match])
 
   if (!match) return null
