@@ -26,15 +26,26 @@ function timeAgo(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime()
   const m = Math.floor(diff / 60000)
   if (m < 1) return 'ahora'
-  if (m < 60) return `hace ${m}m`
+  if (m < 60) return `${m}m`
   const h = Math.floor(m / 60)
-  if (h < 24) return `hace ${h}h`
-  return `hace ${Math.floor(h / 24)}d`
+  if (h < 24) return `${h}h`
+  return `${Math.floor(h / 24)}d`
 }
+
+const AVATAR_COLORS = [
+  { bg: '#F2E0C8', fg: '#8B5E2A' },
+  { bg: '#D6E8D4', fg: '#3D7A54' },
+  { bg: '#D4E0F0', fg: '#3A5F8A' },
+  { bg: '#EDD4F0', fg: '#7A3A8A' },
+  { bg: '#F0D4D4', fg: '#8A3A3A' },
+  { bg: '#D4EEF0', fg: '#2A7A80' },
+]
 
 function CommentCard({ post, userId }: { post: PostWithDetails; userId: string }) {
   const [revealed, setRevealed] = useState(false)
   const name = post.author.displayName ?? post.author.username
+  const isMe = post.author.id === userId
+  const palette = AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length]
 
   const initialReactions = useMemo<ReactionSummary[]>(
     () =>
@@ -53,12 +64,21 @@ function CommentCard({ post, userId }: { post: PostWithDetails; userId: string }
   const { reactions, toggle } = useReaction(post.id, userId, initialReactions)
 
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, isMe && styles.cardMe]}>
       <View style={styles.cardHeader}>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarInitial}>{name.slice(0, 1).toUpperCase()}</Text>
+        <View style={[styles.avatar, { backgroundColor: palette.bg }]}>
+          <Text style={[styles.avatarInitial, { color: palette.fg }]}>
+            {name.slice(0, 1).toUpperCase()}
+          </Text>
         </View>
-        <Text style={styles.authorName}>{name}</Text>
+        <View style={styles.cardMeta}>
+          <Text style={styles.authorName}>{name}</Text>
+          {post.chapterRef != null && (
+            <View style={styles.chapterTag}>
+              <Text style={styles.chapterTagText}>cap. {post.chapterRef}</Text>
+            </View>
+          )}
+        </View>
         <Text style={styles.timestamp}>{timeAgo(post.createdAt)}</Text>
       </View>
 
@@ -125,7 +145,7 @@ function AdvanceModal({
           <TouchableOpacity onPress={onClose}>
             <Text style={styles.modalCancel}>Cancelar</Text>
           </TouchableOpacity>
-          <Text style={styles.modalTitle}>Actualizar progreso</Text>
+          <Text style={styles.modalTitle}>Mi progreso</Text>
           <TouchableOpacity onPress={handleSave} disabled={saving}>
             {saving ? (
               <ActivityIndicator color={colors.amber} size="small" />
@@ -135,7 +155,7 @@ function AdvanceModal({
           </TouchableOpacity>
         </View>
         <View style={styles.modalBody}>
-          <Text style={styles.fieldLabel}>Capítulo actual</Text>
+          <Text style={styles.fieldLabel}>CAPÍTULO ACTUAL</Text>
           <TextInput
             style={styles.fieldInput}
             value={chapter}
@@ -144,7 +164,7 @@ function AdvanceModal({
             placeholder="Ej. 12"
             placeholderTextColor={colors.textMuted}
           />
-          <Text style={styles.fieldLabel}>Página (opcional)</Text>
+          <Text style={styles.fieldLabel}>PÁGINA  (opcional)</Text>
           <TextInput
             style={styles.fieldInput}
             value={page}
@@ -227,7 +247,7 @@ export default function ReadingScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
             <Ionicons name="arrow-back" size={22} color={colors.textSecondary} />
           </TouchableOpacity>
         </View>
@@ -241,41 +261,59 @@ export default function ReadingScreen() {
     )
   }
 
+  const chapter = session.currentChapter ?? 1
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
+      {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={22} color={colors.textSecondary} />
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={20} color={colors.textSecondary} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.advanceButton} onPress={() => setShowAdvance(true)}>
-          <Ionicons name="flag-outline" size={14} color={colors.amber} />
-          <Text style={styles.advanceText}>Actualizar progreso</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>Lectura en grupo</Text>
+        <TouchableOpacity
+          style={styles.finishButton}
+          onPress={handleFinish}
+          disabled={finishing}
+        >
+          {finishing ? (
+            <ActivityIndicator size="small" color={colors.textInverse} />
+          ) : (
+            <Text style={styles.finishButtonText}>Finalizar</Text>
+          )}
         </TouchableOpacity>
       </View>
 
-      <View style={styles.progressBanner}>
-        <View style={styles.progressInfo}>
-          <Text style={styles.chapterLabel}>Capítulo {session.currentChapter ?? '–'}</Text>
-          {session.currentPage != null && (
-            <Text style={styles.pageLabel}>Página {session.currentPage}</Text>
-          )}
-        </View>
-        <View style={styles.progressBannerActions}>
-          <View style={styles.progressBadge}>
-            <Ionicons name="book-outline" size={13} color={colors.success} />
-            <Text style={styles.progressBadgeText}>en curso</Text>
-          </View>
-          <TouchableOpacity style={styles.finishButton} onPress={handleFinish} disabled={finishing}>
-            {finishing ? (
-              <ActivityIndicator size="small" color={colors.textInverse} />
-            ) : (
-              <>
-                <Ionicons name="checkmark-circle-outline" size={13} color={colors.textInverse} />
-                <Text style={styles.finishButtonText}>Finalizar</Text>
-              </>
+      {/* Progress hero */}
+      <TouchableOpacity
+        style={styles.progressHero}
+        onPress={() => setShowAdvance(true)}
+        activeOpacity={0.75}
+      >
+        <View style={styles.progressLeft}>
+          <Text style={styles.chapterNumber}>{chapter}</Text>
+          <View>
+            <Text style={styles.chapterWord}>capítulo</Text>
+            {session.currentPage != null && (
+              <Text style={styles.pageLabel}>pág. {session.currentPage}</Text>
             )}
-          </TouchableOpacity>
+          </View>
         </View>
+        <View style={styles.progressRight}>
+          <View style={styles.updateBtn}>
+            <Ionicons name="pencil-outline" size={13} color={colors.amber} />
+            <Text style={styles.updateBtnText}>Actualizar</Text>
+          </View>
+          <View style={styles.readingBadge}>
+            <View style={styles.readingDot} />
+            <Text style={styles.readingBadgeText}>en curso</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+
+      {/* Comments section label */}
+      <View style={styles.sectionRow}>
+        <Text style={styles.sectionLabel}>COMENTARIOS  ·  CAP. {chapter}</Text>
       </View>
 
       <KeyboardAvoidingView
@@ -293,26 +331,28 @@ export default function ReadingScreen() {
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <View style={styles.emptyComments}>
-              <Text style={styles.emptyText}>
-                Sin comentarios para el capítulo {session.currentChapter ?? 1}
-              </Text>
-              <Text style={styles.emptyHint}>Sé el primero en comentar</Text>
+              <View style={styles.emptyIconWrap}>
+                <Ionicons name="chatbubble-outline" size={28} color={colors.textMuted} />
+              </View>
+              <Text style={styles.emptyText}>Sin comentarios aún</Text>
+              <Text style={styles.emptyHint}>Sé el primero en comentar el capítulo {chapter}</Text>
             </View>
           }
         />
 
+        {/* Input area */}
         <View style={styles.inputArea}>
           <TouchableOpacity
             style={[styles.spoilerToggle, hasSpoiler && styles.spoilerToggleActive]}
             onPress={() => setHasSpoiler(v => !v)}
           >
             <Ionicons
-              name="eye-off-outline"
-              size={14}
+              name={hasSpoiler ? 'eye-off' : 'eye-off-outline'}
+              size={13}
               color={hasSpoiler ? colors.amber : colors.textMuted}
             />
             <Text style={[styles.spoilerToggleText, hasSpoiler && styles.spoilerToggleTextActive]}>
-              Spoiler
+              {hasSpoiler ? 'Spoiler activo' : 'Marcar spoiler'}
             </Text>
           </TouchableOpacity>
 
@@ -320,7 +360,7 @@ export default function ReadingScreen() {
             <TextInput
               ref={inputRef}
               style={styles.input}
-              placeholder={`Comentar cap. ${session.currentChapter ?? 1}...`}
+              placeholder={`Comenta el capítulo ${chapter}…`}
               placeholderTextColor={colors.textMuted}
               value={commentText}
               onChangeText={setCommentText}
@@ -335,7 +375,7 @@ export default function ReadingScreen() {
               {sending ? (
                 <ActivityIndicator color={colors.textInverse} size="small" />
               ) : (
-                <Ionicons name="send" size={16} color={colors.textInverse} />
+                <Ionicons name="send" size={15} color={commentText.trim() ? colors.textInverse : colors.textMuted} />
               )}
             </TouchableOpacity>
           </View>
@@ -344,7 +384,7 @@ export default function ReadingScreen() {
 
       <AdvanceModal
         visible={showAdvance}
-        currentChapter={session.currentChapter ?? 1}
+        currentChapter={chapter}
         currentPage={session.currentPage}
         onSave={advance}
         onClose={() => setShowAdvance(false)}
@@ -354,44 +394,67 @@ export default function ReadingScreen() {
 }
 
 const styles = StyleSheet.create({
-  advanceButton: {
-    alignItems: 'center',
-    borderColor: colors.amber,
-    borderRadius: 16,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  advanceText: { color: colors.amber, fontFamily: 'Inter-Regular', fontSize: 12 },
-  authorName: { color: colors.textSecondary, flex: 1, fontFamily: 'Inter-Regular', fontSize: 13 },
+  authorName: { color: colors.textPrimary, fontFamily: 'Inter-SemiBold', fontSize: 13 },
   avatar: {
     alignItems: 'center',
-    backgroundColor: colors.surfaceHigh,
-    borderRadius: 14,
-    height: 28,
+    borderRadius: 16,
+    height: 32,
     justifyContent: 'center',
-    width: 28,
+    width: 32,
   },
-  avatarInitial: { color: colors.amber, fontFamily: 'Inter-Regular', fontSize: 13 },
+  avatarInitial: { fontFamily: 'Inter-Bold', fontSize: 13 },
+  backButton: { padding: 4 },
   card: {
     backgroundColor: colors.surfaceUp,
     borderColor: colors.border,
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1,
     marginHorizontal: 16,
     marginVertical: 5,
-    padding: 12,
+    padding: 14,
+    shadowColor: '#1A1208',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 1,
   },
-  cardHeader: { alignItems: 'center', flexDirection: 'row', gap: 8, marginBottom: 8 },
+  cardMe: { borderColor: colors.amber + '30' },
+  cardHeader: { alignItems: 'center', flexDirection: 'row', gap: 9, marginBottom: 10 },
+  cardMeta: { alignItems: 'center', flex: 1, flexDirection: 'row', gap: 7 },
   centered: { alignItems: 'center', flex: 1, gap: 12, justifyContent: 'center' },
-  chapterLabel: { color: colors.textPrimary, fontFamily: 'Inter-Regular', fontSize: 18 },
+  chapterNumber: {
+    color: colors.textPrimary,
+    fontFamily: 'Playfair-Bold',
+    fontSize: 48,
+    lineHeight: 52,
+  },
+  chapterTag: {
+    backgroundColor: colors.amberFaint,
+    borderRadius: 8,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  chapterTagText: { color: colors.amber, fontFamily: 'Inter-Medium', fontSize: 10 },
+  chapterWord: { color: colors.textMuted, fontFamily: 'Inter-Regular', fontSize: 13 },
   container: { backgroundColor: colors.bg, flex: 1 },
-  content: { color: colors.textPrimary, fontFamily: 'Inter-Regular', fontSize: 16, lineHeight: 22 },
-  emptyComments: { alignItems: 'center', gap: 6, paddingTop: 60 },
-  emptyHint: { color: colors.textMuted, fontFamily: 'Inter-Regular', fontSize: 12 },
-  emptyText: { color: colors.textSecondary, fontFamily: 'Inter-Regular', fontSize: 16 },
+  content: {
+    color: colors.textPrimary,
+    fontFamily: 'Inter-Regular',
+    fontSize: 15,
+    lineHeight: 23,
+  },
+  emptyComments: { alignItems: 'center', gap: 8, paddingTop: 56 },
+  emptyHint: { color: colors.textMuted, fontFamily: 'Inter-Regular', fontSize: 13 },
+  emptyIconWrap: {
+    alignItems: 'center',
+    backgroundColor: colors.surfaceHigh,
+    borderRadius: 20,
+    height: 52,
+    justifyContent: 'center',
+    marginBottom: 4,
+    width: 52,
+  },
+  emptyText: { color: colors.textSecondary, fontFamily: 'Inter-SemiBold', fontSize: 15 },
   errorText: { color: colors.error, fontFamily: 'Inter-Regular', fontSize: 14 },
   fieldInput: {
     backgroundColor: colors.surfaceUp,
@@ -407,11 +470,19 @@ const styles = StyleSheet.create({
   },
   fieldLabel: {
     color: colors.textMuted,
-    fontFamily: 'Inter-Regular',
-    fontSize: 12,
+    fontFamily: 'Inter-Medium',
+    fontSize: 10,
+    letterSpacing: 0.8,
     marginBottom: 6,
     marginTop: 14,
   },
+  finishButton: {
+    backgroundColor: colors.success,
+    borderRadius: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  finishButtonText: { color: '#fff', fontFamily: 'Inter-SemiBold', fontSize: 12 },
   flex: { flex: 1 },
   header: {
     alignItems: 'center',
@@ -419,8 +490,16 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     paddingVertical: 12,
+  },
+  headerTitle: {
+    color: colors.textSecondary,
+    flex: 1,
+    fontFamily: 'Inter-Medium',
+    fontSize: 14,
+    marginHorizontal: 12,
+    textAlign: 'center',
   },
   input: {
     color: colors.textPrimary,
@@ -431,6 +510,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   inputArea: {
+    backgroundColor: colors.surface,
     borderTopColor: colors.border,
     borderTopWidth: 1,
     paddingBottom: 16,
@@ -441,12 +521,12 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     backgroundColor: colors.surfaceUp,
     borderColor: colors.border,
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 1,
     flexDirection: 'row',
     gap: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
   },
   list: { paddingBottom: 8, paddingTop: 8 },
   modal: { backgroundColor: colors.bg, flex: 1 },
@@ -461,40 +541,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
   },
-  modalSave: { color: colors.amber, fontFamily: 'Inter-Regular', fontSize: 14 },
-  modalTitle: { color: colors.textPrimary, fontFamily: 'Inter-Regular', fontSize: 18 },
-  pageLabel: { color: colors.textMuted, fontFamily: 'Inter-Regular', fontSize: 13, marginTop: 2 },
-  progressBadge: {
+  modalSave: { color: colors.amber, fontFamily: 'Inter-SemiBold', fontSize: 14 },
+  modalTitle: { color: colors.textPrimary, fontFamily: 'Playfair-Bold', fontSize: 20 },
+  pageLabel: { color: colors.textMuted, fontFamily: 'Inter-Regular', fontSize: 12, marginTop: 1 },
+  progressHero: {
     alignItems: 'center',
-    backgroundColor: colors.success + '20',
-    borderRadius: 10,
-    flexDirection: 'row',
-    gap: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  progressBadgeText: { color: colors.success, fontFamily: 'Inter-Regular', fontSize: 11 },
-  progressBanner: {
-    alignItems: 'center',
+    backgroundColor: colors.surfaceUp,
     borderBottomColor: colors.border,
     borderBottomWidth: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingVertical: 14,
+    paddingVertical: 16,
   },
-  progressBannerActions: { alignItems: 'flex-end', gap: 6 },
-  progressInfo: { gap: 2 },
-  finishButton: {
-    alignItems: 'center',
+  progressLeft: { alignItems: 'flex-end', flexDirection: 'row', gap: 8 },
+  progressRight: { alignItems: 'flex-end', gap: 8 },
+  readingBadge: { alignItems: 'center', flexDirection: 'row', gap: 5 },
+  readingBadgeText: { color: colors.success, fontFamily: 'Inter-Medium', fontSize: 11 },
+  readingDot: {
     backgroundColor: colors.success,
-    borderRadius: 12,
-    flexDirection: 'row',
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    borderRadius: 4,
+    height: 6,
+    width: 6,
   },
-  finishButtonText: { color: colors.textInverse, fontFamily: 'Inter-Regular', fontSize: 11 },
   retryButton: {
     borderColor: colors.border,
     borderRadius: 8,
@@ -503,33 +572,63 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   retryText: { color: colors.textSecondary, fontFamily: 'Inter-Regular', fontSize: 13 },
+  sectionLabel: {
+    color: colors.textMuted,
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 10,
+    letterSpacing: 0.8,
+  },
+  sectionRow: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
   sendButton: {
     alignItems: 'center',
     backgroundColor: colors.amber,
     borderRadius: 18,
-    height: 36,
+    height: 34,
     justifyContent: 'center',
-    width: 36,
+    width: 34,
   },
   sendButtonDisabled: { backgroundColor: colors.surfaceHigh },
   spoilerBlock: {
     alignItems: 'center',
     backgroundColor: colors.surfaceHigh,
-    borderRadius: 8,
+    borderRadius: 10,
     flexDirection: 'row',
     gap: 8,
-    padding: 10,
+    marginBottom: 4,
+    padding: 12,
   },
   spoilerText: { color: colors.textMuted, fontFamily: 'Inter-Regular', fontSize: 13 },
   spoilerToggle: {
     alignItems: 'center',
+    borderColor: colors.border,
+    borderRadius: 16,
+    borderWidth: 1,
     flexDirection: 'row',
     gap: 4,
-    marginBottom: 6,
-    paddingVertical: 2,
+    marginBottom: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    alignSelf: 'flex-start',
   },
-  spoilerToggleActive: {},
-  spoilerToggleText: { color: colors.textMuted, fontFamily: 'Inter-Regular', fontSize: 12 },
+  spoilerToggleActive: {
+    backgroundColor: colors.amberFaint,
+    borderColor: colors.amber,
+  },
+  spoilerToggleText: { color: colors.textMuted, fontFamily: 'Inter-Medium', fontSize: 12 },
   spoilerToggleTextActive: { color: colors.amber },
   timestamp: { color: colors.textMuted, fontFamily: 'Inter-Regular', fontSize: 11 },
+  updateBtn: {
+    alignItems: 'center',
+    borderColor: colors.amber,
+    borderRadius: 14,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  updateBtnText: { color: colors.amber, fontFamily: 'Inter-Medium', fontSize: 12 },
 })

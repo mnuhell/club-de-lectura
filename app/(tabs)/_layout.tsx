@@ -1,11 +1,12 @@
 import { Tabs } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import { colors } from '@/src/ui/theme'
+import { Platform } from 'react-native'
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name']
 
-function TabIcon({ name, color }: { name: IoniconName; color: string }) {
-  return <Ionicons name={name} size={24} color={color} />
+function TabIcon({ name, color, focused }: { name: IoniconName; color: string; focused: boolean }) {
+  return <Ionicons name={focused ? name.replace('-outline', '') as IoniconName : name} size={22} color={color} />
 }
 
 export default function TabsLayout() {
@@ -17,13 +18,16 @@ export default function TabsLayout() {
           backgroundColor: colors.surface,
           borderTopColor: colors.border,
           borderTopWidth: 1,
+          height: Platform.OS === 'ios' ? 80 : 62,
+          paddingTop: 8,
+          paddingBottom: Platform.OS === 'ios' ? 24 : 10,
         },
         tabBarActiveTintColor: colors.amber,
         tabBarInactiveTintColor: colors.textMuted,
         tabBarLabelStyle: {
-          fontFamily: 'Inter-Regular',
-          fontSize: 11,
-          marginBottom: 2,
+          fontFamily: 'Inter-Medium',
+          fontSize: 10,
+          marginTop: 2,
         },
       }}
     >
@@ -31,35 +35,45 @@ export default function TabsLayout() {
         name="feed/index"
         options={{
           title: 'Feed',
-          tabBarIcon: ({ color }) => <TabIcon name="book-outline" color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon name="book-outline" color={color} focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
         name="discover"
         options={{
           title: 'Descubrir',
-          tabBarIcon: ({ color }) => <TabIcon name="heart-outline" color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon name="heart-outline" color={color} focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
         name="clubs"
         options={{
           title: 'Clubs',
-          tabBarIcon: ({ color }) => <TabIcon name="people-outline" color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon name="people-outline" color={color} focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
         name="library"
         options={{
           title: 'Biblioteca',
-          tabBarIcon: ({ color }) => <TabIcon name="library-outline" color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon name="library-outline" color={color} focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
         name="profile/index"
         options={{
           title: 'Perfil',
-          tabBarIcon: ({ color }) => <TabIcon name="person-outline" color={color} />,
+          tabBarIcon: ({ color, focused }) => (
+            <TabIcon name="person-outline" color={color} focused={focused} />
+          ),
         }}
       />
     </Tabs>

@@ -2,6 +2,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { router } from 'expo-router'
+import { Ionicons } from '@expo/vector-icons'
 import { useAuth } from '@/src/ui/hooks/useAuth'
 import { useDiscover, useMatches, useReaderPreferences } from '@/src/ui/hooks/useDiscover'
 import { ReaderCard } from '@/src/ui/components/ReaderCard'
@@ -50,16 +51,21 @@ export default function DiscoverScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.emptySetup}>
-          <Text style={styles.emptyIcon}>📚</Text>
+          <View style={styles.emptyIconWrap}>
+            <Ionicons name="library-outline" size={36} color="#C8853A" />
+          </View>
           <Text style={styles.emptyTitle}>Completa tu perfil lector</Text>
           <Text style={styles.emptyText}>
             Cuéntanos qué géneros te apasionan para encontrar lectores afines a ti.
-            {'\n\n'}La foto se revela solo si hay match — lo que importa primero es lo que lees.
+          </Text>
+          <Text style={styles.emptyPrivacy}>
+            La foto se revela solo si hay coincidencia — lo que importa primero es lo que lees.
           </Text>
           <TouchableOpacity
             style={styles.setupButton}
             onPress={() => router.push('/discover/setup')}
           >
+            <Ionicons name="person-add-outline" size={16} color="#0D0A06" />
             <Text style={styles.setupButtonText}>Crear mi perfil lector</Text>
           </TouchableOpacity>
         </View>
@@ -75,7 +81,7 @@ export default function DiscoverScreen() {
           style={styles.matchesButton}
           onPress={() => router.push('/discover/matches')}
         >
-          <Text style={styles.matchesIcon}>♥</Text>
+          <Ionicons name="heart" size={20} color="#C8853A" />
           {matches.length > 0 && (
             <View style={styles.matchesBadge}>
               <Text style={styles.matchesBadgeText}>{matches.length}</Text>
@@ -89,7 +95,9 @@ export default function DiscoverScreen() {
           <ActivityIndicator color="#C8853A" size="large" />
         ) : error ? (
           <View style={styles.emptyStack}>
-            <Text style={styles.emptyIcon}>⚠️</Text>
+            <View style={styles.emptyIconWrap}>
+              <Ionicons name="wifi-outline" size={30} color="#C8853A60" />
+            </View>
             <Text style={styles.emptyTitle}>No se pudo conectar</Text>
             <Text style={styles.emptyText}>{error}</Text>
             <TouchableOpacity style={styles.reloadButton} onPress={reload}>
@@ -98,11 +106,12 @@ export default function DiscoverScreen() {
           </View>
         ) : readers.length === 0 ? (
           <View style={styles.emptyStack}>
-            <Text style={styles.emptyIcon}>🔭</Text>
+            <View style={styles.emptyIconWrap}>
+              <Ionicons name="telescope-outline" size={30} color="#C8853A60" />
+            </View>
             <Text style={styles.emptyTitle}>Sin más lectores por ahora</Text>
             <Text style={styles.emptyText}>
-              Has explorado todos los lectores disponibles en tu zona. Vuelve más tarde o amplía tu
-              ciudad.
+              Has explorado todos los lectores disponibles. Vuelve más tarde o amplía tu ciudad.
             </Text>
             <TouchableOpacity style={styles.reloadButton} onPress={reload}>
               <Text style={styles.reloadText}>Volver a buscar</Text>
@@ -144,27 +153,45 @@ export default function DiscoverScreen() {
 }
 
 const styles = StyleSheet.create({
-  center: { alignItems: 'center', backgroundColor: '#0D0A06', flex: 1, justifyContent: 'center' },
-  container: { backgroundColor: '#0D0A06', flex: 1 },
   cardBehind: {
-    opacity: 0.7,
-    transform: [{ scale: 0.95 }, { translateY: 10 }],
+    opacity: 0.65,
+    transform: [{ scale: 0.94 }, { translateY: 12 }],
   },
   cardWrapper: {
     position: 'absolute',
     width: '100%',
   },
+  center: { alignItems: 'center', backgroundColor: '#0D0A06', flex: 1, justifyContent: 'center' },
+  container: { backgroundColor: '#0D0A06', flex: 1 },
   editProfileButton: {
-    paddingVertical: 10,
+    paddingVertical: 12,
   },
   editProfileText: {
-    color: '#F2E8D550',
+    color: '#F2E8D540',
     fontFamily: 'Inter-Regular',
     fontSize: 14,
   },
-  emptyIcon: {
-    fontSize: 56,
-    marginBottom: 16,
+  emptyIconWrap: {
+    alignItems: 'center',
+    backgroundColor: '#C8853A15',
+    borderColor: '#C8853A30',
+    borderRadius: 32,
+    borderWidth: 1,
+    height: 72,
+    justifyContent: 'center',
+    marginBottom: 20,
+    width: 72,
+  },
+  emptyPrivacy: {
+    color: '#F2E8D530',
+    fontFamily: 'Inter-Regular',
+    fontStyle: 'italic',
+    fontSize: 13,
+    lineHeight: 18,
+    marginBottom: 28,
+    marginTop: -8,
+    paddingHorizontal: 8,
+    textAlign: 'center',
   },
   emptySetup: {
     alignItems: 'center',
@@ -177,9 +204,8 @@ const styles = StyleSheet.create({
     padding: 32,
   },
   emptyText: {
-    color: '#F2E8D560',
+    color: '#F2E8D555',
     fontFamily: 'Inter-Regular',
-    fontStyle: 'italic',
     fontSize: 15,
     lineHeight: 22,
     marginBottom: 28,
@@ -187,9 +213,8 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     color: '#F2E8D5',
-    fontFamily: 'Inter-Regular',
-    fontSize: 20,
-    fontWeight: '700',
+    fontFamily: 'Playfair-Bold',
+    fontSize: 22,
     marginBottom: 12,
     textAlign: 'center',
   },
@@ -204,38 +229,38 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: '#F2E8D5',
-    fontFamily: 'Inter-Regular',
-    fontSize: 22,
-    fontWeight: '700',
+    fontFamily: 'Playfair-Bold',
+    fontSize: 28,
   },
   matchesBadge: {
     alignItems: 'center',
     backgroundColor: '#C8853A',
+    borderColor: '#0D0A06',
     borderRadius: 8,
+    borderWidth: 1.5,
     height: 16,
     justifyContent: 'center',
     minWidth: 16,
     paddingHorizontal: 3,
     position: 'absolute',
-    right: 0,
-    top: 0,
+    right: -2,
+    top: -2,
   },
   matchesBadgeText: {
     color: '#0D0A06',
-    fontFamily: 'Inter-Regular',
-    fontSize: 11,
-    fontWeight: '700',
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 10,
   },
   matchesButton: {
     alignItems: 'center',
+    backgroundColor: '#C8853A18',
+    borderColor: '#C8853A40',
+    borderRadius: 20,
+    borderWidth: 1,
     height: 40,
     justifyContent: 'center',
     position: 'relative',
     width: 40,
-  },
-  matchesIcon: {
-    color: '#C8853A',
-    fontSize: 22,
   },
   reloadButton: {
     borderColor: '#C8853A',
@@ -247,20 +272,22 @@ const styles = StyleSheet.create({
   },
   reloadText: {
     color: '#C8853A',
-    fontFamily: 'Inter-Regular',
+    fontFamily: 'Inter-Medium',
     fontSize: 15,
   },
   setupButton: {
+    alignItems: 'center',
     backgroundColor: '#C8853A',
-    borderRadius: 12,
+    borderRadius: 14,
+    flexDirection: 'row',
+    gap: 8,
     paddingHorizontal: 28,
-    paddingVertical: 14,
+    paddingVertical: 15,
   },
   setupButtonText: {
     color: '#0D0A06',
-    fontFamily: 'Inter-Regular',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 16,
-    fontWeight: '700',
   },
   stack: {
     alignItems: 'center',

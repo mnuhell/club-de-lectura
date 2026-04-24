@@ -6,6 +6,11 @@
       "sourceType": "github",
       "computedHash": "c1f02c1417e30a9ed2814657a48aae49dce828b2d865f9a2a8a0ed173d20f731"
     },
+    "mobile-design": {
+      "source": "sickn33/antigravity-awesome-skills",
+      "sourceType": "github",
+      "computedHash": "ba174c1095bcdda7a135622361778568589922fae7d932d822c5daba94e12318"
+    },
     "react-native-best-practices": {
       "source": "callstackincubator/agent-skills",
       "sourceType": "github",
@@ -15,6 +20,11 @@
       "source": "obra/superpowers",
       "sourceType": "github",
       "computedHash": "126f1ebf6ccd414f42544f6e83d8cc5adb089e1108eaffb7c400701e37eecd9f"
+    },
+    "ui-mobile": {
+      "source": "alinaqi/claude-bootstrap",
+      "sourceType": "github",
+      "computedHash": "14062e337cf61370d269b46ff1a9144535956ab1776d4ab8c82a7b980bcf92ce"
     }
   }
 }

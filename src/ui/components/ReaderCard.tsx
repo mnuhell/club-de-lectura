@@ -1,4 +1,5 @@
 import type { ReaderProfile } from '@/src/domain/ReaderProfile'
+import { Ionicons } from '@expo/vector-icons'
 import React, { useRef } from 'react'
 import {
   Animated,
@@ -97,35 +98,46 @@ export function ReaderCard({ reader, onLike, onPass, isTop }: Props) {
         ]}
         {...(isTop ? panResponder.panHandlers : {})}
       >
-        {/* LIKE label */}
+        {/* LEER JUNTOS swipe label */}
         <Animated.View style={[styles.label, styles.likeLabel, { opacity: likeOpacity }]}>
           <Text style={styles.likeText}>LEER JUNTOS</Text>
         </Animated.View>
-        {/* PASS label */}
+        {/* PASAR swipe label */}
         <Animated.View style={[styles.label, styles.passLabel, { opacity: passOpacity }]}>
           <Text style={styles.passText}>PASAR</Text>
         </Animated.View>
 
-        {/* Avatar placeholder — nunca se muestra aquí, solo tras el match */}
+        {/* Avatar placeholder — only revealed after match */}
         <View style={styles.avatarPlaceholder}>
-          <Text style={styles.avatarIcon}>📖</Text>
+          <Ionicons name="book" size={42} color="#C8853A" />
+          <View style={styles.avatarGlow} />
         </View>
 
-        {/* Name + city */}
+        {/* Name */}
         <Text style={styles.name}>{reader.fullName}</Text>
-        {reader.city && <Text style={styles.city}>📍 {reader.city}</Text>}
+
+        {/* City */}
+        {reader.city && (
+          <View style={styles.cityRow}>
+            <Ionicons name="location-outline" size={13} color="#F2E8D550" />
+            <Text style={styles.city}>{reader.city}</Text>
+          </View>
+        )}
 
         {/* Shared genres badge */}
         {sharedCount > 0 && (
           <View style={styles.sharedBadge}>
+            <Ionicons name="star" size={11} color="#C8853A" />
             <Text style={styles.sharedText}>
               {sharedCount} género{sharedCount > 1 ? 's' : ''} en común
             </Text>
           </View>
         )}
 
-        {/* Reader bio */}
-        {reader.readerBio ? <Text style={styles.bio}>{reader.readerBio}</Text> : null}
+        {/* Bio */}
+        {reader.readerBio ? (
+          <Text style={styles.bio}>{reader.readerBio}</Text>
+        ) : null}
 
         {/* Genres */}
         <View style={styles.genresRow}>
@@ -141,11 +153,14 @@ export function ReaderCard({ reader, onLike, onPass, isTop }: Props) {
       {/* Action buttons */}
       {isTop && (
         <View style={styles.buttons}>
-          <TouchableOpacity style={[styles.btn, styles.passBtn]} onPress={handlePass}>
-            <Text style={styles.passIcon}>✕</Text>
+          <TouchableOpacity style={[styles.btn, styles.passBtn]} onPress={handlePass} activeOpacity={0.8}>
+            <Ionicons name="close" size={28} color="#888" />
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.btn, styles.likeBtn]} onPress={handleLike}>
-            <Text style={styles.likeIcon}>♥</Text>
+          <View style={styles.hintWrap}>
+            <Text style={styles.hintText}>desliza o toca</Text>
+          </View>
+          <TouchableOpacity style={[styles.btn, styles.likeBtn]} onPress={handleLike} activeOpacity={0.8}>
+            <Ionicons name="heart" size={26} color="#C8853A" />
           </TouchableOpacity>
         </View>
       )}
@@ -158,150 +173,169 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   card: {
-    width: SCREEN_WIDTH - 32,
-    backgroundColor: '#161009',
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#C8853A30',
-    padding: 24,
     alignItems: 'center',
-    minHeight: 420,
+    backgroundColor: '#161009',
+    borderColor: '#C8853A25',
+    borderRadius: 24,
+    borderWidth: 1,
+    minHeight: 440,
+    padding: 28,
     shadowColor: '#C8853A',
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    elevation: 5,
+    shadowOpacity: 0.12,
+    shadowRadius: 24,
+    elevation: 6,
+    width: SCREEN_WIDTH - 32,
   },
   label: {
-    position: 'absolute',
-    top: 24,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
     borderRadius: 8,
-    borderWidth: 2,
+    borderWidth: 2.5,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    position: 'absolute',
+    top: 28,
     zIndex: 10,
   },
   likeLabel: {
-    right: 16,
     borderColor: '#C8853A',
-    transform: [{ rotate: '15deg' }],
+    right: 16,
+    transform: [{ rotate: '14deg' }],
   },
   likeText: {
     color: '#C8853A',
-    fontFamily: 'Inter-Regular',
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 13,
+    letterSpacing: 0.5,
   },
   passLabel: {
-    left: 16,
     borderColor: '#666',
-    transform: [{ rotate: '-15deg' }],
+    left: 16,
+    transform: [{ rotate: '-14deg' }],
   },
   passText: {
     color: '#666',
-    fontFamily: 'Inter-Regular',
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 13,
+    letterSpacing: 0.5,
   },
   avatarPlaceholder: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    backgroundColor: '#0D0A06',
-    borderWidth: 2,
-    borderColor: '#C8853A30',
     alignItems: 'center',
+    backgroundColor: '#0D0A06',
+    borderColor: '#C8853A30',
+    borderRadius: 52,
+    borderWidth: 2,
+    height: 104,
     justifyContent: 'center',
-    marginBottom: 16,
-    marginTop: 8,
+    marginBottom: 20,
+    marginTop: 12,
+    position: 'relative',
+    width: 104,
   },
-  avatarIcon: {
-    fontSize: 40,
+  avatarGlow: {
+    backgroundColor: '#C8853A',
+    borderRadius: 40,
+    bottom: -8,
+    height: 16,
+    left: '50%',
+    opacity: 0.08,
+    position: 'absolute',
+    width: 80,
+    transform: [{ translateX: -40 }],
   },
   name: {
     color: '#F2E8D5',
-    fontSize: 22,
-    fontFamily: 'Inter-Regular',
-    fontWeight: '600',
-    marginBottom: 4,
+    fontFamily: 'Playfair-Bold',
+    fontSize: 26,
+    marginBottom: 6,
     textAlign: 'center',
   },
+  cityRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 4,
+    marginBottom: 14,
+  },
   city: {
-    color: '#F2E8D560',
-    fontSize: 14,
+    color: '#F2E8D550',
     fontFamily: 'Inter-Regular',
-    marginBottom: 12,
+    fontSize: 13,
   },
   sharedBadge: {
-    backgroundColor: '#C8853A22',
+    alignItems: 'center',
+    backgroundColor: '#C8853A18',
+    borderColor: '#C8853A60',
+    borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#C8853A',
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    marginBottom: 12,
+    flexDirection: 'row',
+    gap: 5,
+    marginBottom: 14,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
   },
   sharedText: {
     color: '#C8853A',
-    fontSize: 13,
-    fontFamily: 'Inter-Regular',
+    fontFamily: 'Inter-Medium',
+    fontSize: 12,
   },
   bio: {
-    color: '#F2E8D580',
-    fontSize: 15,
+    color: '#F2E8D575',
     fontFamily: 'Inter-Regular',
     fontStyle: 'italic',
-    textAlign: 'center',
-    marginBottom: 16,
-    paddingHorizontal: 8,
+    fontSize: 14,
     lineHeight: 20,
+    marginBottom: 18,
+    paddingHorizontal: 4,
+    textAlign: 'center',
   },
   genresRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
+    gap: 6,
   },
   moreGenres: {
-    color: '#F2E8D540',
-    fontSize: 13,
-    fontFamily: 'Inter-Regular',
     alignSelf: 'center',
-    marginLeft: 4,
+    color: '#F2E8D540',
+    fontFamily: 'Inter-Regular',
+    fontSize: 12,
+    marginLeft: 2,
   },
   buttons: {
+    alignItems: 'center',
     flexDirection: 'row',
+    gap: 20,
     justifyContent: 'center',
-    gap: 32,
-    marginTop: 20,
+    marginTop: 22,
+  },
+  hintWrap: {
+    alignItems: 'center',
+    width: 72,
+  },
+  hintText: {
+    color: '#F2E8D525',
+    fontFamily: 'Inter-Regular',
+    fontSize: 10,
+    letterSpacing: 0.3,
   },
   btn: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
     alignItems: 'center',
-    justifyContent: 'center',
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
+    borderRadius: 36,
     elevation: 4,
+    height: 68,
+    justifyContent: 'center',
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    width: 68,
   },
   passBtn: {
     backgroundColor: '#1a1410',
+    borderColor: '#444',
     borderWidth: 1.5,
-    borderColor: '#555',
-    shadowColor: '#555',
+    shadowColor: '#000',
   },
   likeBtn: {
-    backgroundColor: '#C8853A22',
-    borderWidth: 1.5,
+    backgroundColor: '#C8853A18',
     borderColor: '#C8853A',
+    borderWidth: 1.5,
     shadowColor: '#C8853A',
-  },
-  passIcon: {
-    color: '#888',
-    fontSize: 24,
-    fontWeight: '300',
-  },
-  likeIcon: {
-    color: '#C8853A',
-    fontSize: 24,
   },
 })

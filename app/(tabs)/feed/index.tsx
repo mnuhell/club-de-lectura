@@ -117,7 +117,7 @@ function PostCard({ item, userId }: { item: PostFeedItem; userId: string }) {
         disabled={isMe}
         activeOpacity={isMe ? 1 : 0.7}
       >
-        <Avatar name={authorName} avatarUrl={item.post.author.avatarUrl} size={42} />
+        <Avatar name={authorName} avatarUrl={item.post.author.avatarUrl} size={40} />
         <View style={styles.cardTopInfo}>
           <View style={styles.cardTopRow}>
             <Text style={styles.authorName} numberOfLines={1}>
@@ -139,16 +139,13 @@ function PostCard({ item, userId }: { item: PostFeedItem; userId: string }) {
         </View>
       </TouchableOpacity>
 
-      {/* Content */}
       {item.post.hasSpoiler && !spoilerRevealed ? (
         <TouchableOpacity style={styles.spoilerBlock} onPress={() => setSpoilerRevealed(true)}>
-          <Ionicons name="eye-off-outline" size={16} color={colors.textMuted} />
+          <Ionicons name="eye-off-outline" size={14} color={colors.textMuted} />
           <Text style={styles.spoilerText}>Contiene spoilers · toca para ver</Text>
         </TouchableOpacity>
       ) : (
-        <Text style={styles.postContent} numberOfLines={5}>
-          {item.post.content}
-        </Text>
+        <Text style={styles.postContent}>{item.post.content}</Text>
       )}
 
       <EmojiReactionBar reactions={reactions} onToggle={toggle} />
@@ -165,7 +162,7 @@ function ProgressCard({ item }: { item: ProgressFeedItem }) {
     <View style={[styles.card, styles.progressCard]}>
       <View style={styles.progressLeft}>
         <View style={styles.progressIconWrap}>
-          <Ionicons name="book-outline" size={20} color={colors.success} />
+          <Ionicons name="book" size={18} color={colors.success} />
         </View>
         <View style={styles.progressInfo}>
           <View style={styles.cardMeta}>
@@ -210,14 +207,17 @@ function NotificationsSheet({
         <View style={styles.sheetHeader}>
           <Text style={styles.sheetTitle}>Notificaciones</Text>
           <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-            <Ionicons name="close" size={20} color={colors.textSecondary} />
+            <Ionicons name="close" size={18} color={colors.textSecondary} />
           </TouchableOpacity>
         </View>
 
         {notifications.length === 0 ? (
           <View style={styles.centered}>
-            <Ionicons name="notifications-off-outline" size={40} color={colors.border} />
-            <Text style={styles.emptyText}>Sin notificaciones</Text>
+            <View style={styles.emptyIconWrap}>
+              <Ionicons name="notifications-off-outline" size={32} color={colors.textMuted} />
+            </View>
+            <Text style={styles.emptyTitle}>Sin notificaciones</Text>
+            <Text style={styles.emptyHint}>Las reacciones a tus comentarios aparecerán aquí</Text>
           </View>
         ) : (
           <ScrollView contentContainerStyle={styles.notifList}>
@@ -226,7 +226,7 @@ function NotificationsSheet({
                 <Avatar
                   name={n.actor.displayName ?? n.actor.username}
                   avatarUrl={n.actor.avatarUrl}
-                  size={38}
+                  size={36}
                 />
                 <View style={styles.notifBody}>
                   <Text style={styles.notifText}>
@@ -295,8 +295,10 @@ export default function FeedScreen() {
 
       {!loading && !error && items.length === 0 && (
         <View style={styles.centered}>
-          <Ionicons name="book-outline" size={48} color={colors.border} />
-          <Text style={styles.emptyText}>Tu feed está vacío</Text>
+          <View style={styles.emptyIconWrap}>
+            <Ionicons name="book-outline" size={36} color={colors.textMuted} />
+          </View>
+          <Text style={styles.emptyTitle}>Tu feed está vacío</Text>
           <Text style={styles.emptyHint}>Únete a un club para ver la actividad aquí</Text>
         </View>
       )}
@@ -324,9 +326,9 @@ export default function FeedScreen() {
 
 const cardShadow = {
   shadowColor: '#1A1208',
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.07,
-  shadowRadius: 8,
+  shadowOffset: { width: 0, height: 1 },
+  shadowOpacity: 0.06,
+  shadowRadius: 6,
   elevation: 2,
 }
 
@@ -334,12 +336,11 @@ const styles = StyleSheet.create({
   authorName: {
     color: colors.textPrimary,
     flex: 1,
-    fontFamily: 'Inter-Regular',
-    fontSize: 15,
-    fontWeight: '600',
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 14,
   },
   avatar: { alignItems: 'center', justifyContent: 'center' },
-  avatarInitial: { fontFamily: 'Inter-Regular', fontWeight: '600' },
+  avatarInitial: { fontFamily: 'Inter-SemiBold', fontWeight: '600' },
   badge: {
     alignItems: 'center',
     backgroundColor: colors.error,
@@ -352,7 +353,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: -4,
   },
-  badgeText: { color: '#fff', fontFamily: 'Inter-Regular', fontSize: 10 },
+  badgeText: { color: '#fff', fontFamily: 'Inter-SemiBold', fontSize: 9 },
   bellButton: { padding: 4, position: 'relative' },
   card: {
     ...cardShadow,
@@ -361,21 +362,21 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     marginHorizontal: 16,
-    marginVertical: 6,
+    marginVertical: 5,
     padding: 16,
   },
-  cardMeta: { alignItems: 'center', flexDirection: 'row', gap: 4, marginTop: 2 },
-  cardTop: { alignItems: 'flex-start', flexDirection: 'row', gap: 12, marginBottom: 12 },
-  cardTopInfo: { flex: 1 },
+  cardMeta: { alignItems: 'center', flexDirection: 'row', gap: 4, marginTop: 1 },
+  cardTop: { alignItems: 'flex-start', flexDirection: 'row', gap: 10, marginBottom: 12 },
+  cardTopInfo: { flex: 1, justifyContent: 'center' },
   cardTopRow: { alignItems: 'center', flexDirection: 'row', gap: 8 },
   centered: { alignItems: 'center', flex: 1, gap: 10, justifyContent: 'center' },
   chapterPill: {
     backgroundColor: colors.amberFaint,
     borderRadius: 10,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
   },
-  chapterPillText: { color: colors.amber, fontFamily: 'Inter-Regular', fontSize: 10 },
+  chapterPillText: { color: colors.amber, fontFamily: 'Inter-Medium', fontSize: 10 },
   closeBtn: {
     backgroundColor: colors.surfaceHigh,
     borderRadius: 16,
@@ -388,9 +389,27 @@ const styles = StyleSheet.create({
     maxWidth: 160,
   },
   container: { backgroundColor: colors.bg, flex: 1 },
-  dot: { color: colors.borderLight, fontSize: 11 },
-  emptyHint: { color: colors.textMuted, fontFamily: 'Inter-Regular', fontSize: 13 },
-  emptyText: { color: colors.textSecondary, fontFamily: 'Inter-Regular', fontSize: 17 },
+  dot: { color: colors.borderLight, fontSize: 10 },
+  emptyHint: {
+    color: colors.textMuted,
+    fontFamily: 'Inter-Regular',
+    fontSize: 13,
+    textAlign: 'center',
+  },
+  emptyIconWrap: {
+    alignItems: 'center',
+    backgroundColor: colors.surfaceHigh,
+    borderRadius: 24,
+    height: 64,
+    justifyContent: 'center',
+    marginBottom: 4,
+    width: 64,
+  },
+  emptyTitle: {
+    color: colors.textSecondary,
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 16,
+  },
   errorText: { color: colors.error, fontFamily: 'Inter-Regular', fontSize: 14 },
   header: {
     alignItems: 'center',
@@ -400,12 +419,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingVertical: 14,
+    paddingVertical: 12,
   },
-  list: { paddingTop: 8, paddingBottom: 24 },
-  notifActor: { color: colors.textPrimary, fontFamily: 'Inter-Regular', fontWeight: '600' },
+  list: { paddingTop: 10, paddingBottom: 24 },
+  notifActor: { color: colors.textPrimary, fontFamily: 'Inter-SemiBold', fontSize: 13 },
   notifBody: { flex: 1, gap: 3 },
-  notifEmoji: { fontSize: 17 },
+  notifEmoji: { fontSize: 16 },
   notifItem: {
     alignItems: 'center',
     borderBottomColor: colors.border,
@@ -427,19 +446,19 @@ const styles = StyleSheet.create({
   postContent: {
     color: colors.textPrimary,
     fontFamily: 'Inter-Regular',
-    fontSize: 16,
-    lineHeight: 23,
+    fontSize: 15,
+    lineHeight: 24,
     marginBottom: 12,
   },
   progressBar: {
     backgroundColor: colors.success,
     borderRadius: 3,
-    height: 4,
+    height: 3,
   },
   progressBarWrap: {
     backgroundColor: colors.border,
     borderRadius: 3,
-    height: 4,
+    height: 3,
     marginTop: 8,
     overflow: 'hidden',
     width: '100%',
@@ -449,17 +468,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.success + '18',
     borderRadius: 12,
-    height: 44,
+    height: 40,
     justifyContent: 'center',
-    width: 44,
+    width: 40,
   },
   progressInfo: { flex: 1 },
-  progressLeft: { alignItems: 'center', flexDirection: 'row', gap: 14 },
+  progressLeft: { alignItems: 'center', flexDirection: 'row', gap: 12 },
   progressText: {
     color: colors.textPrimary,
-    fontFamily: 'Inter-Regular',
-    fontSize: 16,
-    marginTop: 4,
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 14,
+    marginTop: 3,
   },
   retryButton: {
     borderColor: colors.border,
@@ -479,7 +498,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
   },
-  sheetTitle: { color: colors.textPrimary, fontFamily: 'Inter-Regular', fontSize: 22 },
+  sheetTitle: {
+    color: colors.textPrimary,
+    fontFamily: 'Playfair-Bold',
+    fontSize: 22,
+  },
   spoilerBlock: {
     alignItems: 'center',
     backgroundColor: colors.surfaceHigh,
@@ -491,7 +514,11 @@ const styles = StyleSheet.create({
   },
   spoilerText: { color: colors.textMuted, fontFamily: 'Inter-Regular', fontSize: 13 },
   timestamp: { color: colors.textMuted, fontFamily: 'Inter-Regular', fontSize: 11 },
-  title: { color: colors.textPrimary, fontFamily: 'Inter-Regular', fontSize: 28 },
+  title: {
+    color: colors.textPrimary,
+    fontFamily: 'Playfair-Bold',
+    fontSize: 30,
+  },
   unreadDot: {
     backgroundColor: colors.amber,
     borderRadius: 4,

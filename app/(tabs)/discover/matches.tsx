@@ -3,6 +3,7 @@ import type { ReaderMatch } from '@/src/domain/ReaderProfile'
 import { GenreChip } from '@/src/ui/components/GenreChip'
 import { useAuth } from '@/src/ui/hooks/useAuth'
 import { useMatches } from '@/src/ui/hooks/useDiscover'
+import { Ionicons } from '@expo/vector-icons'
 import { router } from 'expo-router'
 import React from 'react'
 import {
@@ -23,9 +24,8 @@ export default function MatchesScreen() {
     <TouchableOpacity
       style={styles.matchCard}
       onPress={() => router.push(`/discover/match/${item.matchId}`)}
-      activeOpacity={0.75}
+      activeOpacity={0.72}
     >
-      {/* Avatar — revealed because it's a match */}
       <View style={styles.avatarContainer}>
         {item.reader.avatarUrl ? (
           <Image source={{ uri: item.reader.avatarUrl }} style={styles.avatar} />
@@ -39,7 +39,12 @@ export default function MatchesScreen() {
 
       <View style={styles.matchInfo}>
         <Text style={styles.matchName}>{item.reader.fullName}</Text>
-        {item.reader.city && <Text style={styles.matchCity}>📍 {item.reader.city}</Text>}
+        {item.reader.city && (
+          <View style={styles.cityRow}>
+            <Ionicons name="location-outline" size={12} color="#F2E8D545" />
+            <Text style={styles.matchCity}>{item.reader.city}</Text>
+          </View>
+        )}
         {item.reader.readerBio && (
           <Text style={styles.matchBio} numberOfLines={2}>
             {item.reader.readerBio}
@@ -58,6 +63,8 @@ export default function MatchesScreen() {
           })}
         </Text>
       </View>
+
+      <Ionicons name="chevron-forward" size={16} color="#C8853A40" style={styles.chevron} />
     </TouchableOpacity>
   )
 
@@ -65,7 +72,7 @@ export default function MatchesScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Text style={styles.backIcon}>←</Text>
+          <Ionicons name="chevron-back" size={22} color="#C8853A" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Mis coincidencias</Text>
         <View style={{ width: 40 }} />
@@ -77,11 +84,13 @@ export default function MatchesScreen() {
         </View>
       ) : matches.length === 0 ? (
         <View style={styles.empty}>
-          <Text style={styles.emptyIcon}>♥</Text>
+          <View style={styles.emptyIconWrap}>
+            <Ionicons name="heart-outline" size={32} color="#C8853A60" />
+          </View>
           <Text style={styles.emptyTitle}>Aún no hay coincidencias</Text>
           <Text style={styles.emptyText}>
-            Sigue descubriendo lectores. Cuando alguien comparta tus gustos y se gusten mutuamente,
-            aparecerá aquí su foto y su perfil completo.
+            Sigue descubriendo lectores. Cuando alguien comparta tus gustos y se gusten
+            mutuamente, verás aquí su foto y su perfil completo.
           </Text>
           <TouchableOpacity style={styles.discoverButton} onPress={() => router.back()}>
             <Text style={styles.discoverButtonText}>Volver a descubrir</Text>
@@ -96,6 +105,7 @@ export default function MatchesScreen() {
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           onRefresh={reload}
           refreshing={loading}
+          showsVerticalScrollIndicator={false}
         />
       )}
     </SafeAreaView>
@@ -103,27 +113,32 @@ export default function MatchesScreen() {
 }
 
 const styles = StyleSheet.create({
-  avatar: { borderRadius: 36, height: 72, width: 72 },
+  avatar: { borderRadius: 38, height: 76, width: 76 },
   avatarContainer: { position: 'relative' },
   avatarFallback: {
     alignItems: 'center',
-    backgroundColor: '#C8853A22',
-    borderColor: '#C8853A',
-    borderRadius: 36,
+    backgroundColor: '#C8853A18',
+    borderColor: '#C8853A50',
+    borderRadius: 38,
     borderWidth: 1.5,
-    height: 72,
+    height: 76,
     justifyContent: 'center',
-    width: 72,
+    width: 76,
   },
   avatarInitial: {
     color: '#C8853A',
-    fontFamily: 'Inter-Regular',
-    fontSize: 28,
-    fontWeight: '700',
+    fontFamily: 'Playfair-Bold',
+    fontSize: 30,
   },
   backButton: { alignItems: 'center', height: 40, justifyContent: 'center', width: 40 },
-  backIcon: { color: '#C8853A', fontSize: 22 },
   center: { alignItems: 'center', flex: 1, justifyContent: 'center' },
+  chevron: { alignSelf: 'center' },
+  cityRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 3,
+    marginBottom: 6,
+  },
   container: { backgroundColor: '#0D0A06', flex: 1 },
   discoverButton: {
     borderColor: '#C8853A',
@@ -134,7 +149,7 @@ const styles = StyleSheet.create({
   },
   discoverButtonText: {
     color: '#C8853A',
-    fontFamily: 'Inter-Regular',
+    fontFamily: 'Inter-Medium',
     fontSize: 15,
   },
   empty: {
@@ -143,28 +158,37 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 32,
   },
-  emptyIcon: { fontSize: 56, marginBottom: 16 },
+  emptyIconWrap: {
+    alignItems: 'center',
+    backgroundColor: '#C8853A15',
+    borderColor: '#C8853A30',
+    borderRadius: 32,
+    borderWidth: 1,
+    height: 72,
+    justifyContent: 'center',
+    marginBottom: 20,
+    width: 72,
+  },
   emptyText: {
-    color: '#F2E8D560',
+    color: '#F2E8D555',
     fontFamily: 'Inter-Regular',
     fontSize: 15,
-    fontStyle: 'italic',
     lineHeight: 22,
     marginBottom: 28,
     textAlign: 'center',
   },
   emptyTitle: {
     color: '#F2E8D5',
-    fontFamily: 'Inter-Regular',
-    fontSize: 20,
-    fontWeight: '700',
+    fontFamily: 'Playfair-Bold',
+    fontSize: 22,
     marginBottom: 12,
     textAlign: 'center',
   },
   genresRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: 6,
+    gap: 4,
+    marginBottom: 8,
   },
   header: {
     alignItems: 'center',
@@ -177,33 +201,32 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: '#F2E8D5',
-    fontFamily: 'Inter-Regular',
-    fontSize: 18,
-    fontWeight: '700',
+    fontFamily: 'Playfair-Bold',
+    fontSize: 20,
   },
-  list: { padding: 16 },
+  list: { padding: 16, paddingBottom: 32 },
   matchBio: {
-    color: '#F2E8D570',
+    color: '#F2E8D565',
     fontFamily: 'Inter-Regular',
-    fontSize: 13,
     fontStyle: 'italic',
-    lineHeight: 17,
+    fontSize: 13,
+    lineHeight: 18,
     marginBottom: 8,
   },
   matchCard: {
+    alignItems: 'center',
     backgroundColor: '#161009',
     borderColor: '#C8853A20',
-    borderRadius: 16,
+    borderRadius: 18,
     borderWidth: 1,
     flexDirection: 'row',
     gap: 14,
     padding: 16,
   },
   matchCity: {
-    color: '#F2E8D550',
+    color: '#F2E8D545',
     fontFamily: 'Inter-Regular',
-    fontSize: 13,
-    marginBottom: 6,
+    fontSize: 12,
   },
   matchDot: {
     backgroundColor: '#C8853A',
@@ -219,15 +242,14 @@ const styles = StyleSheet.create({
   matchInfo: { flex: 1 },
   matchName: {
     color: '#F2E8D5',
-    fontFamily: 'Inter-Regular',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 17,
-    fontWeight: '600',
-    marginBottom: 2,
+    marginBottom: 3,
   },
   matchedAt: {
-    color: '#F2E8D530',
+    color: '#F2E8D528',
     fontFamily: 'Inter-Regular',
-    fontSize: 12,
+    fontSize: 11,
   },
   separator: { height: 10 },
 })
