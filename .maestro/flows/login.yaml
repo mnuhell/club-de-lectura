@@ -1,0 +1,8 @@
+appId: com.manufit78.bookclub
+---
+# Smoke test: la app arranca y llega a la pantalla de bienvenida sin sesión.
+- launchApp
+- assertVisible:
+    text: "Folio"
+- assertVisible:
+    text: "Ya tengo cuenta"

@@ -1,3 +1,4 @@
+import * as Linking from 'expo-linking'
 import { supabase } from './client'
 
 export async function signInWithEmail(email: string, password: string) {
@@ -21,6 +22,18 @@ export async function signInWithMagicLink(email: string) {
     email,
     options: { shouldCreateUser: true },
   })
+  if (error) throw error
+}
+
+export async function resetPasswordForEmail(email: string) {
+  const redirectTo = Linking.createURL('reset-password')
+  console.log('[reset-password] redirectTo:', redirectTo)
+  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo })
+  if (error) throw error
+}
+
+export async function updatePassword(newPassword: string) {
+  const { error } = await supabase.auth.updateUser({ password: newPassword })
   if (error) throw error
 }
 

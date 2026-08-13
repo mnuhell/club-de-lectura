@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import type { TextInputProps } from 'react-native'
 import {
   View,
   Text,
@@ -13,24 +12,31 @@ import {
   StatusBar,
 } from 'react-native'
 import { router } from 'expo-router'
-import { signInWithEmail } from '@/src/infrastructure/supabase/auth'
+import { updatePassword } from '@/src/infrastructure/supabase/auth'
+import { useAuth } from '@/src/ui/hooks/useAuth'
 import { colors, fontSize, fontWeight, spacing, radius } from '@/src/ui/theme'
 
-export default function SignInScreen() {
-  const [email, setEmail] = useState('')
+export default function ResetPasswordScreen() {
+  const { clearPasswordRecovery } = useAuth()
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  async function handleSignIn() {
-    if (!email || !password) {
-      setError('Completa todos los campos para continuar.')
+  async function handleSubmit() {
+    if (password.length < 8) {
+      setError('La contraseña debe tener al menos 8 caracteres.')
+      return
+    }
+    if (password !== confirmPassword) {
+      setError('Las contraseñas no coinciden.')
       return
     }
     setError(null)
     setLoading(true)
     try {
-      await signInWithEmail(email.trim(), password)
+      await updatePassword(password)
+      clearPasswordRecovery()
       router.replace('/(tabs)/feed')
     } catch (e: unknown) {
       setError(friendlyError(e instanceof Error ? e.message : 'Error desconocido'))
@@ -46,40 +52,25 @@ export default function SignInScreen() {
     >
       <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        {/* Cabecera */}
-        <Pressable onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backText}>← Volver</Text>
-        </Pressable>
-
         <View style={styles.header}>
-          <Text style={styles.ornament}>📖</Text>
-          <Text style={styles.title}>Bienvenido de vuelta,{'\n'}lector</Text>
-          <Text style={styles.subtitle}>Retoma donde lo dejaste</Text>
+          <Text style={styles.ornament}>🔑</Text>
+          <Text style={styles.title}>Nueva{'\n'}contraseña</Text>
+          <Text style={styles.subtitle}>Elige una contraseña nueva para tu cuenta</Text>
         </View>
 
-        {/* Formulario */}
         <View style={styles.form}>
           <Field
-            label="Correo electrónico"
-            value={email}
-            onChangeText={setEmail}
-            placeholder="tu@email.com"
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          <Field
-            label="Contraseña"
+            label="Nueva contraseña"
             value={password}
             onChangeText={setPassword}
-            placeholder="••••••••"
-            secureTextEntry
+            placeholder="Mínimo 8 caracteres"
           />
-          <Pressable
-            onPress={() => router.push('/(auth)/forgot-password')}
-            style={styles.forgotLink}
-          >
-            <Text style={styles.footerLink}>¿Olvidaste tu contraseña?</Text>
-          </Pressable>
+          <Field
+            label="Confirmar contraseña"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            placeholder="Repite la contraseña"
+          />
 
           {error && (
             <View style={styles.errorBox}>
@@ -93,22 +84,14 @@ export default function SignInScreen() {
               pressed && styles.pressed,
               loading && styles.disabled,
             ]}
-            onPress={handleSignIn}
+            onPress={handleSubmit}
             disabled={loading}
           >
             {loading ? (
               <ActivityIndicator color={colors.textInverse} />
             ) : (
-              <Text style={styles.btnPrimaryText}>Continuar leyendo</Text>
+              <Text style={styles.btnPrimaryText}>Guardar contraseña</Text>
             )}
-          </Pressable>
-        </View>
-
-        {/* Pie */}
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>¿Primera vez aquí? </Text>
-          <Pressable onPress={() => router.replace('/(auth)/sign-up')}>
-            <Text style={styles.footerLink}>Únete al club</Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -121,17 +104,11 @@ function Field({
   value,
   onChangeText,
   placeholder,
-  secureTextEntry,
-  keyboardType,
-  autoCapitalize,
 }: {
   label: string
   value: string
   onChangeText: (v: string) => void
   placeholder?: string
-  secureTextEntry?: boolean
-  keyboardType?: TextInputProps['keyboardType']
-  autoCapitalize?: TextInputProps['autoCapitalize']
 }) {
   const [focused, setFocused] = useState(false)
   return (
@@ -143,9 +120,8 @@ function Field({
         onChangeText={onChangeText}
         placeholder={placeholder}
         placeholderTextColor={colors.textMuted}
-        secureTextEntry={secureTextEntry}
-        keyboardType={keyboardType}
-        autoCapitalize={autoCapitalize ?? 'sentences'}
+        secureTextEntry
+        autoCapitalize="none"
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
       />
@@ -154,15 +130,13 @@ function Field({
 }
 
 function friendlyError(msg: string): string {
-  if (msg.includes('Invalid login')) return 'Correo o contraseña incorrectos.'
-  if (msg.includes('Email not confirmed')) return 'Confirma tu correo antes de entrar.'
+  if (msg.includes('same password')) return 'Usa una contraseña distinta a la actual.'
+  if (msg.includes('weak password')) return 'Usa una contraseña más segura.'
   if (msg.includes('network')) return 'Sin conexión. Revisa tu red.'
   return 'Algo salió mal. Inténtalo de nuevo.'
 }
 
 const styles = StyleSheet.create({
-  backBtn: { alignSelf: 'flex-start' },
-  backText: { color: colors.textMuted, fontSize: fontSize.sm },
   btnPrimary: {
     alignItems: 'center',
     backgroundColor: colors.amber,
@@ -191,10 +165,6 @@ const styles = StyleSheet.create({
   },
   errorText: { color: colors.error, fontSize: fontSize.sm },
   flex: { backgroundColor: colors.bg, flex: 1 },
-  footer: { flexDirection: 'row', justifyContent: 'center' },
-  footerLink: { color: colors.amber, fontSize: fontSize.sm, fontWeight: fontWeight.medium },
-  footerText: { color: colors.textMuted, fontSize: fontSize.sm },
-  forgotLink: { alignSelf: 'flex-end' },
   form: { gap: spacing[4] },
   header: { gap: spacing[2] },
   ornament: { fontSize: fontSize.xl, marginBottom: spacing[2] },

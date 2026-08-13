@@ -19,6 +19,10 @@ export function createMatchingActions(repo: IMatchingRepository) {
       return repo.getMatches(userId)
     },
 
+    async getMemberProfile(userId: string): Promise<ReaderProfile> {
+      return repo.getMemberProfile(userId)
+    },
+
     async getMyGenres(userId: string): Promise<string[]> {
       return repo.getMyGenres(userId)
     },

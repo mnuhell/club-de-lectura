@@ -1,9 +1,7 @@
-import { useAuth } from '@/src/ui/hooks/useAuth'
+import { AuthProvider, useAuth } from '@/src/ui/hooks/useAuth'
 import { usePushNotifications } from '@/src/ui/hooks/usePushNotifications'
 import { colors } from '@/src/ui/theme'
-import config from '@/tamagui.config'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
-import { TamaguiProvider } from '@tamagui/core'
 import { useFonts } from 'expo-font'
 import { Stack, router } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
@@ -44,24 +42,26 @@ export default function RootLayout() {
   if (!fontsLoaded) return null
 
   return (
-    <TamaguiProvider config={config} defaultTheme="dark">
+    <AuthProvider>
       <RootNavigator />
-    </TamaguiProvider>
+    </AuthProvider>
   )
 }
 
 function RootNavigator() {
-  const { session, loading } = useAuth()
+  const { session, loading, passwordRecovery } = useAuth()
   usePushNotifications(session?.user.id ?? '')
 
   useEffect(() => {
     if (loading) return
-    if (session) {
+    if (passwordRecovery) {
+      router.replace('/(auth)/reset-password')
+    } else if (session) {
       router.replace('/(tabs)/feed')
     } else {
       router.replace('/(auth)/welcome')
     }
-  }, [session, loading])
+  }, [session, loading, passwordRecovery])
 
   return (
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}>

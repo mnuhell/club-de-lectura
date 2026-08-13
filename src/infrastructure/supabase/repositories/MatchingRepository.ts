@@ -69,6 +69,29 @@ export const MatchingRepository: IMatchingRepository = {
     )
   },
 
+  async getMemberProfile(userId) {
+    const [{ data: prof, error: profError }, { data: genres, error: genresError }] =
+      await Promise.all([
+        supabase
+          .from('profiles')
+          .select('id, display_name, username, avatar_url, city, reader_bio')
+          .eq('id', userId)
+          .single(),
+        supabase.from('reader_genres').select('genre').eq('user_id', userId),
+      ])
+    if (profError || !prof) throw new Error('No se pudo cargar el perfil')
+    if (genresError) throw new Error('No se pudieron cargar los géneros')
+    return {
+      id: prof.id,
+      fullName: prof.display_name ?? prof.username ?? 'Lector',
+      username: prof.username ?? undefined,
+      city: prof.city ?? undefined,
+      readerBio: prof.reader_bio ?? undefined,
+      avatarUrl: prof.avatar_url ?? undefined,
+      genres: (genres ?? []).map((g: { genre: string }) => g.genre),
+    }
+  },
+
   async getMyGenres(userId) {
     const { data, error } = await supabase
       .from('reader_genres')

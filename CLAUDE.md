@@ -12,7 +12,7 @@ No es solo trackear libros: es leer **juntos**, discutir capítulo a capítulo, 
 | Capa | Tecnología |
 |---|---|
 | Framework | Expo SDK 54 + Expo Router v6 (file-based routing) |
-| UI | Tamagui 2.0-rc |
+| UI | React Native StyleSheet + tokens de `src/ui/theme/` |
 | Backend / DB | Supabase (auth + postgres + realtime + storage) |
 | State / cache | TBD (considerar Zustand + React Query) |
 | Navegación | expo-router (Stack + Tabs) |
@@ -48,7 +48,7 @@ src/
 └── ui/
     ├── components/     # Componentes compartidos
     ├── hooks/          # Custom hooks (puente entre usecases y UI)
-    └── theme/          # Tokens de diseño Tamagui
+    └── theme/          # Tokens de diseño (colores, tipografía, spacing) — única fuente de verdad
 ```
 
 ### Regla de dependencias

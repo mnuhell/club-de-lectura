@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import type { TextInputProps } from 'react-native'
 import {
   View,
   Text,
@@ -13,30 +12,50 @@ import {
   StatusBar,
 } from 'react-native'
 import { router } from 'expo-router'
-import { signInWithEmail } from '@/src/infrastructure/supabase/auth'
+import { resetPasswordForEmail } from '@/src/infrastructure/supabase/auth'
 import { colors, fontSize, fontWeight, spacing, radius } from '@/src/ui/theme'
 
-export default function SignInScreen() {
+export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [done, setDone] = useState(false)
 
-  async function handleSignIn() {
-    if (!email || !password) {
-      setError('Completa todos los campos para continuar.')
+  async function handleSubmit() {
+    if (!email) {
+      setError('Escribe tu correo electrónico.')
       return
     }
     setError(null)
     setLoading(true)
     try {
-      await signInWithEmail(email.trim(), password)
-      router.replace('/(tabs)/feed')
+      await resetPasswordForEmail(email.trim())
+      setDone(true)
     } catch (e: unknown) {
       setError(friendlyError(e instanceof Error ? e.message : 'Error desconocido'))
     } finally {
       setLoading(false)
     }
+  }
+
+  if (done) {
+    return (
+      <View style={styles.confirmContainer}>
+        <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
+        <Text style={styles.confirmOrnament}>✉︎</Text>
+        <Text style={styles.confirmTitle}>Revisa tu correo</Text>
+        <Text style={styles.confirmBody}>
+          Te enviamos un enlace para restablecer tu contraseña.{'\n'}
+          Ábrelo desde este mismo dispositivo.
+        </Text>
+        <Pressable
+          style={({ pressed }) => [styles.btnPrimary, pressed && styles.pressed]}
+          onPress={() => router.replace('/(auth)/sign-in')}
+        >
+          <Text style={styles.btnPrimaryText}>Ir a iniciar sesión</Text>
+        </Pressable>
+      </View>
+    )
   }
 
   return (
@@ -46,18 +65,16 @@ export default function SignInScreen() {
     >
       <StatusBar barStyle="light-content" backgroundColor={colors.bg} />
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        {/* Cabecera */}
         <Pressable onPress={() => router.back()} style={styles.backBtn}>
           <Text style={styles.backText}>← Volver</Text>
         </Pressable>
 
         <View style={styles.header}>
-          <Text style={styles.ornament}>📖</Text>
-          <Text style={styles.title}>Bienvenido de vuelta,{'\n'}lector</Text>
-          <Text style={styles.subtitle}>Retoma donde lo dejaste</Text>
+          <Text style={styles.ornament}>🔑</Text>
+          <Text style={styles.title}>¿Olvidaste tu{'\n'}contraseña?</Text>
+          <Text style={styles.subtitle}>Te enviamos un enlace para restablecerla</Text>
         </View>
 
-        {/* Formulario */}
         <View style={styles.form}>
           <Field
             label="Correo electrónico"
@@ -67,19 +84,6 @@ export default function SignInScreen() {
             keyboardType="email-address"
             autoCapitalize="none"
           />
-          <Field
-            label="Contraseña"
-            value={password}
-            onChangeText={setPassword}
-            placeholder="••••••••"
-            secureTextEntry
-          />
-          <Pressable
-            onPress={() => router.push('/(auth)/forgot-password')}
-            style={styles.forgotLink}
-          >
-            <Text style={styles.footerLink}>¿Olvidaste tu contraseña?</Text>
-          </Pressable>
 
           {error && (
             <View style={styles.errorBox}>
@@ -93,22 +97,14 @@ export default function SignInScreen() {
               pressed && styles.pressed,
               loading && styles.disabled,
             ]}
-            onPress={handleSignIn}
+            onPress={handleSubmit}
             disabled={loading}
           >
             {loading ? (
               <ActivityIndicator color={colors.textInverse} />
             ) : (
-              <Text style={styles.btnPrimaryText}>Continuar leyendo</Text>
+              <Text style={styles.btnPrimaryText}>Enviar enlace</Text>
             )}
-          </Pressable>
-        </View>
-
-        {/* Pie */}
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>¿Primera vez aquí? </Text>
-          <Pressable onPress={() => router.replace('/(auth)/sign-up')}>
-            <Text style={styles.footerLink}>Únete al club</Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -121,7 +117,6 @@ function Field({
   value,
   onChangeText,
   placeholder,
-  secureTextEntry,
   keyboardType,
   autoCapitalize,
 }: {
@@ -129,9 +124,8 @@ function Field({
   value: string
   onChangeText: (v: string) => void
   placeholder?: string
-  secureTextEntry?: boolean
-  keyboardType?: TextInputProps['keyboardType']
-  autoCapitalize?: TextInputProps['autoCapitalize']
+  keyboardType?: 'email-address'
+  autoCapitalize?: 'none'
 }) {
   const [focused, setFocused] = useState(false)
   return (
@@ -143,7 +137,6 @@ function Field({
         onChangeText={onChangeText}
         placeholder={placeholder}
         placeholderTextColor={colors.textMuted}
-        secureTextEntry={secureTextEntry}
         keyboardType={keyboardType}
         autoCapitalize={autoCapitalize ?? 'sentences'}
         onFocus={() => setFocused(true)}
@@ -154,8 +147,8 @@ function Field({
 }
 
 function friendlyError(msg: string): string {
-  if (msg.includes('Invalid login')) return 'Correo o contraseña incorrectos.'
-  if (msg.includes('Email not confirmed')) return 'Confirma tu correo antes de entrar.'
+  if (msg.includes('rate limit')) return 'Espera unos minutos antes de volver a intentarlo.'
+  if (msg.includes('invalid email')) return 'El correo no tiene un formato válido.'
   if (msg.includes('network')) return 'Sin conexión. Revisa tu red.'
   return 'Algo salió mal. Inténtalo de nuevo.'
 }
@@ -175,6 +168,28 @@ const styles = StyleSheet.create({
     fontSize: fontSize.md,
     fontWeight: fontWeight.bold,
   },
+  confirmBody: {
+    color: colors.textSecondary,
+    fontFamily: 'Inter-Regular',
+    fontSize: fontSize.base,
+    lineHeight: 22,
+    textAlign: 'center',
+  },
+  confirmContainer: {
+    alignItems: 'center',
+    backgroundColor: colors.bg,
+    flex: 1,
+    gap: spacing[4],
+    justifyContent: 'center',
+    paddingHorizontal: spacing[6],
+  },
+  confirmOrnament: { fontSize: 48, marginBottom: spacing[2] },
+  confirmTitle: {
+    color: colors.textPrimary,
+    fontFamily: 'Inter-Regular',
+    fontSize: fontSize.xl,
+    fontWeight: fontWeight.bold,
+  },
   container: {
     backgroundColor: colors.bg,
     flexGrow: 1,
@@ -191,10 +206,6 @@ const styles = StyleSheet.create({
   },
   errorText: { color: colors.error, fontSize: fontSize.sm },
   flex: { backgroundColor: colors.bg, flex: 1 },
-  footer: { flexDirection: 'row', justifyContent: 'center' },
-  footerLink: { color: colors.amber, fontSize: fontSize.sm, fontWeight: fontWeight.medium },
-  footerText: { color: colors.textMuted, fontSize: fontSize.sm },
-  forgotLink: { alignSelf: 'flex-end' },
   form: { gap: spacing[4] },
   header: { gap: spacing[2] },
   ornament: { fontSize: fontSize.xl, marginBottom: spacing[2] },

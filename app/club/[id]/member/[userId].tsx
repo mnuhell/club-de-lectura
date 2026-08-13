@@ -1,11 +1,8 @@
-import { supabase } from '@/src/infrastructure/supabase/client'
-import { MatchingRepository } from '@/src/infrastructure/supabase/repositories/MatchingRepository'
 import { useAuth } from '@/src/ui/hooks/useAuth'
+import { useMemberProfile } from '@/src/ui/hooks/useMemberProfile'
 import { colors } from '@/src/ui/theme'
-import { createMatchingActions } from '@/src/usecases/matching'
 import { Ionicons } from '@expo/vector-icons'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { useCallback, useEffect, useState } from 'react'
 import {
   ActivityIndicator,
   Alert,
@@ -18,69 +15,20 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-const matchingActions = createMatchingActions(MatchingRepository)
-
-interface MemberProfile {
-  id: string
-  displayName: string | null
-  username: string | null
-  avatarUrl: string | null
-  city: string | null
-  readerBio: string | null
-  genres: string[]
-}
-
 export default function MemberProfileScreen() {
   const { userId } = useLocalSearchParams<{ userId: string }>()
   const router = useRouter()
   const { user } = useAuth()
-
-  const [profile, setProfile] = useState<MemberProfile | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [matching, setMatching] = useState(false)
-  const [matched, setMatched] = useState(false)
-
-  const load = useCallback(async () => {
-    setLoading(true)
-    try {
-      const [{ data: prof }, { data: genres }] = await Promise.all([
-        supabase
-          .from('profiles')
-          .select('id, display_name, username, avatar_url, city, reader_bio')
-          .eq('id', userId)
-          .single(),
-        supabase.from('reader_genres').select('genre').eq('user_id', userId),
-      ])
-      if (prof) {
-        setProfile({
-          id: prof.id,
-          displayName: prof.display_name ?? null,
-          username: prof.username ?? null,
-          avatarUrl: prof.avatar_url ?? null,
-          city: prof.city ?? null,
-          readerBio: prof.reader_bio ?? null,
-          genres: (genres ?? []).map((g: { genre: string }) => g.genre),
-        })
-      }
-    } finally {
-      setLoading(false)
-    }
-  }, [userId])
-
-  useEffect(() => {
-    load()
-  }, [load])
+  const { profile, loading, matching, matched, like } = useMemberProfile(userId)
 
   async function handleMatch() {
     if (!user?.id) return
-    setMatching(true)
     try {
-      const matchId = await matchingActions.like(user.id, userId)
+      const matchId = await like(user.id)
       if (matchId) {
-        setMatched(true)
         Alert.alert(
           '\u00a1Es un match! \ud83d\udcda',
-          `T\u00fa y ${profile?.displayName ?? 'este lector'} ten\u00e9is gustos en com\u00fan.`,
+          `T\u00fa y ${profile?.fullName ?? 'este lector'} ten\u00e9is gustos en com\u00fan.`,
         )
       } else {
         Alert.alert(
@@ -90,12 +38,10 @@ export default function MemberProfileScreen() {
       }
     } catch {
       Alert.alert('Error', 'No se pudo registrar el inter\u00e9s.')
-    } finally {
-      setMatching(false)
     }
   }
 
-  const name = profile?.displayName ?? profile?.username ?? 'Lector'
+  const name = profile?.fullName ?? profile?.username ?? 'Lector'
   const initial = name.charAt(0).toUpperCase()
   const matchLabel = matched ? 'Match enviado' : 'Quiero conectar'
   const matchIcon = matched ? '\u2713' : '\ud83d\udcda'
@@ -141,7 +87,7 @@ export default function MemberProfileScreen() {
         </View>
 
         <Text style={styles.name}>{name}</Text>
-        {profile.username && profile.displayName && (
+        {profile.username && name !== profile.username && (
           <Text style={styles.username}>@{profile.username}</Text>
         )}
 

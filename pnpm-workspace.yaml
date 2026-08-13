@@ -1,3 +1,5 @@
 packages:
   - '.'
+allowBuilds:
+  simple-git-hooks: set this to true or false
 nodeLinker: hoisted

@@ -73,7 +73,15 @@ export function useMatches(userId: string) {
     }, [load]),
   )
 
-  return { matches, loading, reload: load }
+  const findMatch = useCallback(
+    async (matchId: string) => {
+      const all = await actions.getMatches(userId)
+      return all.find(m => m.matchId === matchId) ?? null
+    },
+    [userId],
+  )
+
+  return { matches, loading, reload: load, findMatch }
 }
 
 export function useReaderPreferences(userId: string) {

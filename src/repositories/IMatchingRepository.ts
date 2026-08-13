@@ -4,6 +4,7 @@ export interface IMatchingRepository {
   getDiscoverableReaders(userId: string, city?: string): Promise<ReaderProfile[]>
   swipeReader(swiperId: string, swipedId: string, action: 'like' | 'pass'): Promise<string | null>
   getMatches(userId: string): Promise<ReaderMatch[]>
+  getMemberProfile(userId: string): Promise<ReaderProfile>
   getMyGenres(userId: string): Promise<string[]>
   setMyGenres(userId: string, genres: string[]): Promise<void>
   updateReaderProfile(

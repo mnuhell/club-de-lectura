@@ -24,6 +24,7 @@ export type LiteraryGenre = (typeof LITERARY_GENRES)[number]
 export interface ReaderProfile {
   id: string
   fullName: string
+  username?: string
   city?: string
   readerBio?: string
   genres: string[]

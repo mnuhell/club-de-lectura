@@ -8,6 +8,7 @@ import {
   getClubDetail,
   getClubMembers,
   leaveClub,
+  updateClub,
   updateClubBook,
 } from '../../usecases/clubs'
 import { createRealtimeManager } from '../../usecases/realtime'
@@ -18,6 +19,8 @@ export function createUseClubDetailActions(repo: IClubRepository) {
     fetchMembers: (clubId: string) => getClubMembers(repo, clubId),
     leave: (clubId: string, userId: string) => leaveClub(repo, clubId, userId),
     updateBook: (clubId: string, bookId: string | null) => updateClubBook(repo, clubId, bookId),
+    update: (clubId: string, patch: Parameters<typeof updateClub>[2]) =>
+      updateClub(repo, clubId, patch),
     delete: (clubId: string) => deleteClub(repo, clubId),
   }
 }
@@ -29,6 +32,7 @@ interface ClubDetailState {
   error: string | null
   leave: () => Promise<void>
   updateBook: (bookId: string | null) => Promise<void>
+  update: (patch: Parameters<typeof updateClub>[2]) => Promise<void>
   deleteClub: () => Promise<void>
   refresh: () => void
 }
@@ -82,9 +86,14 @@ export function useClubDetail(id: string, userId: string): ClubDetailState {
     await load()
   }
 
+  async function update(patch: Parameters<typeof _clubDetailActions.update>[1]) {
+    await _clubDetailActions.update(id, patch)
+    await load()
+  }
+
   async function deleteClub() {
     await _clubDetailActions.delete(id)
   }
 
-  return { club, members, loading, error, leave, updateBook, deleteClub, refresh: load }
+  return { club, members, loading, error, leave, updateBook, update, deleteClub, refresh: load }
 }

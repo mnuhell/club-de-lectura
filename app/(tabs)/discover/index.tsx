@@ -8,7 +8,6 @@ import { useDiscover, useMatches, useReaderPreferences } from '@/src/ui/hooks/us
 import { ReaderCard } from '@/src/ui/components/ReaderCard'
 import { MatchCelebration } from '@/src/ui/components/MatchCelebration'
 import type { ReaderMatch } from '@/src/domain/ReaderProfile'
-import { MatchingRepository } from '@/src/infrastructure/supabase/repositories/MatchingRepository'
 
 export default function DiscoverScreen() {
   const { user } = useAuth()
@@ -17,7 +16,7 @@ export default function DiscoverScreen() {
   const { genres, loading: genresLoading } = useReaderPreferences(userId)
   const { readers, loading, error, newMatch, like, pass, clearNewMatch, reload } =
     useDiscover(userId)
-  const { matches } = useMatches(userId)
+  const { matches, findMatch } = useMatches(userId)
   const [celebrationMatch, setCelebrationMatch] = useState<ReaderMatch | null>(null)
 
   // Entry animation values
@@ -42,13 +41,12 @@ export default function DiscoverScreen() {
 
   React.useEffect(() => {
     if (newMatch) {
-      MatchingRepository.getMatches(userId).then(allMatches => {
-        const found = allMatches.find(m => m.matchId === newMatch)
+      findMatch(newMatch).then(found => {
         if (found) setCelebrationMatch(found)
         clearNewMatch()
       })
     }
-  }, [newMatch, userId, clearNewMatch])
+  }, [newMatch, findMatch, clearNewMatch])
 
   const handleViewMatch = (matchId: string) => {
     setCelebrationMatch(null)

@@ -87,7 +87,7 @@ export default function EditClubScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const { user } = useAuth()
-  const { club, loading, refresh } = useClubDetail(id, user?.id ?? '')
+  const { club, loading, update } = useClubDetail(id, user?.id ?? '')
 
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
@@ -126,9 +126,7 @@ export default function EditClubScreen() {
     setError(null)
     setSaving(true)
     try {
-      const { ClubRepository } = await import('@/src/infrastructure/supabase/repositories')
-      const { updateClub } = await import('@/src/usecases/clubs')
-      await updateClub(ClubRepository, id, {
+      await update({
         name: name.trim(),
         description: description.trim() || null,
         city: city.trim() || null,
@@ -141,7 +139,6 @@ export default function EditClubScreen() {
         bookstoreAddress: bookstoreAddress.trim() || null,
         bookstorePhone: bookstorePhone.trim() || null,
       })
-      refresh()
       router.back()
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'No se pudo guardar')
